@@ -1,0 +1,8 @@
+build/*
+*.vpk
+*.elf
+*.elf.unstripped.elf
+*.velf
+*.nro
+*.nacl
+*.sfo

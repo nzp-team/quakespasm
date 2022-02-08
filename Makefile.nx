@@ -1,0 +1,295 @@
+#---------------------------------------------------------------------------------
+.SUFFIXES:
+#---------------------------------------------------------------------------------
+
+ifeq ($(strip $(DEVKITPRO)),)
+$(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/devkitpro")
+endif
+
+TOPDIR ?= $(CURDIR)
+include $(DEVKITPRO)/libnx/switch_rules
+
+#---------------------------------------------------------------------------------
+# TARGET is the name of the output
+# BUILD is the directory where object files & intermediate files will be placed
+# SOURCES is a list of directories containing source code
+# DATA is a list of directories containing data files
+# INCLUDES is a list of directories containing header files
+# EXEFS_SRC is the optional input directory containing data copied into exefs, if anything this normally should only contain "main.npdm".
+# ROMFS is the directory containing data to be added to RomFS, relative to the Makefile (Optional)
+#
+# NO_ICON: if set to anything, do not use icon.
+# NO_NACP: if set to anything, no .nacp file is generated.
+# APP_TITLE is the name of the app stored in the .nacp file (Optional)
+# APP_AUTHOR is the author of the app stored in the .nacp file (Optional)
+# APP_VERSION is the version of the app stored in the .nacp file (Optional)
+# APP_TITLEID is the titleID of the app stored in the .nacp file (Optional)
+# ICON is the filename of the icon (.jpg), relative to the project folder.
+#   If not set, it attempts to use one of the following (in this order):
+#     - <Project name>.jpg
+#     - icon.jpg
+#     - <libnx folder>/default_icon.jpg
+#---------------------------------------------------------------------------------
+APP_TITLE	:=	NaziZombiesPortableNX
+APP_AUTHOR	:=	naievil
+APP_VERSION	:=	0.1.0
+ICON        :=  assets/nx/icon.jpg
+
+TARGET		:=	nzportable
+BUILD		:=	build
+SOURCES		:=
+
+SOURCEFILES	:=\
+	source/bsd_strlcat.c \
+	source/bsd_strlcpy.c \
+	source/bgmusic.c \
+	source/snd_codec.c \
+	source/snd_flac.c \
+	source/snd_wave.c \
+	source/snd_vorbis.c \
+	source/snd_opus.c \
+	source/snd_mpg123.c \
+	source/snd_mikmod.c \
+	source/snd_xmp.c \
+	source/snd_umx.c \
+	source/snd_dma.c \
+	source/snd_mix.c \
+	source/snd_mem.c \
+	source/snd_sdl.c \
+	source/cd_sdl.c \
+	source/in_sdl.c \
+	source/gl_refrag.c \
+	source/gl_rlight.c \
+	source/gl_rpart.c \
+	source/gl_rmain.c \
+	source/gl_fog.c \
+	source/gl_rmisc.c \
+	source/r_part.c \
+	source/r_world.c \
+	source/gl_screen.c \
+	source/gl_sky.c \
+	source/gl_warp.c \
+	source/gl_vidsdl.c \
+	source/gl_hud.c \
+	source/gl_draw.c \
+	source/image.c \
+	source/gl_texmgr.c \
+	source/gl_mesh.c \
+	source/r_sprite.c \
+	source/r_alias.c \
+	source/r_brush.c \
+	source/gl_model.c \
+	source/net_bsd.c \
+	source/net_udp.c \
+	source/pl_nx.c \
+	source/sys_sdl_nx.c \
+	source/main_sdl_nx.c \
+	source/net_dgrm.c \
+	source/net_loop.c \
+	source/net_main.c \
+	source/chase.c \
+	source/cl_demo.c \
+	source/cl_input.c \
+	source/cl_main.c \
+	source/cl_parse.c \
+	source/cl_tent.c \
+	source/console.c \
+	source/keys.c \
+	source/menu.c \
+	source/sbar.c \
+	source/view.c \
+	source/wad.c \
+	source/cmd.c \
+	source/common.c \
+	source/crc.c \
+	source/cvar.c \
+	source/cfgfile.c \
+	source/host.c \
+	source/host_cmd.c \
+	source/mathlib.c \
+	source/pr_cmds.c \
+	source/pr_edict.c \
+	source/pr_exec.c \
+	source/sv_main.c \
+	source/sv_move.c \
+	source/sv_phys.c \
+	source/sv_user.c \
+	source/world.c \
+	source/zone.c \
+	source/glad/glad.c
+
+DATA		:=	data
+INCLUDES	:=	
+DEFINES		+=	-DUSE_SDL2 -DUSE_CODEC_VORBIS -DUSE_CODEC_MP3 -DUSE_CODEC_WAVE -DSDL_FRAMEWORK
+EXEFS_SRC	:=	exefs_src
+#ROMFS	:=	romfs
+
+#---------------------------------------------------------------------------------
+# options for code generation
+#---------------------------------------------------------------------------------
+ARCH	:=	-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE -mcpu=cortex-a57+crc+fp+simd
+
+CFLAGS	:=	-g -Wall -O3 -fno-strict-aliasing -fomit-frame-pointer -ffunction-sections \
+			$(ARCH) $(DEFINES)
+
+CFLAGS	+=	$(INCLUDE) -D__SWITCH__
+
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
+
+ASFLAGS	:=	-g $(ARCH)
+LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+
+LIBS	:= -lSDL2main -lSDL2 -lEGL -lglapi -ldrm_nouveau \
+		-lvorbisfile -lvorbis -logg -lmpg123 -lnx -lm -lstdc++
+
+#---------------------------------------------------------------------------------
+# list of directories containing libraries, this must be the top level containing
+# include and lib
+#---------------------------------------------------------------------------------
+LIBDIRS	:= $(PORTLIBS) $(LIBNX)
+
+
+#---------------------------------------------------------------------------------
+# no real need to edit anything past this point unless you need to add additional
+# rules for different file extensions
+#---------------------------------------------------------------------------------
+ifneq ($(BUILD),$(notdir $(CURDIR)))
+#---------------------------------------------------------------------------------
+
+export OUTPUT	:=	$(CURDIR)/$(TARGET)
+export TOPDIR	:=	$(CURDIR)
+
+export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
+			$(foreach sf,$(SOURCEFILES),$(CURDIR)/$(dir $(sf))) \
+			$(foreach dir,$(DATA),$(CURDIR)/$(dir))
+
+export DEPSDIR	:=	$(CURDIR)/$(BUILD)
+
+CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c))) $(foreach f,$(SOURCEFILES),$(notdir $(f)))
+CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
+SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
+BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
+
+#---------------------------------------------------------------------------------
+# use CXX for linking C++ projects, CC for standard C
+#---------------------------------------------------------------------------------
+ifeq ($(strip $(CPPFILES)),)
+#---------------------------------------------------------------------------------
+	export LD	:=	$(CC)
+#---------------------------------------------------------------------------------
+else
+#---------------------------------------------------------------------------------
+	export LD	:=	$(CXX)
+#---------------------------------------------------------------------------------
+endif
+#---------------------------------------------------------------------------------
+
+export OFILES_BIN	:=	$(addsuffix .o,$(BINFILES))
+export OFILES_SRC	:=	$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
+export OFILES 	:=	$(OFILES_BIN) $(OFILES_SRC)
+export HFILES_BIN	:=	$(addsuffix .h,$(subst .,_,$(BINFILES)))
+
+export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
+			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
+			-I$(CURDIR)/$(BUILD)
+
+export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
+
+export BUILD_EXEFS_SRC := $(TOPDIR)/$(EXEFS_SRC)
+
+ifeq ($(strip $(ICON)),)
+	icons := $(wildcard *.jpg)
+	ifneq (,$(findstring $(TARGET).jpg,$(icons)))
+		export APP_ICON := $(TOPDIR)/$(TARGET).jpg
+	else
+		ifneq (,$(findstring icon.jpg,$(icons)))
+			export APP_ICON := $(TOPDIR)/icon.jpg
+		endif
+	endif
+else
+	export APP_ICON := $(TOPDIR)/$(ICON)
+endif
+
+ifeq ($(strip $(NO_ICON)),)
+	export NROFLAGS += --icon=$(APP_ICON)
+endif
+
+ifeq ($(strip $(NO_NACP)),)
+	export NROFLAGS += --nacp=$(CURDIR)/$(TARGET).nacp
+endif
+
+ifneq ($(APP_TITLEID),)
+	export NACPFLAGS += --titleid=$(APP_TITLEID)
+endif
+
+ifneq ($(ROMFS),)
+	export NROFLAGS += --romfsdir=$(CURDIR)/$(ROMFS)
+endif
+
+.PHONY: $(BUILD) clean all
+
+#---------------------------------------------------------------------------------
+all: $(BUILD)
+
+$(BUILD):
+	@[ -d $@ ] || mkdir -p $@
+	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile.nx
+
+#---------------------------------------------------------------------------------
+clean:
+	@echo clean ...
+	@rm -fr $(BUILD)/nx
+	@rm $(BUILD)/*.o
+	@rm $(BUILD)/*.d
+
+
+#---------------------------------------------------------------------------------
+else
+.PHONY:	all
+
+DEPENDS	:=	$(OFILES:.o=.d)
+
+#---------------------------------------------------------------------------------
+# main targets
+#---------------------------------------------------------------------------------
+all	:	$(OUTPUT).pfs0 $(OUTPUT).nro
+	mkdir -p nx/objs
+	mkdir -p nx/exefs
+	mv *.o nx/objs/
+	mv *.d nx/objs/
+	mv exefs/* nx/exefs/*
+	mv nzportable.lst nx/objs/
+	mv nzportable.map nx/objs/
+	mv ../nzportable.nacp nx/
+	mv ../nzportable.nro nx/
+	mv ../nzportable.elf nx/
+	mv ../nzportable.nso nx/
+	mv ../nzportable.pfs0 nx/
+
+$(OUTPUT).pfs0	:	$(OUTPUT).nso
+
+$(OUTPUT).nso	:	$(OUTPUT).elf
+
+ifeq ($(strip $(NO_NACP)),)
+$(OUTPUT).nro	:	$(OUTPUT).elf $(OUTPUT).nacp
+else
+$(OUTPUT).nro	:	$(OUTPUT).elf
+endif
+
+$(OUTPUT).elf	:	$(OFILES)
+
+$(OFILES_SRC)	: $(HFILES_BIN)
+
+#---------------------------------------------------------------------------------
+# you need a rule like this for each extension you use as binary data
+#---------------------------------------------------------------------------------
+%.bin.o	%_bin.h :	%.bin
+#---------------------------------------------------------------------------------
+	@echo $(notdir $<)
+	@$(bin2o)
+
+-include $(DEPENDS)
+
+#---------------------------------------------------------------------------------------
+endif
+#---------------------------------------------------------------------------------------
