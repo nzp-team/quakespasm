@@ -12,6 +12,7 @@ jobs:
       - name: Update VitaGL and install zip
         run: |
           apt install -y zip
+          bash vitasdk-update
           bash vdpm vitagl
       - name: Build
         working-directory: ./
