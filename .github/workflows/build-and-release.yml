@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Update VitaGL and install zip
         run: |
-          apt install -y zip
+          apk add build-base zip git
           bash vitasdk-update
           bash vdpm vitagl
       - name: Build
