@@ -6,7 +6,7 @@ jobs:
     outputs:
       vpk_link: ${{ steps.zip.outputs.zip }}
     container:
-      image: gnuton/vitasdk-docker
+      image: vitasdk/vitasdk:latest
     steps:
       - uses: actions/checkout@v2
       - name: Update VitaGL and install zip
