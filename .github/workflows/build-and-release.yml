@@ -9,11 +9,9 @@ jobs:
       image: vitasdk/vitasdk:latest
     steps:
       - uses: actions/checkout@v2
-      - name: Update VitaGL and install zip
+      - name: Install Packages
         run: |
           apk add build-base zip git
-          bash vitasdk-update
-          bash vdpm vitagl
       - name: Build
         working-directory: ./
         run: |
