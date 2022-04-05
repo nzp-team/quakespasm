@@ -9,9 +9,10 @@ jobs:
       image: vitasdk/vitasdk:latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Packages
+      - name: Install Packages and update VitaGL
         run: |
-          apk add build-base zip git curl
+          apk add bash build-base zip git curl
+          vdpm vitagl
       - name: Build
         working-directory: ./
         run: |

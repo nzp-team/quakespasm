@@ -827,25 +827,24 @@ void Preload (void)
 {
 	Mod_ForName ("models/player.mdl", true);
 
-	Mod_ForName ("models/ai/zbod.mdl",true);
-	Mod_ForName ("models/ai/zlarm.mdl",true);
-	Mod_ForName ("models/ai/zrarm.mdl",true);
-	Mod_ForName ("models/ai/zhead.mdl",true);
-	Mod_ForName ("models/ai/zcbod.mdl",true);
-	Mod_ForName ("models/ai/zclarm.mdl",true);
-	Mod_ForName ("models/ai/zcrarm.mdl",true);
-	Mod_ForName ("models/ai/zchead.mdl",true);
-
+	Mod_ForName("models/ai/zbod.mdl", true);
+	Mod_ForName("models/ai/zcbod.mdl", true);
 	Mod_ForName ("models/ai/zfull.mdl",true);
 	Mod_ForName ("models/ai/zcfull.mdl",true);
+	Mod_ForName ("models/ai/zhead.mdl",true);
+	Mod_ForName ("models/ai/zchead.mdl",true);
+	Mod_ForName ("models/ai/zlarm.mdl",true);
+	Mod_ForName ("models/ai/zclarm.mdl",true);
+	Mod_ForName ("models/ai/zrarm.mdl",true);
+	Mod_ForName ("models/ai/zcrarm.mdl",true);
 
-	Mod_ForName ("models/VModels/v_knife.mdl", true);
-	Mod_ForName ("models/VModels/v_colt.mdl", true);
-	Mod_ForName ("models/Misc/instakill!.mdl", true);
-	Mod_ForName ("models/Misc/maxammo!.mdl", true);
-	Mod_ForName ("models/Misc/nuke!.mdl", true);
-	Mod_ForName ("models/Misc/carpenter!.mdl", true);
-	Mod_ForName ("models/Misc/x2!.mdl", true);
+	Mod_ForName ("models/weapons/knife/v_knife.mdl", true);
+	Mod_ForName ("models/weapons/m1911/v_colt.mdl", true);
+	Mod_ForName ("models/pu/instakill!.mdl", true);
+	Mod_ForName ("models/pu/maxammo!.mdl", true);
+	Mod_ForName ("models/pu/nuke!.mdl", true);
+	Mod_ForName ("models/pu/carpenter!.mdl", true);
+	Mod_ForName ("models/pu/x2!.mdl", true);
 }
 
 /*

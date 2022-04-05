@@ -6,3 +6,4 @@ build/*
 *.nro
 *.nacl
 *.sfo
+*.bin
