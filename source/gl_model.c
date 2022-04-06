@@ -2485,16 +2485,20 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 			pheader->texels[i] = texels - (byte *)pheader;
 			memcpy (texels, (byte *)(pskintype + 1), size);
 
-			// naievil -- new model texture loading
-			COM_StripExtension(loadmodel->name, possiblename, strlen(loadmodel->name));
-			q_snprintf (withext, sizeof(possiblename), "%s_%i.tga", possiblename, i);
-			q_snprintf (possiblename, sizeof(possiblename), "%s_%i", possiblename, i);
+			//spike - external model textures with dp naming -- eg progs/foo.mdl_0.tga
+			//always use the alpha channel for external images. gpus prefer aligned data anyway.
+			char filename[MAX_QPATH];
+			byte *data;
+			int fwidth = 0, fheight = 0;
+			qboolean malloced=false;
+			enum srcformat fmt = SRC_RGBA;
+			q_snprintf (filename, sizeof(filename), "%s_%i", loadmodel->name, i);
+			data = Image_LoadImage (filename, &fwidth, &fheight);
 
-			FILE	*f;
-			COM_FOpenFile (withext, &f, NULL);
-			if (f) {
-				// New model loading with <modelpath>_<framenum>.tga
-				pheader->gltextures[i][0] = loadtextureimage(possiblename);
+			if (data) {
+				pheader->gltextures[i][0] = TexMgr_LoadImage (loadmodel, filename, fwidth, fheight,
+					SRC_RGBA, data, filename, 0, TEXPREF_ALPHA|texflags|TEXPREF_MIPMAP );
+				//pheader->gltextures[i][0] = loadtextureimage(loadmodel->name);
 				pheader->fbtextures[i][0] = NULL;
 			} else {
 
