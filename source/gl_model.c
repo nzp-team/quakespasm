@@ -2488,6 +2488,7 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 			//spike - external model textures with dp naming -- eg progs/foo.mdl_0.tga
 			//always use the alpha channel for external images. gpus prefer aligned data anyway.
 			char filename[MAX_QPATH];
+			char filename2[MAX_QPATH];
 			byte *data;
 			int fwidth = 0, fheight = 0;
 			qboolean malloced=false;
@@ -2500,7 +2501,6 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 					SRC_RGBA, data, filename, 0, TEXPREF_ALPHA|texflags|TEXPREF_MIPMAP );
 
 				//now try to load glow/luma image from the same place
-				Hunk_FreeToLowMark (mark);
 				q_snprintf (filename2, sizeof(filename2), "%s_glow", filename);
 				data = Image_LoadImage (filename2, &fwidth, &fheight);
 				if (!data)
@@ -2510,8 +2510,11 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 				}
 
 				if (data)
-					tx->fullbright = TexMgr_LoadImage (loadmodel, filename2, fwidth, fheight,
-						SRC_RGBA, data, filename, 0, TEXPREF_MIPMAP | extraflags );
+					pheader->fbtextures[i][0]t = TexMgr_LoadImage (loadmodel, filename2, fwidth, fheight,
+						SRC_RGBA, data, filename, 0, TEXPREF_ALPHA|texflags|TEXPREF_MIPMAP );
+				else
+					pheader->fbtextures[i][0] = NULL;
+
 			} else {
 
 				//johnfitz -- rewritten
