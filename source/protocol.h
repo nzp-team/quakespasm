@@ -73,6 +73,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define U_TRANS			(1<<15)
 //johnfitz
 
+// NZP START
+#define U_LIGHTLEVEL 	(1<<24)
+// NZP END
+
 #define	SU_VIEWHEIGHT	(1<<0)
 #define	SU_IDEALPITCH	(1<<1)
 #define	SU_PUNCH1		(1<<2)
@@ -126,6 +130,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define B_LARGEFRAME	(1<<1)	// frame is short instead of byte
 #define B_ALPHA			(1<<2)	// 1 byte, uses ENTALPHA_ENCODE, not sent if ENTALPHA_DEFAULT
 //johnfitz
+
+// NZP START
+#define B_LIGHTLEVEL 	(1<<3)
+// NZP END
 
 //johnfitz -- PROTOCOL_FITZQUAKE -- alpha encoding
 #define ENTALPHA_DEFAULT	0	//entity's alpha is "default" (i.e. water obeys r_wateralpha) -- must be zero so zeroed out memory works
@@ -246,6 +254,7 @@ typedef struct
 	unsigned char 	colormap;	//johnfitz -- was int
 	unsigned char 	skin;		//johnfitz -- was int
 	unsigned char	alpha;		//johnfitz -- added
+	unsigned char 	light_lev;
 	int		effects;
 } entity_state_t;
 

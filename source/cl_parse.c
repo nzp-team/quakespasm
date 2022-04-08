@@ -589,6 +589,11 @@ void CL_ParseUpdate (int bits)
 		ent->lerpflags &= ~LERP_MOVESTEP;
 	//johnfitz
 
+	// NZP START
+	if (bits & U_LIGHTLEVEL)
+		ent->light_lev = MSG_ReadByte();
+	// NZP END
+
 	//johnfitz -- PROTOCOL_FITZQUAKE and PROTOCOL_NEHAHRA
 	if (cl.protocol == PROTOCOL_FITZQUAKE || cl.protocol == PROTOCOL_RMQ)
 	{
@@ -685,6 +690,7 @@ void CL_ParseBaseline (entity_t *ent, int version) //johnfitz -- added argument
 
 	ent->baseline.colormap = MSG_ReadByte();
 	ent->baseline.skin = MSG_ReadByte();
+	ent->baseline.light_lev = MSG_ReadByte();
 	for (i = 0; i < 3; i++)
 	{
 		ent->baseline.origin[i] = MSG_ReadCoord (cl.protocolflags);

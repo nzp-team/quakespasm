@@ -648,6 +648,9 @@ void SV_WriteEntitiesToClient (edict_t	*clent, sizebuf_t *msg)
 		if (ent->baseline.modelindex != ent->v.modelindex)
 			bits |= U_MODEL;
 
+		if (ent->baseline.light_lev != ent->v.light_lev)
+			bits |= U_LIGHTLEVEL;
+
 		//johnfitz -- alpha
 		if (pr_alpha_supported)
 		{
@@ -724,6 +727,11 @@ void SV_WriteEntitiesToClient (edict_t	*clent, sizebuf_t *msg)
 			MSG_WriteCoord (msg, ent->v.origin[2], sv.protocolflags);
 		if (bits & U_ANGLE3)
 			MSG_WriteAngle(msg, ent->v.angles[2], sv.protocolflags);
+
+		// NZP START
+		if (bits & U_LIGHTLEVEL)
+			MSG_WriteByte(msg, ent->v.light_lev);
+		// NZP END
 
 		//johnfitz -- PROTOCOL_FITZQUAKE
 		if (bits & U_ALPHA)
@@ -1184,12 +1192,14 @@ void SV_CreateBaseline (void)
 			svent->baseline.colormap = entnum;
 			svent->baseline.modelindex = SV_ModelIndex("models/player.mdl");
 			svent->baseline.alpha = ENTALPHA_DEFAULT; //johnfitz -- alpha support
+			svent->baseline.light_lev = 0; // motolegacy -- light level support
 		}
 		else
 		{
 			svent->baseline.colormap = 0;
 			svent->baseline.modelindex = SV_ModelIndex(PR_GetString(svent->v.model));
 			svent->baseline.alpha = svent->alpha; //johnfitz -- alpha support
+			svent->baseline.light_lev = 0; // motolegacy -- light level support
 		}
 
 		//johnfitz -- PROTOCOL_FITZQUAKE
@@ -1201,6 +1211,7 @@ void SV_CreateBaseline (void)
 			if (svent->baseline.frame & 0xFF00)
 				svent->baseline.frame = 0;
 			svent->baseline.alpha = ENTALPHA_DEFAULT;
+			svent->baseline.light_lev = 0;
 		}
 		else //decide which extra data needs to be sent
 		{
@@ -1210,6 +1221,8 @@ void SV_CreateBaseline (void)
 				bits |= B_LARGEFRAME;
 			if (svent->baseline.alpha != ENTALPHA_DEFAULT)
 				bits |= B_ALPHA;
+			if (svent->baseline.light_lev != 0)
+				bits |= B_LIGHTLEVEL;
 		}
 		//johnfitz
 
@@ -1242,6 +1255,7 @@ void SV_CreateBaseline (void)
 
 		MSG_WriteByte (&sv.signon, svent->baseline.colormap);
 		MSG_WriteByte (&sv.signon, svent->baseline.skin);
+		MSG_WriteByte (&sv.signon, svent->baseline.light_lev);
 		for (i=0 ; i<3 ; i++)
 		{
 			MSG_WriteCoord(&sv.signon, svent->baseline.origin[i], sv.protocolflags);
