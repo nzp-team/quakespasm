@@ -2498,8 +2498,20 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 			if (data) {
 				pheader->gltextures[i][0] = TexMgr_LoadImage (loadmodel, filename, fwidth, fheight,
 					SRC_RGBA, data, filename, 0, TEXPREF_ALPHA|texflags|TEXPREF_MIPMAP );
-				//pheader->gltextures[i][0] = loadtextureimage(loadmodel->name);
-				pheader->fbtextures[i][0] = NULL;
+
+				//now try to load glow/luma image from the same place
+				Hunk_FreeToLowMark (mark);
+				q_snprintf (filename2, sizeof(filename2), "%s_glow", filename);
+				data = Image_LoadImage (filename2, &fwidth, &fheight);
+				if (!data)
+				{
+					q_snprintf (filename2, sizeof(filename2), "%s_luma", filename);
+					data = Image_LoadImage (filename2, &fwidth, &fheight);
+				}
+
+				if (data)
+					tx->fullbright = TexMgr_LoadImage (loadmodel, filename2, fwidth, fheight,
+						SRC_RGBA, data, filename, 0, TEXPREF_MIPMAP | extraflags );
 			} else {
 
 				//johnfitz -- rewritten
