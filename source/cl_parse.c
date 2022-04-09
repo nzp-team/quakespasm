@@ -690,7 +690,6 @@ void CL_ParseBaseline (entity_t *ent, int version) //johnfitz -- added argument
 
 	ent->baseline.colormap = MSG_ReadByte();
 	ent->baseline.skin = MSG_ReadByte();
-	ent->baseline.light_lev = MSG_ReadByte();
 	for (i = 0; i < 3; i++)
 	{
 		ent->baseline.origin[i] = MSG_ReadCoord (cl.protocolflags);
@@ -698,6 +697,7 @@ void CL_ParseBaseline (entity_t *ent, int version) //johnfitz -- added argument
 	}
 
 	ent->baseline.alpha = (bits & B_ALPHA) ? MSG_ReadByte() : ENTALPHA_DEFAULT; //johnfitz -- PROTOCOL_FITZQUAKE
+	ent->baseline.light_lev = (bits & B_LIGHTLEVEL) ? MSG_ReadByte() : 0;
 }
 
 

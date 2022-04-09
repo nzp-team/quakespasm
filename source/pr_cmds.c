@@ -1795,6 +1795,8 @@ static void PF_makestatic (void)
 			bits |= B_LARGEFRAME;
 		if (ent->alpha != ENTALPHA_DEFAULT)
 			bits |= B_ALPHA;
+		//if (ent->light_lev != 0)
+		//	bits |= B_LIGHTLEVEL;
 	}
 
 	if (bits)
@@ -1828,6 +1830,11 @@ static void PF_makestatic (void)
 	if (bits & B_ALPHA)
 		MSG_WriteByte (&sv.signon, ent->alpha);
 	//johnfitz
+
+	// NZP START
+	//if (bits & B_LIGHTLEVEL)
+	//	MSG_WriteByte (&sv.signon, ent->light_lev);
+	// NZP END
 
 // throw the entity away now
 	ED_Free (ent);

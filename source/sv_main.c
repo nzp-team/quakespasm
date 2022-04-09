@@ -1255,7 +1255,6 @@ void SV_CreateBaseline (void)
 
 		MSG_WriteByte (&sv.signon, svent->baseline.colormap);
 		MSG_WriteByte (&sv.signon, svent->baseline.skin);
-		MSG_WriteByte (&sv.signon, svent->baseline.light_lev);
 		for (i=0 ; i<3 ; i++)
 		{
 			MSG_WriteCoord(&sv.signon, svent->baseline.origin[i], sv.protocolflags);
@@ -1266,6 +1265,11 @@ void SV_CreateBaseline (void)
 		if (bits & B_ALPHA)
 			MSG_WriteByte (&sv.signon, svent->baseline.alpha);
 		//johnfitz
+
+		// NZP START
+		if (bits & B_LIGHTLEVEL)
+			MSG_WriteByte (&sv.signon, svent->baseline.light_lev);
+		// NZP END
 	}
 }
 

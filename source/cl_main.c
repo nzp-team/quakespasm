@@ -576,7 +576,12 @@ void CL_RelinkEntities (void)
 			dl = CL_AllocDlight (i);
 			VectorCopy (ent->origin,  dl->origin);
 			dl->die = cl.time + 0.001;
-			dl->radius = 100;
+			
+			if (ent->light_lev != 0)
+				dl->radius = ent->light_lev;
+			else
+				dl->radius = 100;
+
 			dl->color[0] = 0.25;
 			dl->color[1] = 0.25;
 			dl->color[2] = 2;
@@ -587,6 +592,12 @@ void CL_RelinkEntities (void)
 			dl = CL_AllocDlight (i);
 			VectorCopy (ent->origin,  dl->origin);
 			dl->die = cl.time + 0.001;
+
+			if (ent->light_lev != 0)
+				dl->radius = ent->light_lev;
+			else
+				dl->radius = 100;
+
 			dl->color[0] = 2;
 			dl->color[1] = 0.25;
 			dl->color[2] = 0.25;
@@ -597,7 +608,12 @@ void CL_RelinkEntities (void)
 			dl = CL_AllocDlight (i);
 			VectorCopy (ent->origin,  dl->origin);
 			dl->die = cl.time + 0.001;
-			dl->radius = 100;
+			
+			if (ent->light_lev != 0)
+				dl->radius = ent->light_lev;
+			else
+				dl->radius = 100;
+
 			dl->color[0] = 2;
 			dl->color[1] = 1;
 			dl->color[2] = 0;
@@ -608,7 +624,12 @@ void CL_RelinkEntities (void)
 			dl = CL_AllocDlight (i);
 			VectorCopy (ent->origin,  dl->origin);
 			dl->die = cl.time + 0.001;
-			dl->radius = 100;
+			
+			if (ent->light_lev != 0)
+				dl->radius = ent->light_lev;
+			else
+				dl->radius = 100;
+
 			dl->color[0] = 0.25;
 			dl->color[1] = 2;
 			dl->color[2] = 0.25;
@@ -619,7 +640,12 @@ void CL_RelinkEntities (void)
 			dl = CL_AllocDlight (i);
 			VectorCopy (ent->origin,  dl->origin);
 			dl->die = cl.time + 0.001;
-			dl->radius = 100;
+			
+			if (ent->light_lev != 0)
+				dl->radius = ent->light_lev;
+			else
+				dl->radius = 100;
+
 			dl->color[0] = 2;
 			dl->color[1] = 0.25;
 			dl->color[2] = 2;
@@ -630,7 +656,12 @@ void CL_RelinkEntities (void)
 			dl = CL_AllocDlight (i);
 			VectorCopy (ent->origin, dl->origin);
 			dl->die = cl.time + 0.001;
-			dl->radius = 100;
+			
+			if (ent->light_lev != 0)
+				dl->radius = ent->light_lev;
+			else
+				dl->radius = 100;
+
 			dl->color[0] = 0.765;
 			dl->color[1] = 1.40;
 			dl->color[2] = 1.95;
@@ -657,7 +688,12 @@ void CL_RelinkEntities (void)
 			dl = CL_AllocDlight (i);
 			VectorCopy (ent->origin, dl->origin);
 			dl->die = cl.time + 0.001;
-			dl->radius = 100;
+
+			if (ent->light_lev != 0)
+				dl->radius = ent->light_lev;
+			else
+				dl->radius = 100;
+
 			dl->color[0] = 1;
 			dl->color[1] = 2;
 			dl->color[2] = 1;
@@ -668,7 +704,12 @@ void CL_RelinkEntities (void)
 			dl = CL_AllocDlight (i);
 			VectorCopy (ent->origin, dl->origin);
 			dl->die = cl.time + 0.001;
-			dl->radius = 100;
+
+			if (ent->light_lev != 0)
+				dl->radius = ent->light_lev;
+			else
+				dl->radius = 100;
+
 			dl->color[0] = 2;
 			dl->color[1] = 2;
 			dl->color[2] = 1;
