@@ -13,6 +13,10 @@ jobs:
         run: |
           apk add bash build-base zip git curl
           vdpm vitagl
+          git clone https://github.com/bythos14/SceShaccCgExt.git
+          cd SceShaccCgExt
+          mkdir build && cd build
+          cmake .. && make -j$(numproc) install
       - name: Build
         working-directory: ./
         run: |
