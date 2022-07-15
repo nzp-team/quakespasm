@@ -141,7 +141,7 @@ CFLAGS+= -DUSE_CODEC_UMX
 endif
 
 COMMON_LIBS:= -lvitaGL -lvitashark -lSceShaccCgExt -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
-	-lScePspnetAdhoc_stub -lc -lSceLibKernel_stub -lmathneon -lSDL2 -lSceKernelDmacMgr_stub \
+	-lScePspnetAdhoc_stub -lc -lSceLibKernel_stub -lmathneon -lSDL2 -lSceAudioIn_stub -lSceKernelDmacMgr_stub \
 	-lSceNet_stub -lSceNetCtl_stub -lpng -lSceDisplay_stub -lSceGxm_stub -lSceShaccCg_stub \
 	-ltaihen_stub -lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm -lSceAppMgr_stub \
 	-lSceAppUtil_stub -lScePgf_stub -ljpeg -lSceRtc_stub -lScePower_stub -lcurl -lssl -lcrypto -lz \
