@@ -56,13 +56,7 @@ int _newlib_heap_size_user = 256 * 1024 * 1024;
 #define MAX_CURDIR_PATH 512
 char cur_dir[MAX_CURDIR_PATH] = "ux0:data/nzp";
 int can_use_IME_keyboard = 1;
-char *getcwd(char *buf, size_t size) {
-    if (buf != NULL) {
-        strncpy(buf, cur_dir, size);
-    }
-    return cur_dir;
-}
-#endif
+#endif // VITA
 
 qboolean		isDedicated;
 cvar_t		sys_throttle = {"sys_throttle", "0.02", CVAR_ARCHIVE};
