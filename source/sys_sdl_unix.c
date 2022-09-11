@@ -56,8 +56,8 @@ int _newlib_heap_size_user = 256 * 1024 * 1024;
 #define MAX_CURDIR_PATH 512
 char cur_dir[MAX_CURDIR_PATH] = "ux0:data/nzp";
 int can_use_IME_keyboard = 1;
-#undef getcwd
-char *getcwd(char *buf, size_t size) {
+
+char *getcwd_OLD(char *buf, size_t size) {
     if (buf != NULL) {
         strncpy(buf, cur_dir, size);
     }
@@ -315,7 +315,11 @@ static void Sys_GetBasedir (char *argv0, char *dst, size_t dstsize)
 	if (realpath(argv0, dst) == NULL)
 	{
 		perror("realpath");
+#ifdef VITA
+		if (getcwd_OLD(dst, dstsize - 1) == NULL)
+#else
 		if (getcwd(dst, dstsize - 1) == NULL)
+#endif
 	_fail:		Sys_Error ("Couldn't determine current directory");
 	}
 	else
@@ -335,7 +339,11 @@ static void Sys_GetBasedir (char *argv0, char *dst, size_t dstsize)
 {
 	char	*tmp;
 
+#ifdef VITA
+	if (getcwd_OLD(dst, dstsize - 1) == NULL)
+#else
 	if (getcwd(dst, dstsize - 1) == NULL)
+#endif
 		Sys_Error ("Couldn't determine current directory");
 
 	tmp = dst;
