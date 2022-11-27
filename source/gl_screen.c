@@ -94,6 +94,7 @@ cvar_t		scr_clock = {"scr_clock", "0", CVAR_NONE};
 cvar_t		scr_viewsize = {"viewsize","100", CVAR_ARCHIVE};
 cvar_t		scr_fov = {"fov","70",CVAR_NONE};	// 10 - 170
 cvar_t		scr_fov_adapt = {"fov_adapt","1",CVAR_ARCHIVE};
+cvar_t		scr_dynamic_fov = {"scr_dynamic_fov","1",CVAR_ARCHIVE}; //sB add dynamic FOV toggle
 cvar_t		scr_conspeed = {"scr_conspeed","500",CVAR_ARCHIVE};
 cvar_t		scr_centertime = {"scr_centertime","2",CVAR_NONE};
 cvar_t		scr_showram = {"showram","1",CVAR_NONE};
@@ -691,6 +692,7 @@ void SCR_Init (void)
 	Cvar_SetCallback (&scr_viewsize, SCR_Callback_refdef);
 	Cvar_RegisterVariable (&scr_fov);
 	Cvar_RegisterVariable (&scr_fov_adapt);
+	Cvar_RegisterVariable (&scr_dynamic_fov); //sB add dynamic FOV toggle
 	Cvar_RegisterVariable (&scr_viewsize);
 	Cvar_RegisterVariable (&scr_conspeed);
 	Cvar_RegisterVariable (&scr_showram);
@@ -1693,8 +1695,16 @@ void SCR_UpdateScreen (void)
 		if(!original_fov)
 			original_fov = scr_fov.value;
 		//original_fov = scr_fov.value;
-		scr_fov.value += (original_fov - 10 - scr_fov.value) * 0.3;
-		Cvar_SetValue("fov",scr_fov.value);
+		
+		if(scr_dynamic_fov.value == 0) //sB add dynamic FOV toggle
+		{
+			original_fov = 0;
+		}
+		else
+		{
+			scr_fov.value += (original_fov - 10 - scr_fov.value) * 0.3;
+			Cvar_SetValue("fov",scr_fov.value);
+		}
 	}
 	else if (cl.stats[STAT_ZOOM] == 0 && original_fov != 0)
 	{
