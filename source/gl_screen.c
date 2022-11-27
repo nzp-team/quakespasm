@@ -1709,13 +1709,14 @@ void SCR_UpdateScreen (void)
 		if(scr_dynamic_fov.value == 0) //sB add dynamic FOV toggle
 		{
 			original_fov = 0;
+			original_view_fov = 0;
 		}
-		else
+		else if(scr_dynamic_fov.value == 1)
 		{
 			scr_fov.value += (original_fov - 10 - scr_fov.value) * 0.3;
-			scr_fov_viewmodel.value += (original_view_fov - 10 - scr_fov_viewmodel.value) * 0.3;
+			//scr_fov_viewmodel.value += (original_view_fov - 10 - scr_fov_viewmodel.value) * 0.3;
 			Cvar_SetValue("fov",scr_fov.value);
-			Cvar_SetValue("r_viewmodel_fov", scr_fov_viewmodel.value);
+			//Cvar_SetValue("r_viewmodel_fov", scr_fov_viewmodel.value);
 		}
 	}
 	else if (cl.stats[STAT_ZOOM] == 0 && original_fov != 0)
