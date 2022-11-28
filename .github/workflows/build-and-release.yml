@@ -20,7 +20,7 @@ jobs:
       - name: Build
         working-directory: ./
         run: |
-          make -f Makefile.vita
+          make -j$(numproc) -f Makefile.vita
       - name: Zip and Upload
         id: zip
         working-directory: ./build/vita
@@ -45,7 +45,7 @@ jobs:
       - name: Build
         working-directory: ./
         run: |
-          make -f Makefile.nx
+          make -j$(numproc) -f Makefile.nx
       - name: Zip and Upload
         id: zip
         working-directory: ./build/nx
