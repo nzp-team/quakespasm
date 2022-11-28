@@ -267,6 +267,9 @@ CL_AdjustAngles
 Moves the local angle positions
 ================
 */
+
+extern float	client_sprinting; //sB fix a bugggggggg and SQUASH
+
 void CL_AdjustAngles (void)
 {
 	float	speed;
@@ -314,7 +317,7 @@ void CL_AdjustAngles (void)
 	// vita gyro support by rinnegatamante (originally from vitaquake)
 	// creds to the switch-examples for nx support
 	if (motioncam.value) {
-		if (gyromode.value && cl.stats[STAT_ZOOM] == 0)
+		if (gyromode.value && cl.stats[STAT_ZOOM] == 0 || client_sprinting == 1) //sB fix gyro activating while sprinting. 
 			return;
 
 #ifdef VITA
