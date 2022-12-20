@@ -25,6 +25,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "quakedef.h"
 
 extern cvar_t r_drawflat, gl_overbright_models, gl_fullbrights, r_lerpmodels, r_lerpmove; //johnfitz
+extern cvar_t scr_fov_viewmodel; //sB porting seperate viewmodel FOV
+extern cvar_t scr_fov;
+
+#include "mathlib.h"
 
 //up to 16 color translated skins
 gltexture_t *playertextures[MAX_SCOREBOARD]; //johnfitz -- changed to an array of pointers
@@ -876,6 +880,7 @@ void R_DrawTransparentAliasModel (entity_t *e)
 	//
 	glPushMatrix ();
 	R_RotateForEntity (lerpdata.origin, lerpdata.angles);
+	
 	glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
 	glScalef (paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
 
@@ -962,8 +967,17 @@ void R_DrawAliasModel (entity_t *e)
 	//
 	glPushMatrix ();
 	R_RotateForEntity (lerpdata.origin, lerpdata.angles);
-	glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
-	glScalef (paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
+	
+	//sB porting viewmodel FOV from 3ds build
+	// Special handling of view model to keep FOV from altering look.  Pretty good.  Not perfect but rather close.
+	if (e == &cl.viewent && scr_fov_viewmodel.value) {
+		float scale = 1.0f / tan (DEG2RAD (scr_fov.value / 2.0f)) * scr_fov_viewmodel.value / 90.0f;
+		glTranslatef (paliashdr->scale_origin[0] * scale, paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
+		glScalef (paliashdr->scale[0] * scale, paliashdr->scale[1], paliashdr->scale[2]);
+	} else {
+		glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
+		glScalef (paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
+	}
 
 	//
 	// random stuff

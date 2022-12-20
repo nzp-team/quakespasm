@@ -51,6 +51,7 @@ extern cvar_t	in_aimassist;
 extern cvar_t 	joy_invert;
 extern cvar_t 	crosshair;
 extern cvar_t 	scr_showfps;
+extern cvar_t	scr_dynamic_fov;
 extern cvar_t 	host_maxfps;
 extern cvar_t 	r_fullbright;
 extern cvar_t 	gl_texturemode;
@@ -2142,9 +2143,20 @@ void M_Graphics_Settings_Draw (void)
 		Draw_ColoredStringScale(300, y + 160, "Disabled", 1, 1, 1, 1, 1.5f);
 	else
 		Draw_ColoredStringScale(300, y + 160, "Enabled", 1, 1, 1, 1, 1.5f);
+	
+	// Toggle Dynamic FOV
+	if (gsettings_cursor == 8)
+		Draw_ColoredStringScale(10, y + 175, "Dynamic FOV", 1, 0, 0, 1, 1.5f);
+	else
+		Draw_ColoredStringScale(10, y + 175, "Dynamic FOV", 1, 1, 1, 1, 1.5f);
+
+	if (scr_dynamic_fov.value == 0)
+		Draw_ColoredStringScale(300, y + 175, "Disabled", 1, 1, 1, 1, 1.5f);
+	else
+		Draw_ColoredStringScale(300, y + 175, "Enabled", 1, 1, 1, 1, 1.5f);
 
 	// Back
-	if (gsettings_cursor == 8)
+	if (gsettings_cursor == 9)
 		Draw_ColoredStringScale(10, y + 335, "Back", 1, 0, 0, 1, 1.5f);
 	else
 		Draw_ColoredStringScale(10, y + 335, "Back", 1, 1, 1, 1, 1.5f);
@@ -2157,6 +2169,7 @@ void M_Graphics_Settings_Draw (void)
 		case 3: Draw_ColoredStringScale(10, y + 305, "Increase or Decrease Game Brightness.", 1, 1, 1, 1, 1.5f); break;
 		case 6: Draw_ColoredStringScale(10, y + 305, "Toggle all non-realtime lights.", 1, 1, 1, 1, 1.5f); break;
 		case 7: Draw_ColoredStringScale(10, y + 305, "Toggle texture filtering.", 1, 1, 1, 1, 1.5f); break;
+		case 8: Draw_ColoredStringScale(10, y + 305, "Toggle Dynamic FOV.", 1, 1, 1, 1, 1.5f); break;
 		default: break;
 	}
 }
@@ -2170,7 +2183,8 @@ void M_Graphics_Settings_Key (int key)
 				case 0: Cvar_SetValue("scr_showfps", scr_showfps.value ? 0 : 1); break;
 				case 6: Cvar_SetValue("r_fullbright", r_fullbright.value ? 0 : 1); break;
 				case 7: Cvar_Set("gl_texturemode", strcmp(gl_texturemode.string, "GL_LINEAR") ? "GL_LINEAR" : "GL_NEAREST_MIPMAP_LINEAR" ); break;
-				case 8: M_Menu_Options_f (); break;
+				case 8: Cvar_SetValue("scr_dynamic_fov", scr_dynamic_fov.value ? 0 : 1); break;
+				case 9: M_Menu_Options_f (); break;
 				default: break;
 			}
 			break;

@@ -94,6 +94,8 @@ cvar_t		scr_clock = {"scr_clock", "0", CVAR_NONE};
 cvar_t		scr_viewsize = {"viewsize","100", CVAR_ARCHIVE};
 cvar_t		scr_fov = {"fov","70",CVAR_NONE};	// 10 - 170
 cvar_t		scr_fov_adapt = {"fov_adapt","1",CVAR_ARCHIVE};
+cvar_t		scr_dynamic_fov = {"scr_dynamic_fov","1",CVAR_ARCHIVE}; //sB add dynamic FOV toggle
+cvar_t		scr_fov_viewmodel = {"r_viewmodel_fov","70"};
 cvar_t		scr_conspeed = {"scr_conspeed","500",CVAR_ARCHIVE};
 cvar_t		scr_centertime = {"scr_centertime","2",CVAR_NONE};
 cvar_t		scr_showram = {"showram","1",CVAR_NONE};
@@ -691,6 +693,8 @@ void SCR_Init (void)
 	Cvar_SetCallback (&scr_viewsize, SCR_Callback_refdef);
 	Cvar_RegisterVariable (&scr_fov);
 	Cvar_RegisterVariable (&scr_fov_adapt);
+	Cvar_RegisterVariable (&scr_dynamic_fov); //sB add dynamic FOV toggle
+	Cvar_RegisterVariable (&scr_fov_viewmodel); //sB porting seperate viewmodel FOV
 	Cvar_RegisterVariable (&scr_viewsize);
 	Cvar_RegisterVariable (&scr_conspeed);
 	Cvar_RegisterVariable (&scr_showram);
@@ -1648,6 +1652,7 @@ int GetWeaponZoomAmmount (void)
 }
 float zoomin_time;
 int original_fov;
+int original_view_fov;
 
 void SCR_UpdateScreen (void)
 {
@@ -1673,39 +1678,60 @@ void SCR_UpdateScreen (void)
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 
 
-	if (cl.stats[STAT_ZOOM] == 1)
+	if (cl.stats[STAT_ZOOM] == 1) //sB was here porting seperate viewmodel fov
 	{
 		if(!original_fov)
+		{
 			original_fov = scr_fov.value;
+			original_view_fov = scr_fov_viewmodel.value;
+		}
 		if(scr_fov.value > (GetWeaponZoomAmmount() + 1))//+1 for accounting for floating point inaccurraces
 		{
 			scr_fov.value += ((original_fov - GetWeaponZoomAmmount()) - scr_fov.value) * 0.25;
+			scr_fov_viewmodel.value += ((original_view_fov - GetWeaponZoomAmmount()) - scr_fov_viewmodel.value) * 0.25;
 			Cvar_SetValue("fov",scr_fov.value);
+			Cvar_SetValue("r_viewmodel_fov", scr_fov_viewmodel.value);
 		}
 	}
 	else if (cl.stats[STAT_ZOOM] == 2)
 	{
 		Cvar_SetValue ("fov", 30);
+		Cvar_SetValue ("r_viewmodel_fov", 30);
 		zoomin_time = 0;
 	}
 	else if (cl.stats[STAT_ZOOM] == 3)
 	{
 		if(!original_fov)
 			original_fov = scr_fov.value;
+			original_view_fov = scr_fov_viewmodel.value;
 		//original_fov = scr_fov.value;
-		scr_fov.value += (original_fov - 10 - scr_fov.value) * 0.3;
-		Cvar_SetValue("fov",scr_fov.value);
+		
+		if(scr_dynamic_fov.value == 0) //sB add dynamic FOV toggle
+		{
+			original_fov = 0;
+			original_view_fov = 0;
+		}
+		else if(scr_dynamic_fov.value == 1)
+		{
+			scr_fov.value += (original_fov - 10 - scr_fov.value) * 0.3;
+			//scr_fov_viewmodel.value += (original_view_fov - 10 - scr_fov_viewmodel.value) * 0.3;
+			Cvar_SetValue("fov",scr_fov.value);
+			//Cvar_SetValue("r_viewmodel_fov", scr_fov_viewmodel.value);
+		}
 	}
 	else if (cl.stats[STAT_ZOOM] == 0 && original_fov != 0)
 	{
 		if(scr_fov.value < (original_fov + 1))//+1 for accounting for floating point inaccuracies
 		{
 			scr_fov.value += (original_fov - scr_fov.value) * 0.25;
+			scr_fov_viewmodel.value += (original_view_fov - scr_fov_viewmodel.value) * 0.25;
 			Cvar_SetValue("fov",scr_fov.value);
+			Cvar_SetValue("r_viewmodel_fov", scr_fov_viewmodel.value);
 		}
 		else
 		{
 			original_fov = 0;
+			original_view_fov = 0;
 		}
 	}
 

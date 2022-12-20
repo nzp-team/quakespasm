@@ -233,11 +233,11 @@ float V_CalcBob (float speed,float which)//0 = regular, 1 = side bobbing
 {
 	float bob = 0;
 	float sprint = 1;
+	
 	if(cl.stats[STAT_ZOOM] == 3)
 		sprint = 1.8 * speed_reduce (cl.stats[STAT_ACTIVEWEAPON]);//this gets sprinting speed in comparison to walk speed per weapon
 	if(cl.stats[STAT_ZOOM] == 2)
 		return 0;
-
 	//12.048 -> 4.3 = 100 -> 36ish, so replace 100 with 36
 	if(which == 0)
 		bob = cl_bobup.value * 24 * speed * (sprint * sprint) * sin((cl.time * 12.5 * sprint));//Pitch Bobbing 10
