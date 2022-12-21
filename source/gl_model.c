@@ -2460,9 +2460,9 @@ qboolean model_is_zombie(char name[MAX_QPATH])
 	Q_strcmp(name, "models/ai/zhead.mdl") == 0 ||
 	Q_strcmp(name, "models/ai/zlarm.mdl") == 0 ||
 	Q_strcmp(name, "models/ai/zrarm.mdl") == 0)
-		return qtrue;
+		return true;
 
-	return qfalse;
+	return false;
 }
 
 /*
@@ -2506,7 +2506,7 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 			pheader->fbtextures[i][0] = NULL;
 		}
 
-		pskintype = (daliasskintype_t *)((byte *)(pskintype+1) + s);
+		pskintype = (daliasskintype_t *)((byte *)(pskintype+1) + size);
 		return (void *)pskintype;
 	}
 

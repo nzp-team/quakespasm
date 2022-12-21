@@ -680,9 +680,9 @@ void	R_InitOtherTextures (void)
 	decal_glow	  = loadtextureimage ("textures/decals/glow2");
 
 	// external zombie skins
-	zombie_skins[0] = loadtextureimage ("models/ai/zfull.mdl_0", 0, 0, qtrue, qtrue);
-	zombie_skins[1] = loadtextureimage ("models/ai/zfull.mdl_1", 0, 0, qtrue, qtrue);
-	zombie_skins[2] = loadtextureimage ("models/ai/zfull.mdl_2", 0, 0, qtrue, qtrue);
-	zombie_skins[3] = loadtextureimage ("models/ai/zfull.mdl_3", 0, 0, qtrue, qtrue);
+	zombie_skins[0] = loadtextureimage ("models/ai/zfull.mdl_0");
+	zombie_skins[1] = loadtextureimage ("models/ai/zfull.mdl_1");
+	zombie_skins[2] = loadtextureimage ("models/ai/zfull.mdl_2");
+	zombie_skins[3] = loadtextureimage ("models/ai/zfull.mdl_3");
 }
 
