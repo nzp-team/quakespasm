@@ -59,6 +59,8 @@ gltexture_t *decal_burn;
 gltexture_t *decal_mark;
 gltexture_t *decal_glow;
 
+gltexture_t *zombie_skins[4];
+
 
 /*
 ====================
@@ -676,5 +678,11 @@ void	R_InitOtherTextures (void)
 	decal_burn	  = loadtextureimage ("textures/decals/explo_burn01");
 	decal_mark	  = loadtextureimage ("textures/decals/particle_burn01");
 	decal_glow	  = loadtextureimage ("textures/decals/glow2");
+
+	// external zombie skins
+	zombie_skins[0] = loadtextureimage ("models/ai/zfull.mdl_0", 0, 0, qtrue, qtrue);
+	zombie_skins[1] = loadtextureimage ("models/ai/zfull.mdl_1", 0, 0, qtrue, qtrue);
+	zombie_skins[2] = loadtextureimage ("models/ai/zfull.mdl_2", 0, 0, qtrue, qtrue);
+	zombie_skins[3] = loadtextureimage ("models/ai/zfull.mdl_3", 0, 0, qtrue, qtrue);
 }
 

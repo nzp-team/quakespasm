@@ -2448,11 +2448,29 @@ void Mod_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 	}
 }
 
+qboolean model_is_zombie(char name[MAX_QPATH])
+{
+	if (Q_strcmp(name, "models/ai/zbod.mdl") == 0 ||
+	Q_strcmp(name, "models/ai/zcbod.mdl") == 0 ||
+	Q_strcmp(name, "models/ai/zcfull.mdl") == 0 ||
+	Q_strcmp(name, "models/ai/zchead.mdl") == 0 ||
+	Q_strcmp(name, "models/ai/zclarm.mdl") == 0 ||
+	Q_strcmp(name, "models/ai/zcrarm.mdl") == 0 ||
+	Q_strcmp(name, "models/ai/zfull.mdl") == 0 ||
+	Q_strcmp(name, "models/ai/zhead.mdl") == 0 ||
+	Q_strcmp(name, "models/ai/zlarm.mdl") == 0 ||
+	Q_strcmp(name, "models/ai/zrarm.mdl") == 0)
+		return qtrue;
+
+	return qfalse;
+}
+
 /*
 ===============
 Mod_LoadAllSkins
 ===============
 */
+extern gltexture_t *zombie_skins[4];
 void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 {
 	int			i, j, k, size, groupskins;
@@ -2473,6 +2491,24 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 
 	if (loadmodel->flags & MF_HOLEY)
 		texflags |= TEXPREF_ALPHA;
+
+	if (model_is_zombie(loadmodel->name) == qtrue) {
+		Mod_FloodFillSkin(skin, pheader->skinwidth, pheader->skinheight);
+		
+		// save 8 bit texels for the player model to remap
+		texels = (byte *) Hunk_AllocName(size, loadname);
+		pheader->texels[i] = texels - (byte *)pheader;
+		memcpy (texels, (byte *)(pskintype + 1), size);
+
+		// force-fill 4 skin slots
+		for (int i = 0; i < 4; i++) {
+			pheader->gltextures[i][0] = zombie_skins[i];
+			pheader->fbtextures[i][0] = NULL;
+		}
+
+		pskintype = (daliasskintype_t *)((byte *)(pskintype+1) + s);
+		return (void *)pskintype;
+	}
 
 	for (i=0 ; i<numskins ; i++)
 	{
