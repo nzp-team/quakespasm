@@ -2492,7 +2492,7 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 	if (loadmodel->flags & MF_HOLEY)
 		texflags |= TEXPREF_ALPHA;
 
-	if (model_is_zombie(loadmodel->name) == qtrue) {
+	if (model_is_zombie(loadmodel->name) == true) {
 		Mod_FloodFillSkin(skin, pheader->skinwidth, pheader->skinheight);
 		
 		// save 8 bit texels for the player model to remap
