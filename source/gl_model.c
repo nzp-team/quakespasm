@@ -2470,7 +2470,7 @@ qboolean model_is_zombie(char name[MAX_QPATH])
 Mod_LoadAllSkins
 ===============
 */
-extern gltexture_t *zombie_skinss[4];
+extern const char* zombie_skinss[4];
 void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 {
 	int			i, j, k, size, groupskins;
@@ -2502,7 +2502,11 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 			pheader->texels[i] = texels - (byte *)pheader;
 			memcpy (texels, (byte *)(pskintype + 1), size);
 
-			pheader->gltextures[i][0] = zombie_skinss[i];
+			int w = 0, h = 0;
+			byte *dat = Image_LoadImage(zombie_skinss[i], &w, &h);
+
+			pheader->gltextures[i][0] = TexMgr_LoadImage(loadmodel, zombie_skinss[i], w, h,
+				SRC_RGBA, dat, zombie_skinss[i], 0, TEXPREF_ALPHA|texflags|TEXPREF_MIPMAP);
 			pheader->fbtextures[i][0] = NULL;
 		}
 
