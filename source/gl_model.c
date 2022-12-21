@@ -2470,7 +2470,7 @@ qboolean model_is_zombie(char name[MAX_QPATH])
 Mod_LoadAllSkins
 ===============
 */
-extern gltexture_t *zombie_skins[4];
+extern gltexture_t *zombie_skinss[4];
 void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 {
 	int			i, j, k, size, groupskins;
@@ -2494,15 +2494,15 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 
 	if (model_is_zombie(loadmodel->name) == true) {
 		Mod_FloodFillSkin(skin, pheader->skinwidth, pheader->skinheight);
-		
-		// save 8 bit texels for the player model to remap
-		texels = (byte *) Hunk_AllocName(size, loadname);
-		pheader->texels[i] = texels - (byte *)pheader;
-		memcpy (texels, (byte *)(pskintype + 1), size);
 
 		// force-fill 4 skin slots
 		for (int i = 0; i < 4; i++) {
-			pheader->gltextures[i][0] = zombie_skins[i];
+			// save 8 bit texels for the player model to remap
+			texels = (byte *) Hunk_AllocName(size, loadname);
+			pheader->texels[i] = texels - (byte *)pheader;
+			memcpy (texels, (byte *)(pskintype + 1), size);
+
+			pheader->gltextures[i][0] = zombie_skinss[i];
 			pheader->fbtextures[i][0] = NULL;
 		}
 
