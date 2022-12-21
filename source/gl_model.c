@@ -2492,28 +2492,6 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 	if (loadmodel->flags & MF_HOLEY)
 		texflags |= TEXPREF_ALPHA;
 
-	if (model_is_zombie(loadmodel->name) == true) {
-		Mod_FloodFillSkin(skin, pheader->skinwidth, pheader->skinheight);
-
-		// force-fill 4 skin slots
-		for (int i = 0; i < 4; i++) {
-			// save 8 bit texels for the player model to remap
-			texels = (byte *) Hunk_AllocName(size, loadname);
-			pheader->texels[i] = texels - (byte *)pheader;
-			memcpy (texels, (byte *)(pskintype + 1), size);
-
-			int w = 0, h = 0;
-			byte *dat = Image_LoadImage(zombie_skinss[i], &w, &h);
-
-			pheader->gltextures[i][0] = TexMgr_LoadImage(loadmodel, zombie_skinss[i], w, h,
-				SRC_RGBA, dat, zombie_skinss[i], 0, TEXPREF_ALPHA|texflags|TEXPREF_MIPMAP);
-			pheader->fbtextures[i][0] = NULL;
-		}
-
-		pskintype = (daliasskintype_t *)((byte *)(pskintype+1) + size);
-		return (void *)pskintype;
-	}
-
 	for (i=0 ; i<numskins ; i++)
 	{
 		if (pskintype->type == ALIAS_SKIN_SINGLE)
@@ -2533,7 +2511,13 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 			int fwidth = 0, fheight = 0;
 			qboolean malloced=false;
 			enum srcformat fmt = SRC_RGBA;
-			q_snprintf (filename, sizeof(filename), "%s_%i", loadmodel->name, i);
+
+			if (model_is_zombie(loadmodel->name) == true) {
+				q_snprintf(filename, sizeof(filename), "%s", zombie_skinss[i]);
+			} else {
+				q_snprintf (filename, sizeof(filename), "%s_%i", loadmodel->name, i);
+			}
+
 			data = Image_LoadImage (filename, &fwidth, &fheight);
 
 			if (data) {
