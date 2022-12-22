@@ -9,14 +9,10 @@ jobs:
       image: vitasdk/vitasdk:latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Packages and build VitaGL
+      - name: Install Packages and update VitaGL
         run: |
           apk add bash build-base zip git curl cmake
-          git clone https://github.com/Rinnegatamante/vitaGL.git
-          cd vitaGL
-          git checkout 4bdd4c26986bee48b7e98a27c7e6375b3ff84a86
-          make -j$(numproc) && make install
-          cd ../
+          vdpm vitagl
           git clone https://github.com/bythos14/SceShaccCgExt.git
           cd SceShaccCgExt
           mkdir build && cd build
