@@ -1,4 +1,5 @@
 build/*
+assets/vita/eboot.bin
 *.vpk
 *.elf
 *.elf.unstripped.elf
