@@ -134,6 +134,8 @@ void Host_EndGame (const char *message, ...)
 		CL_NextDemo ();
 	else
 		CL_Disconnect ();
+	
+	//Clear_LoadingFill ();
 
 	longjmp (host_abortserver, 1);
 }
@@ -171,6 +173,8 @@ void Host_Error (const char *error, ...)
 	CL_Disconnect ();
 	cls.demonum = -1;
 	cl.intermission = 0; //johnfitz -- for errors during intermissions (changelevel with no map found, etc.)
+	
+	//Clear_LoadingFill ();
 
 	inerror = false;
 
@@ -827,16 +831,16 @@ void Preload (void)
 {
 	Mod_ForName ("models/player.mdl", true);
 
-	Mod_ForName("models/ai/zbod.mdl", true);
-	Mod_ForName("models/ai/zcbod.mdl", true);
+	Mod_ForName("models/ai/zb#.mdl", true);
+	Mod_ForName("models/ai/zbc#.mdl", true);
 	Mod_ForName ("models/ai/zfull.mdl",true);
 	Mod_ForName ("models/ai/zcfull.mdl",true);
-	Mod_ForName ("models/ai/zhead.mdl",true);
-	Mod_ForName ("models/ai/zchead.mdl",true);
-	Mod_ForName ("models/ai/zlarm.mdl",true);
-	Mod_ForName ("models/ai/zclarm.mdl",true);
-	Mod_ForName ("models/ai/zrarm.mdl",true);
-	Mod_ForName ("models/ai/zcrarm.mdl",true);
+	Mod_ForName ("models/ai/zh^.mdl",true);
+	Mod_ForName ("models/ai/zhc^.mdl",true);
+	Mod_ForName ("models/ai/zal(.mdl",true);
+	Mod_ForName ("models/ai/zalc(.mdl",true);
+	Mod_ForName ("models/ai/zar(.mdl",true);
+	Mod_ForName ("models/ai/zarc(.mdl",true);
 
 	Mod_ForName ("models/weapons/knife/v_knife.mdl", true);
 	Mod_ForName ("models/weapons/m1911/v_colt.mdl", true);
@@ -963,6 +967,8 @@ void Host_Shutdown(void)
 
 // keep Con_Printf from trying to update the screen
 	scr_disabled_for_loading = true;
+	
+	//Clear_LoadingFill ();
 
 	Host_WriteConfiguration ();
 
