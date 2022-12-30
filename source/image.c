@@ -76,6 +76,7 @@ static inline int Buf_GetC(stdio_buffer_t *buf)
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_JPEG
 #define STBI_ONLY_PNG
+#define STBI_ONLY_TGA
 #include "stb_image.h"
 static byte *Image_LoadSTBI(FILE *f, int *width, int *height)
 {
