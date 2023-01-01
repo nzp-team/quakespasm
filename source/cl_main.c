@@ -766,6 +766,9 @@ void CL_RelinkEntities (void)
 			R_RocketTrail (oldorg, ent->origin, 6);
 
 		ent->forcelink = false;
+		
+		if ( ent->effects & EF_NODRAW )
+			continue;
 
 		if (i == cl.viewentity && !chase_active.value)
 			continue;

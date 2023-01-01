@@ -406,6 +406,7 @@ void Sys_Error (const char *error, ...)
 {
 	va_list		argptr;
 	char		text[1024];
+	FILE *f;
 
 	host_parms->errstate++;
 
@@ -418,6 +419,13 @@ void Sys_Error (const char *error, ...)
 	sceClibPrintf(errortxt2);
 	sceClibPrintf(text);
 	sceClibPrintf("\n\n");
+	
+	f = fopen ("ux0:data/nzp/error.log", "w");
+	if (f)
+	{
+		fprintf (f, "Error: %s\n", text);
+		fclose (f);
+	}
 #endif
 
 	fputs (errortxt1, stderr);

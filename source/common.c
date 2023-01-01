@@ -1632,7 +1632,7 @@ static int COM_FindFile (const char *filename, int *handle, FILE **file,
 			}
 			else
 			{
-				return 0; /* dummy valid value for COM_FileExists() */
+				return 0;
 			}
 		}
 	}
@@ -1773,11 +1773,11 @@ byte *COM_LoadFile (const char *path, int usehunk, unsigned int *path_id)
 		buf = (byte *) malloc (len+1);
 		break;
 	default:
-		Sys_Error ("COM_LoadFile: bad usehunk");
+		Host_Error ("COM_LoadFile: bad usehunk");
 	}
 
 	if (!buf)
-		Sys_Error ("COM_LoadFile: not enough space for %s", path);
+		Host_Error ("COM_LoadFile: not enough space for %s", path);
 
 	((byte *)buf)[len] = 0;
 

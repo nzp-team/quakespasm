@@ -714,16 +714,20 @@ int fgetLittleShort (FILE *f);
 LoadTGA
 =============
 */
+
 qpic_t *LoadTGAPic (char *path)
 {
 	byte *data;
 	int w;
 	int h;
+	char *lscreendefault;
 
 	data = Image_LoadImage(path, &w, &h);
 
 	// Build it into a qpic for easy return
+
 	qpic_t *pic;
+	
 	pic = (qpic_t *) Hunk_Alloc (sizeof(qpic_t) - 4 + (4 * w * h));
 	
 	pic->width  = w;

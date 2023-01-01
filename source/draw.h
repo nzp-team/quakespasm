@@ -37,11 +37,18 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha);
 void Draw_ColorPic (int x, int y, qpic_t *pic, float r, float g, float b, float alpha);
 void Draw_TransPicTranslate (int x, int y, qpic_t *pic, int top, int bottom); //johnfitz -- more parameters
 void Draw_ConsoleBackground (void); //johnfitz -- removed parameter int lines
+void Draw_LoadingFill(void);
 void Draw_TileClear (int x, int y, int w, int h);
 void Draw_Fill (int x, int y, int w, int h, int c, float alpha); //johnfitz -- added alpha
-void Draw_FillByColor (int x, int y, int w, int h, unsigned int c, float alpha);
+void Draw_FillByColor (int x, int y, int w, int h, float r, float g, float b, float a);
 void Draw_FadeScreen (void);
 void Draw_String (int x, int y, const char *str);
+
+extern float loading_cur_step;
+extern int loading_step;
+extern char loading_name[32];
+extern float loading_num_step;
+
 void Draw_ColoredString (int x, int y, const char *str, float r, float g, float b, float a);
 void Draw_ColoredStringScale (int x, int y, const char *str, float r, float g, float b, float a, float s);
 qpic_t *Draw_PicFromWad (const char *name);

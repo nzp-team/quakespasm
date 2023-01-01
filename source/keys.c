@@ -262,7 +262,7 @@ char *osk_text2 [] =
 	"   A S D F G H J K L : \" | ",
 	"     Z X C V B N M   < > ? "
 };
-
+extern qboolean console_enabled;
 void Key_Console (int key)
 {
 	static	char current[MAXCMDLINE] = "";
@@ -1109,6 +1109,7 @@ void Key_Event (int key, qboolean down)
 			break;
 		case key_game:
 		case key_console:
+			console_enabled = false;
 			M_ToggleMenu_f ();
 			break;
 		default:

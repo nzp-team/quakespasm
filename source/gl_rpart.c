@@ -449,9 +449,9 @@ void QMB_AllocParticles (void)
 	particles = (particle_t *) malloc (r_numparticles * sizeof(particle_t));
 }
 
-extern int loading_num_step;
-extern int loading_cur_step;
-char loading_name[32];
+extern float loading_num_step;
+extern float loading_cur_step;
+extern char loading_name[32];
 
 void QMB_InitParticles (void)
 {
@@ -478,7 +478,7 @@ void QMB_InitParticles (void)
 
 	if (!(glpic = loadtextureimage("textures/particles/particlefont")))
 	{
-		Clear_LoadingFill ();
+		//Clear_LoadingFill ();
 		Sys_Error("Cannot load textures/particles/particlefont\n");
 		return;
 	}
@@ -496,10 +496,13 @@ void QMB_InitParticles (void)
 
 	for (i=0 ; i<8 ; i++)
 		ADD_PARTICLE_TEXTURE(ptex_dpsmoke, glpic, i, 8, i * 32, 64, (i + 1) * 32, 96);
+	
+	loading_cur_step++;
+	SCR_UpdateScreen ();
 
 	if (!(glpic = loadtextureimage("textures/particles/smoke")))
 	{
-		Clear_LoadingFill ();
+		//Clear_LoadingFill ();
 		Sys_Error("Cannot load textures/particles/smoke\n");
 		return;
 	}
@@ -513,7 +516,7 @@ void QMB_InitParticles (void)
 	// load the rest of the images
 	if(!(glpic = loadtextureimage("textures/particles/q3particlefont")))
 	{
-		Clear_LoadingFill ();
+		//Clear_LoadingFill ();
 		Sys_Error("Cannot load textures/particles/q3particlefont\n");
 		return;
 	}
@@ -539,7 +542,7 @@ void QMB_InitParticles (void)
 
 	if (!(glpic = loadtextureimage("textures/particles/flame")))
 	{
-		Clear_LoadingFill ();
+		//Clear_LoadingFill ();
 		Sys_Error("Cannot load textures/particles/flame\n");
 		return;
 	}
@@ -551,7 +554,7 @@ void QMB_InitParticles (void)
 
 	if (!(glpic = loadtextureimage("textures/particles/inferno")))
 	{
-		Clear_LoadingFill ();
+		//Clear_LoadingFill ();
 		Sys_Error("Cannot load textures/particles/inferno\n");
 		return;
 	}
@@ -563,7 +566,7 @@ void QMB_InitParticles (void)
 
 	if (!(glpic = loadtextureimage("textures/particles/zing1")))
 	{
-        Clear_LoadingFill ();
+        //Clear_LoadingFill ();
        	Sys_Error("Cannot load textures/particles/zing1\n");
 		return;
 	}
@@ -577,7 +580,7 @@ void QMB_InitParticles (void)
 	
 	if (!(glpic = loadtextureimage("textures/mzfl/mzfl0")))
 	{
-		Clear_LoadingFill ();
+		//Clear_LoadingFill ();
 		Sys_Error("Cannot load textures/particles/mzfl0\n");
 		return;
 	}
@@ -590,7 +593,7 @@ void QMB_InitParticles (void)
 
 	if (!(glpic = loadtextureimage("textures/mzfl/mzfl1")))
 	{
-		Clear_LoadingFill ();
+		//Clear_LoadingFill ();
 		Sys_Error("Cannot load textures/particles/mzfl1\n");
 		return;
 	}
@@ -601,7 +604,7 @@ void QMB_InitParticles (void)
 	SCR_UpdateScreen ();
 	if (!(glpic = loadtextureimage("textures/mzfl/mzfl2")))
 	{
-        Clear_LoadingFill ();
+       //Clear_LoadingFill ();
 		Sys_Error("Cannot load textures/particles/mzfl2\n");
 		return;
 	}
@@ -613,7 +616,7 @@ void QMB_InitParticles (void)
 
 	if (!(glpic = loadtextureimage("textures/mzfl/muzzleflash8")))
 	{
-		Clear_LoadingFill ();
+		//Clear_LoadingFill ();
 		Sys_Error("Cannot load textures/particles/muzzleflash8\n");
 		return;
 	}
@@ -626,7 +629,7 @@ void QMB_InitParticles (void)
 	max_s = max_t = 64.0;
 	if (!(glpic = loadtextureimage("textures/particles/bloodcloud")))
 	{
-        Clear_LoadingFill ();
+        //Clear_LoadingFill ();
 		Sys_Error("Cannot load textures/particles/bloodcloud\n");
 		return;
 	}
@@ -638,7 +641,7 @@ void QMB_InitParticles (void)
 
 	if (!(glpic = loadtextureimage("textures/particles/fly")))
 	{
-		Clear_LoadingFill ();
+		//Clear_LoadingFill ();
 		Sys_Error("Cannot load textures/particles/fly\n");
 		return;
 	}

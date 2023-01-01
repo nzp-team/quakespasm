@@ -3069,6 +3069,7 @@ void PF_rumble (void)
 	IN_StartRumble(intensity_small, intensity_large, duration);
 }
 #endif
+
 static builtin_t pr_builtin[] =
 {
 	PF_Fixme,
