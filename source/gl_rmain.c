@@ -622,17 +622,18 @@ void R_SetupView (void)
 R_DrawEntitiesOnList
 =============
 */
-int doZHack;
+//int doZHack;
 
 void R_DrawEntitiesOnList (qboolean alphapass) //johnfitz -- added parameter
 {
 	int		i;
+	//char specChar; //nzp
 
 	if (!r_drawentities.value)
 		return;
 
-	int zHackCount = 0;
-	doZHack = 0;
+	//int zHackCount = 0;
+	//doZHack = 0;
 	char specChar;
 
 	//johnfitz -- sprites are not a special case
@@ -668,7 +669,7 @@ void R_DrawEntitiesOnList (qboolean alphapass) //johnfitz -- added parameter
 		//	continue;
 		//}
 
-		doZHack = 0;
+		/*doZHack = 0; sB needs to fix updateLimb in Quakespasm l8er
 		if(specChar == '#')
 		{
 			if(zHackCount > 5 || ((currententity->z_head != 0) && (currententity->z_larm != 0) && (currententity->z_rarm != 0)))
@@ -680,7 +681,25 @@ void R_DrawEntitiesOnList (qboolean alphapass) //johnfitz -- added parameter
 				zHackCount ++;//drawing zombie piece by piece.
 			}
 		}
+		
+		specChar = currententity->model->name[strlen(currententity->model->name)-5];
 
+		if(specChar == '(' || specChar == '^')//skip heads and arms: it's faster to do this than a strcmp...
+		{
+			continue;
+		}
+		doZHack = 0;
+		if(specChar == '#')
+		{
+			if(zHackCount > 5 || ((currententity->z_head != 0) && (currententity->z_larm != 0) && (currententity->z_rarm != 0)))
+			{
+				doZHack = 1;
+			}
+			else
+			{
+				zHackCount ++;//drawing zombie piece by piece.
+			}
+		}*/
 
 		switch (currententity->model->type)
 		{
@@ -722,7 +741,7 @@ void R_DrawEntitiesOnList (qboolean alphapass) //johnfitz -- added parameter
 		default:
 			break;
 		}
-		doZHack = 0;
+		//doZHack = 0;
 	}
 
 	for (i=0 ; i<cl_numvisedicts ; i++)
@@ -1155,7 +1174,7 @@ void R_RenderScene (void)
 	R_DrawWorld ();
 
 	S_ExtraUpdate (); // don't let sound get messed up if going slow
-
+		
 	R_DrawShadows (); //johnfitz -- render entity shadows
 
 	R_DrawEntitiesOnList (false); //johnfitz -- false means this is the pass for nonalpha entities
