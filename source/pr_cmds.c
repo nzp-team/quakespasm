@@ -874,6 +874,25 @@ int TraceMove(vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end, int type, edic
 	return 0;
 }
 
+void PF_tracemove(void)//progs side
+{
+	float   *start, *end, *mins, *maxs;
+	int      nomonsters;
+	edict_t   *ent;
+
+	start = G_VECTOR(OFS_PARM0);
+	mins = G_VECTOR(OFS_PARM1);
+	maxs = G_VECTOR(OFS_PARM2);
+	end = G_VECTOR(OFS_PARM3);
+	nomonsters = G_FLOAT(OFS_PARM4);
+	ent = G_EDICT(OFS_PARM5);
+
+	Con_DPrintf ("TraceMove start, ");
+	G_INT(OFS_RETURN) = TraceMove(start, mins, maxs, end,nomonsters,ent);
+	Con_DPrintf ("TM end\n");
+	return;
+}
+
 /*
 =================
 PF_checkpos
@@ -3171,7 +3190,7 @@ static builtin_t pr_builtin[] =
 	NULL,						// #96
 	NULL,						// #97
 	PF_FindFloat,				// #98
-	NULL,						// #99
+	PF_tracemove,				// #99 sB reenabled
 	NULL,						// #100
 	NULL,						// #101
 	NULL,						// #102

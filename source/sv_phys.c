@@ -272,7 +272,7 @@ int SV_FlyMove (edict_t *ent, float time, trace_t *steptrace)
 		for (i=0 ; i<3 ; i++)
 			end[i] = ent->v.origin[i] + time_left * ent->v.velocity[i];
 
-		trace = SV_Move (ent->v.origin, ent->v.mins, ent->v.maxs, end, false, ent);
+		trace = SV_Move (ent->v.origin, ent->v.mins, ent->v.maxs, end, MOVE_NOMONSTERS, ent);//Editted by blubs, we do want to ignore monsters in the trace
 
 		if (trace.allsolid)
 		{	// entity is trapped in another solid
@@ -1102,31 +1102,36 @@ void SV_CheckStuck_IgnoreMonsters (edict_t *ent)
 void SV_PushAwayZombies(edict_t *ent)
 {
 	edict_t *other_ent;
-	float	rad = 23;//approx. length of bbox corner 
+	float	rad = 64;//approx. length of bbox corner 
 	float	*org = ent->v.origin;
 	vec3_t	eorg;
 	int		i, j;
 
 	other_ent = NEXT_EDICT(sv.edicts);
 	for (i=1 ; i<sv.num_edicts ; i++, ent = NEXT_EDICT(other_ent))
-	{
-		if (other_ent->free)
-			continue;
+	{	
+		//if (other_ent->free)
+			//continue;
 		//if (ent->v.solid == SOLID_NOT)
 		//	continue;
-		if( other_ent->v.solid != SOLID_SLIDEBOX)
+		if( other_ent->v.solid != SOLID_CORPSE)
 			continue;
 		if( other_ent->v.movetype != MOVETYPE_WALK)
 			continue;
 		for (j=0 ; j<3 ; j++)
 			eorg[j] = org[j] - (other_ent->v.origin[j] + (other_ent->v.mins[j] + other_ent->v.maxs[j])*0.5);
 		if (Length(eorg) > rad)
+		{	
+			Con_Printf ("Length Greater than bbox corner. \n");
 			continue;
-		
+		}
 		//Process nearby zombie
 		for(j = 0; j < 2; j++)//only x & y
-			other_ent->v.velocity[j] += (other_ent->v.origin[j] - ent->v.origin[j]) * 0.001;//push away other zombie
+		{
+			Con_Printf ("Pushing Zombie \n");
+			other_ent->v.velocity[j] += (other_ent->v.origin[j] - ent->v.origin[j]) * 0.01;//push away other zombie was 0.001
 			//ent->v.velocity[j] += (ent->v.origin[j] - other_ent->v.origin[j]) * 0.01;//push away self
+		}
 	}
 }
 //=============================
@@ -1147,7 +1152,7 @@ void SV_Physics_Walk(edict_t 	*ent)
 	VectorCopy(ent->v.mins,old_mins);
 	VectorCopy(ent->v.maxs,old_maxs);
 	
-	//'-16,-16,-32', '16,16,40'
+	//'-16,-16,-32', '16,16,40' sB reenabled PushAwayZombies
 	ent->v.mins[0] = -16; ent->v.mins[1] = -16; ent->v.mins[2] = -32;
 	ent->v.maxs[0] = 16; ent->v.maxs[1] = 16; ent->v.maxs[2] = 40;
 
