@@ -1005,11 +1005,11 @@ void M_Menu_Maps_f (void)
 	MAP_ITEMS = 13;
 	current_custom_map_page = 1;
 }
-
+extern vrect_t scr_vrect;
 void M_Menu_Maps_Draw (void)
 {
 #ifdef VITA
-	int y = 0;
+	int y = scr_vrect.y * 0.5;
 #else
 	int y = vid.height * 0.5;
 #endif
@@ -1042,7 +1042,10 @@ void M_Menu_Maps_Draw (void)
 		if (m_maps_cursor == i) {
 			if (custom_maps[i + multiplier].map_use_thumbnail == 1) {
 				menu_cuthum = Draw_CachePic(custom_maps[i + multiplier].map_thumbnail_path);
-				//Draw_StretchPic(x_map_info_disp + 305, y + 55, menu_cuthum, 274, 155);
+				if (menu_cuthum != NULL)
+				{
+					Draw_Pic(x_map_info_disp + 305, y + 55, menu_cuthum);
+				}
 			}
 
 			if (custom_maps[i + multiplier].map_name_pretty != 0)
