@@ -483,11 +483,8 @@ void CL_RelinkEntities (void)
 			for (j=0 ; j<3 ; j++)
 			{
 				delta[j] = ent->msg_origins[0][j] - ent->msg_origins[1][j];
-				if (delta[j] > 100 || delta[j] < -100)
-				{
+				if (delta[j] > 100 || delta[j] < -100)//blubs check here for interpolating zombies
 					f = 1;		// assume a teleportation, not a motion
-					ent->lerpflags |= LERP_RESETMOVE; //johnfitz -- don't lerp teleports
-				}
 			}
 
 			//johnfitz -- don't cl_lerp entities that will be r_lerped

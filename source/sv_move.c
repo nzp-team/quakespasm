@@ -137,7 +137,7 @@ qboolean SV_movestep (edict_t *ent, vec3_t move, qboolean relink)
 				if (dz < 30)
 					neworg[2] += 8;
 			}
-			trace = SV_Move (ent->v.origin, ent->v.mins, ent->v.maxs, neworg, false, ent);
+			trace = SV_Move (ent->v.origin, ent->v.mins, ent->v.maxs, neworg, MOVE_NOMONSTERS, ent); //sB fixing zombies, was FALSE thanks blubs
 
 			if (trace.fraction == 1)
 			{
@@ -162,7 +162,7 @@ qboolean SV_movestep (edict_t *ent, vec3_t move, qboolean relink)
 	VectorCopy (neworg, end);
 	end[2] -= STEPSIZE*2;
 
-	trace = SV_Move (neworg, ent->v.mins, ent->v.maxs, end, false, ent);
+	trace = SV_Move (neworg, ent->v.mins, ent->v.maxs, end, MOVE_NOMONSTERS, ent); //sB see above
 
 	if (trace.allsolid)
 		return false;
@@ -170,7 +170,7 @@ qboolean SV_movestep (edict_t *ent, vec3_t move, qboolean relink)
 	if (trace.startsolid)
 	{
 		neworg[2] -= STEPSIZE;
-		trace = SV_Move (neworg, ent->v.mins, ent->v.maxs, end, false, ent);
+		trace = SV_Move (neworg, ent->v.mins, ent->v.maxs, end, MOVE_NOMONSTERS, ent); //sB
 		if (trace.allsolid || trace.startsolid)
 			return false;
 	}
