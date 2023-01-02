@@ -1681,8 +1681,8 @@ void SV_Physics (void)
 	else
 	  entity_cap = sv.num_edicts; 
 
-	for (i=0 ; i<sv.num_edicts ; i++, ent = NEXT_EDICT(ent))
-	//for (i=0 ; i<entity_cap ; i++, ent = NEXT_EDICT(ent))
+	//for (i=0 ; i<sv.num_edicts ; i++, ent = NEXT_EDICT(ent))
+	for (i=0 ; i<entity_cap ; i++, ent = NEXT_EDICT(ent))
 	{
 		if (ent->free)
 			continue;

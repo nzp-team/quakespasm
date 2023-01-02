@@ -320,7 +320,96 @@ void SV_NewChaseDir (edict_t *actor, edict_t *enemy, float dist)
 	}
 
 // try other directions
-	if ( ((rand()&3) & 1) ||  abs((int)deltay)>abs((int)deltax)) // ericw -- explicit int cast to suppress clang suggestion to use fabsf
+	if ( ((rand()&3) & 1) ||  abs(deltay)>abs(deltax))
+	{
+		tdir=d[1];
+		d[1]=d[2];
+		d[2]=tdir;
+	}
+
+	if (d[1]!=DI_NODIR && d[1]!=turnaround
+	&& SV_StepDirection(actor, d[1], dist))
+			return;
+
+	if (d[2]!=DI_NODIR && d[2]!=turnaround
+	&& SV_StepDirection(actor, d[2], dist))
+			return;
+
+/* there is no direct path to the player, so pick another direction */
+
+	if (olddir!=DI_NODIR && SV_StepDirection(actor, olddir, dist))
+			return;
+
+	if (rand()&1) 	/*randomly determine direction of search*/
+	{
+		for (tdir=0 ; tdir<=315 ; tdir += 45)
+			if (tdir!=turnaround && SV_StepDirection(actor, tdir, dist) )
+					return;
+	}
+	else
+	{
+		for (tdir=315 ; tdir >=0 ; tdir -= 45)
+			if (tdir!=turnaround && SV_StepDirection(actor, tdir, dist) )
+					return;
+	}
+
+	if (turnaround != DI_NODIR && SV_StepDirection(actor, turnaround, dist) )
+			return;
+
+	actor->v.ideal_yaw = olddir;		// can't move
+
+// if a bridge was pulled out from underneath a monster, it may not have
+// a valid standing position at all
+
+	if (!SV_CheckBottom (actor))
+		SV_FixCheckBottom (actor);
+
+}
+
+/*
+================
+SV_NewChaseDirO
+
+================
+*/
+void SV_NewChaseDirO (edict_t *actor, vec3_t goal, float dist)
+{
+	float		deltax,deltay;
+	float			d[3];
+	float		tdir, olddir, turnaround;
+
+	olddir = anglemod( (int)(actor->v.ideal_yaw/45)*45 );
+	turnaround = anglemod(olddir - 180);
+
+	deltax = goal[0] - actor->v.origin[0];
+	deltay = goal[1] - actor->v.origin[1];
+	if (deltax>10)
+		d[1]= 0;
+	else if (deltax<-10)
+		d[1]= 180;
+	else
+		d[1]= DI_NODIR;
+	if (deltay<-10)
+		d[2]= 270;
+	else if (deltay>10)
+		d[2]= 90;
+	else
+		d[2]= DI_NODIR;
+
+// try direct route
+	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
+	{
+		if (d[1] == 0)
+			tdir = d[2] == 90 ? 45 : 315;
+		else
+			tdir = d[2] == 90 ? 135 : 215;
+
+		if (tdir != turnaround && SV_StepDirection(actor, tdir, dist))
+			return;
+	}
+
+// try other directions
+	if ( ((rand()&3) & 1) ||  abs(deltay)>abs(deltax))
 	{
 		tdir=d[1];
 		d[1]=d[2];
@@ -388,11 +477,64 @@ qboolean SV_CloseEnough (edict_t *ent, edict_t *goal, float dist)
 
 /*
 ======================
+SV_CloseEnough
+
+======================
+*/
+qboolean SV_CloseEnoughO (edict_t *ent, vec3_t goal, float dist)
+{
+	int		i;
+
+	for (i=0 ; i<3 ; i++)
+	{
+		if (goal[i] > ent->v.absmax[i] + dist)
+			return false;
+		if (goal[i] < ent->v.absmin[i] - dist)
+			return false;
+	}
+	return true;
+}
+
+/*
+======================
 SV_MoveToGoal
 
 ======================
 */
 void SV_MoveToGoal (void)
+{
+	edict_t		*ent;
+	float		dist;
+	float		*goal;
+
+	ent = PROG_TO_EDICT(pr_global_struct->self);
+
+	dist = G_FLOAT(OFS_PARM0);
+	goal = G_VECTOR(OFS_PARM1);
+
+	if ( !( (int)ent->v.flags & (FL_ONGROUND|FL_FLY|FL_SWIM) ) )
+	{
+		G_FLOAT(OFS_RETURN) = 0;
+		return;
+	}
+
+// if the next step hits the enemy, return immediately
+    if ( PROG_TO_EDICT(ent->v.enemy) != sv.edicts &&  SV_CloseEnoughO (ent, goal, dist) )
+		return;
+
+// bump around...
+	if ((rand()&3)==1 || !SV_StepDirection (ent, ent->v.ideal_yaw, dist))
+	    SV_NewChaseDirO (ent, goal, dist);
+
+}
+
+/*
+======================
+SV_MoveToOrigin
+
+======================
+*/
+void SV_MoveToOrigin (void)
 {
 	edict_t		*ent, *goal;
 	float		dist;
@@ -408,14 +550,12 @@ void SV_MoveToGoal (void)
 	}
 
 // if the next step hits the enemy, return immediately
-	if ( PROG_TO_EDICT(ent->v.enemy) != sv.edicts &&  SV_CloseEnough (ent, goal, dist) )
+    if ( PROG_TO_EDICT(ent->v.enemy) != sv.edicts &&  SV_CloseEnough (ent, goal, dist) )
 		return;
 
 // bump around...
-	if ( (rand()&3)==1 ||
-	!SV_StepDirection (ent, ent->v.ideal_yaw, dist))
-	{
-		SV_NewChaseDir (ent, goal, dist);
-	}
+	if ((rand()&3)==1 || !SV_StepDirection (ent, ent->v.ideal_yaw, dist))
+	    SV_NewChaseDir (ent, goal, dist);
+
 }
 

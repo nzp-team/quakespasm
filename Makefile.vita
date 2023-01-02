@@ -240,6 +240,7 @@ OBJS :=\
 	source/cfgfile.o \
 	source/host.o \
 	source/host_cmd.o \
+	source/matrixlib.o \
 	source/mathlib.o \
 	source/pr_cmds.o \
 	source/pr_edict.o \
