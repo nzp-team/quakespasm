@@ -571,6 +571,9 @@ void SV_WriteEntitiesToClient (edict_t	*clent, sizebuf_t *msg)
 	ent = NEXT_EDICT(sv.edicts);
 	for (e=1 ; e<sv.num_edicts ; e++, ent = NEXT_EDICT(ent))
 	{
+		
+		if (ent->v.effects == EF_NODRAW) //sB adding back NODRAW for limbs
+			continue;
 
 		if (ent != clent)	// clent is ALLWAYS sent
 		{

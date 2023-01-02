@@ -54,6 +54,8 @@ extern	vec3_t			lightspot;
 float	*shadedots = r_avertexnormal_dots[0];
 vec3_t	shadevector;
 
+extern int zombie_skins[2][2]; 
+
 float	entalpha; //johnfitz
 
 qboolean	overbright; //johnfitz
@@ -935,24 +937,134 @@ cleanup:
 	glPopMatrix ();
 }
 
+/*
+=====================
+R_DrawZombieLimb
+
+=====================
+*/
+//Blubs Z hacks: need this declaration.
+qmodel_t *Mod_FindName (char *name);
+
+
+void R_DrawZombieLimb (entity_t *e,int which)
+{
+	
+	//entity_t *e;
+	qmodel_t		*clmodel;
+	aliashdr_t	*paliashdr;
+	entity_t    *limb_ent;
+	lerpdata_t	lerpdata;
+
+	//e = &cl_entities[ent];
+	//clmodel = e->model;
+
+	if(which == 1)
+		limb_ent = &cl_entities[e->z_head];
+	else if(which == 2)
+		limb_ent = &cl_entities[e->z_larm];
+	else if(which == 3)
+		limb_ent = &cl_entities[e->z_rarm];
+	else
+		return;
+	
+	clmodel = limb_ent->model;
+	if(clmodel == NULL)
+		return;
+
+	VectorCopy (e->origin, r_entorigin);
+	VectorSubtract (r_origin, r_entorigin, modelorg);
+
+	// locate the proper data
+	paliashdr = (aliashdr_t *)Mod_Extradata (clmodel);//e->model
+	rs_aliaspolys += paliashdr->numtris;
+	R_SetupAliasFrame (paliashdr, e->frame, &lerpdata);
+	R_SetupEntityTransform (e, &lerpdata);
+
+	glPushMatrix ();
+	
+	R_RotateForEntity (lerpdata.origin, lerpdata.angles);
+	
+	paliashdr = (aliashdr_t *)Mod_Extradata (e->model);
+	rs_aliaspolys += paliashdr->numtris;
+	
+	if (gl_smoothmodels.value && !r_drawflat_cheatsafe)
+		glShadeModel (GL_SMOOTH);
+	if (gl_affinemodels.value)
+		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+
+	overbright = gl_overbright_models.value;
+	shading = true;
+	
+	//blubs disabled
+	/*if (r_i_model_transform.value)
+		R_BlendedRotateForEntity (e, 0);
+	else
+		R_RotateForEntity (e, 0);*/
+	
+	rs_aliaspolys += paliashdr->numtris;
+	R_SetupAliasLighting (e);
+
+	glTranslatef(paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
+	
+	GL_DisableMultitexture();
+
+	glScalef(paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
+
+	//R_SetupAliasFrame (paliashdr, e->frame, &lerpdata);
+	//R_SetupEntityTransform (e, &lerpdata);
+	GL_DrawAliasFrame(paliashdr, lerpdata);
+	
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	
+	#ifndef VITA
+	glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	glShadeModel (GL_FLAT);
+#endif
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
+	
+	//t3 += Sys_FloatTime();
+	glPopMatrix ();
+	
+}
+
 
 /*
 =================
 R_DrawAliasModel -- johnfitz -- almost completely rewritten
 =================
 */
+
+//extern int doZHack;
+
 void R_DrawAliasModel (entity_t *e)
 {
 	aliashdr_t	*paliashdr;
 	int			i, anim, skinnum;
+	char		specChar;
 	gltexture_t	*tx, *fb;
 	lerpdata_t	lerpdata;
 	qboolean	alphatest = !!(e->model->flags & MF_HOLEY);
+	//qmodel_t		*clmodel;
+	vec3_t		mins, maxs;
+	
+	//clmodel = e->model;
 
 	//
 	// setup pose/lerp data -- do it first so we don't miss updates due to culling
 	//
-	paliashdr = (aliashdr_t *)Mod_Extradata (e->model);
+	/*specChar = clmodel->name[strlen(clmodel->name) - 5];
+	if(doZHack && specChar == '#')
+	{
+		if(clmodel->name[strlen(clmodel->name) - 6] == 'c')
+			paliashdr = (aliashdr_t *) Mod_Extradata(Mod_FindName("models/ai/zcfull.mdl"));
+		else
+			paliashdr = (aliashdr_t *) Mod_Extradata(Mod_FindName("models/ai/zfull.mdl"));
+	}
+	else*/
+		paliashdr = (aliashdr_t *)Mod_Extradata (e->model);
+	
 	R_SetupAliasFrame (paliashdr, e->frame, &lerpdata);
 	R_SetupEntityTransform (e, &lerpdata);
 
@@ -967,17 +1079,21 @@ void R_DrawAliasModel (entity_t *e)
 	//
 	glPushMatrix ();
 	R_RotateForEntity (lerpdata.origin, lerpdata.angles);
-	
-	//sB porting viewmodel FOV from 3ds build
-	// Special handling of view model to keep FOV from altering look.  Pretty good.  Not perfect but rather close.
-	if (e == &cl.viewent && scr_fov_viewmodel.value) {
-		float scale = 1.0f / tan (DEG2RAD (scr_fov.value / 2.0f)) * scr_fov_viewmodel.value / 90.0f;
-		glTranslatef (paliashdr->scale_origin[0] * scale, paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
-		glScalef (paliashdr->scale[0] * scale, paliashdr->scale[1], paliashdr->scale[2]);
-	} else {
-		glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
-		glScalef (paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
+	/* //sB needs fixing in Quakespasm but fuck GL bro
+	//specChar = clmodel->name[strlen(clmodel->name) - 5];
+	if(doZHack && specChar == '#')
+	{
+		if(clmodel->name[strlen(clmodel->name) - 6] == 'c')
+			paliashdr = (aliashdr_t *) Mod_Extradata(Mod_FindName("models/ai/zcfull.mdl"));
+		else
+			paliashdr = (aliashdr_t *) Mod_Extradata(Mod_FindName("models/ai/zfull.mdl"));
 	}
+	else*/
+		paliashdr = (aliashdr_t *)Mod_Extradata (e->model);
+
+	rs_aliaspolys += paliashdr->numtris;
+	
+	//glPushMatrix ();
 
 	//
 	// random stuff
@@ -990,6 +1106,17 @@ void R_DrawAliasModel (entity_t *e)
 #endif
 	overbright = gl_overbright_models.value;
 	shading = true;
+	
+	//sB porting viewmodel FOV from 3ds build
+	// Special handling of view model to keep FOV from altering look.  Pretty good.  Not perfect but rather close.
+	if (e == &cl.viewent && scr_fov_viewmodel.value) {
+		float scale = 1.0f / tan (DEG2RAD (scr_fov.value / 2.0f)) * scr_fov_viewmodel.value / 90.0f;
+		glTranslatef (paliashdr->scale_origin[0] * scale, paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
+		glScalef (paliashdr->scale[0] * scale, paliashdr->scale[1], paliashdr->scale[2]);
+	} else {
+		glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
+		glScalef (paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
+	}
 
 	//
 	// set up for alpha blending
@@ -1019,6 +1146,7 @@ void R_DrawAliasModel (entity_t *e)
 	// set up textures
 	//
 	GL_DisableMultitexture();
+	
 	anim = (int)(cl.time*10) & 3;
 	skinnum = e->skinnum;
 	if ((skinnum >= paliashdr->numskins) || (skinnum < 0))
@@ -1029,6 +1157,7 @@ void R_DrawAliasModel (entity_t *e)
 	}
 	tx = paliashdr->gltextures[skinnum][anim];
 	fb = paliashdr->fbtextures[skinnum][anim];
+	
 	if (e->colormap != vid.colormap && !gl_nocolors.value)
 	{
 		i = e - cl_entities;
@@ -1211,6 +1340,18 @@ void R_DrawAliasModel (entity_t *e)
 			}
 		}
 	}
+	
+	//glPopMatrix ();
+	/*
+	if (doZHack == 0 && specChar == '#')//if we're drawing zombie, also draw its limbs in one call
+		{
+			if(e->z_head)
+				R_DrawZombieLimb(e,1);
+			if(e->z_larm)
+				R_DrawZombieLimb(e,2);
+			if(e->z_rarm)
+				R_DrawZombieLimb(e,3);
+		}*/
 
 cleanup:
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);

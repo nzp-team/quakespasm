@@ -115,7 +115,7 @@ static void *Z_TagMalloc (int size, int tag)
 	memblock_t	*start, *rover, *newblock, *base;
 
 	if (!tag)
-		Sys_Error ("Z_TagMalloc: tried to use a 0 tag");
+		Host_Error ("Z_TagMalloc: tried to use a 0 tag");
 
 //
 // scan through the block list looking for the first free block
@@ -181,11 +181,11 @@ static void Z_CheckHeap (void)
 		if (block->next == &mainzone->blocklist)
 			break;			// all blocks have been hit
 		if ( (byte *)block + block->size != (byte *)block->next)
-			Sys_Error ("Z_CheckHeap: block size does not touch the next block\n");
+			Host_Error ("Z_CheckHeap: block size does not touch the next block\n");
 		if ( block->next->prev != block)
-			Sys_Error ("Z_CheckHeap: next block doesn't have proper back link\n");
+			Host_Error ("Z_CheckHeap: next block doesn't have proper back link\n");
 		if (!block->tag && !block->next->tag)
-			Sys_Error ("Z_CheckHeap: two consecutive free blocks\n");
+			Host_Error ("Z_CheckHeap: two consecutive free blocks\n");
 	}
 }
 
@@ -202,7 +202,7 @@ void *Z_Malloc (int size)
 	Z_CheckHeap ();	// DEBUG
 	buf = Z_TagMalloc (size, 1);
 	if (!buf)
-		Sys_Error ("Z_Malloc: failed on allocation of %i bytes",size);
+		Host_Error ("Z_Malloc: failed on allocation of %i bytes",size);
 	Q_memset (buf, 0, size);
 
 	return buf;
@@ -425,6 +425,7 @@ void Hunk_Print_f (void)
 Hunk_AllocName
 ===================
 */
+
 void *Hunk_AllocName (int size, const char *name)
 {
 	hunk_t	*h;
@@ -434,7 +435,7 @@ void *Hunk_AllocName (int size, const char *name)
 #endif
 
 	if (size < 0)
-		Sys_Error ("Hunk_Alloc: bad size: %i", size);
+		Sys_Error("Not enough bytes");
 
 	size = sizeof(hunk_t) + ((size+15)&~15);
 

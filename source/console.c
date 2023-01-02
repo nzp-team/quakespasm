@@ -64,6 +64,8 @@ qboolean	con_debuglog = false;
 
 qboolean	con_initialized;
 
+extern qboolean console_enabled;
+
 void M_OSK_Draw (void);
 
 /*
@@ -118,9 +120,11 @@ void Con_ToggleConsole_f (void)
 		{
 			IN_Activate();
 			key_dest = key_game;
+			console_enabled = false;
 		}
 		else
 		{
+			console_enabled = false;
 			M_Menu_Main_f ();
 		}
 	}
@@ -1185,7 +1189,7 @@ The typing input line at the bottom should only be drawn if typing is allowed
 
 // Naievil -- console toggle for menu
 int OSK_toggle;
-
+qboolean console_enabled;
 void Con_DrawConsole (int lines, qboolean drawinput)
 {
 	int	i, x, y, j, sb, rows;
@@ -1200,6 +1204,8 @@ void Con_DrawConsole (int lines, qboolean drawinput)
 
 // draw the background
 	Draw_ConsoleBackground ();
+	if (!console_enabled && !developer.value)
+		return;
 
 // draw the buffer text
 	rows = (con_vislines +7)/8;

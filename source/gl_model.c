@@ -526,6 +526,8 @@ void Mod_LoadTextures (lump_t *l)
 
 	loadmodel->numtextures = nummiptex + 2; //johnfitz -- need 2 dummy texture chains for missing textures
 	loadmodel->textures = (texture_t **) Hunk_AllocName (loadmodel->numtextures * sizeof(*loadmodel->textures) , loadname);
+	
+	loading_num_step = loading_num_step + m->nummiptex;
 
 	// motolegacy - load referenced WAD3 files for HLBSP, from DQuake+ 
 	if (loadmodel->bspversion == HL_BSPVERSION)
@@ -697,6 +699,10 @@ void Mod_LoadTextures (lump_t *l)
 				} 
 			}
 		}
+		strcpy(loading_name, mt->name);
+        //free (tx_pixels);
+        loading_cur_step++;
+		SCR_UpdateScreen();
 		//johnfitz
 	}
 
@@ -2185,26 +2191,94 @@ void Mod_LoadBrushModel (qmodel_t *mod, void *buffer)
 
 	for (i = 0; i < (int) sizeof(dheader_t) / 4; i++)
 		((int *)header)[i] = LittleLong ( ((int *)header)[i]);
+	
+	loading_num_step = loading_num_step + 16;
+	loading_step = 2;
 
 // load into heap
 
+	strcpy(loading_name, "Vertexes");
+	SCR_UpdateScreen ();
 	Mod_LoadVertexes (&header->lumps[LUMP_VERTEXES]);
+	
+	loading_cur_step++;
+	strcpy(loading_name, "Edges");
+	SCR_UpdateScreen ();
 	Mod_LoadEdges (&header->lumps[LUMP_EDGES], bsp2);
+	
+	loading_cur_step++;
+	strcpy(loading_name, "Surfedges");
+	SCR_UpdateScreen ();
 	Mod_LoadSurfedges (&header->lumps[LUMP_SURFEDGES]);
+	
+	loading_cur_step++;
+	strcpy(loading_name, "Entities");
+	SCR_UpdateScreen ();
 	Mod_LoadEntities (&header->lumps[LUMP_ENTITIES]);
+	
+	loading_cur_step++;
+	strcpy(loading_name, "Textures");
+	SCR_UpdateScreen ();
 	Mod_LoadTextures (&header->lumps[LUMP_TEXTURES]);
+	
+	loading_cur_step++;
+	SCR_UpdateScreen ();
 	Mod_LoadLighting (&header->lumps[LUMP_LIGHTING]);
+	loading_cur_step++;
+	SCR_UpdateScreen ();
 	Mod_LoadPlanes (&header->lumps[LUMP_PLANES]);
+	
+	loading_cur_step++;
+	strcpy(loading_name, "Texinfo");
+	SCR_UpdateScreen ();
 	Mod_LoadTexinfo (&header->lumps[LUMP_TEXINFO]);
+	
+	loading_cur_step++;
+	strcpy(loading_name, "Faces");
+	SCR_UpdateScreen ();
 	Mod_LoadFaces (&header->lumps[LUMP_FACES], bsp2);
+	
+	loading_cur_step++;
+	strcpy(loading_name, "Marksurfaces");
+	SCR_UpdateScreen ();
 	Mod_LoadMarksurfaces (&header->lumps[LUMP_MARKSURFACES], bsp2);
+	
+	loading_cur_step++;
+	strcpy(loading_name, "Visibility");
+	SCR_UpdateScreen ();
 	Mod_LoadVisibility (&header->lumps[LUMP_VISIBILITY]);
+	
+	loading_cur_step++;
+	strcpy(loading_name, "Leafs");
+	SCR_UpdateScreen ();
 	Mod_LoadLeafs (&header->lumps[LUMP_LEAFS], bsp2);
+	
+	loading_cur_step++;
+	strcpy(loading_name, "Nodes");
+	SCR_UpdateScreen ();
 	Mod_LoadNodes (&header->lumps[LUMP_NODES], bsp2);
+	
+	loading_cur_step++;
+	strcpy(loading_name, "Clipnodes");
+	SCR_UpdateScreen ();
 	Mod_LoadClipnodes (&header->lumps[LUMP_CLIPNODES], bsp2);
+	
+	loading_cur_step++;
+	strcpy(loading_name, "Submodels");
+	SCR_UpdateScreen ();
 	Mod_LoadSubmodels (&header->lumps[LUMP_MODELS]);
 
+	loading_cur_step++;
+	strcpy(loading_name, "Hull");
+	SCR_UpdateScreen ();
 	Mod_MakeHull0 ();
+	
+	loading_cur_step++;
+	loading_step = 3;
+	
+	strcpy(loading_name, "Screen");
+    loading_cur_step++;
+	SCR_UpdateScreen ();
 
 	mod->numframes = 2;		// regular and alternate animation
 
@@ -2448,23 +2522,6 @@ void Mod_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 	}
 }
 
-qboolean model_is_zombie(char name[MAX_QPATH])
-{
-	if (Q_strcmp(name, "models/ai/zbod.mdl") == 0 ||
-	Q_strcmp(name, "models/ai/zcbod.mdl") == 0 ||
-	Q_strcmp(name, "models/ai/zcfull.mdl") == 0 ||
-	Q_strcmp(name, "models/ai/zchead.mdl") == 0 ||
-	Q_strcmp(name, "models/ai/zclarm.mdl") == 0 ||
-	Q_strcmp(name, "models/ai/zcrarm.mdl") == 0 ||
-	Q_strcmp(name, "models/ai/zfull.mdl") == 0 ||
-	Q_strcmp(name, "models/ai/zhead.mdl") == 0 ||
-	Q_strcmp(name, "models/ai/zlarm.mdl") == 0 ||
-	Q_strcmp(name, "models/ai/zrarm.mdl") == 0)
-		return true;
-
-	return false;
-}
-
 /*
 ===============
 Mod_LoadAllSkins
@@ -2512,11 +2569,11 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 			qboolean malloced=false;
 			enum srcformat fmt = SRC_RGBA;
 
-			if (model_is_zombie(loadmodel->name) == true) {
+			/*if (model_is_zombie(loadmodel->name) == true) {
 				q_snprintf(filename, sizeof(filename), "%s", zombie_skinss[i]);
-			} else {
+			} else {*/
 				q_snprintf (filename, sizeof(filename), "%s_%i", loadmodel->name, i);
-			}
+			//}
 
 			data = Image_LoadImage (filename, &fwidth, &fheight);
 

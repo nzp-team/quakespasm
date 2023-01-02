@@ -403,6 +403,9 @@ void CL_ParseServerInfo (void)
 // now we try to load everything else until a cache allocation fails
 //
 
+	loading_num_step = loading_num_step +nummodels + numsounds;
+	loading_step = 1;
+
 	// copy the naked name of the map file to the cl structure -- O.S
 	COM_StripExtension (COM_SkipPath(model_precache[1]), cl.mapname, sizeof(cl.mapname));
 
@@ -414,15 +417,30 @@ void CL_ParseServerInfo (void)
 			Host_Error ("Model %s not found", model_precache[i]);
 		}
 		CL_KeepaliveMessage ();
+		loading_cur_step++;
+		strcpy(loading_name, model_precache[i]);
+		//Con_Printf("%i,",i);
+		SCR_UpdateScreen ();
 	}
+	
+	SCR_UpdateScreen ();
+	
+	loading_step = 4;
 
 	S_BeginPrecaching ();
 	for (i = 1; i < numsounds; i++)
 	{
 		cl.sound_precache[i] = S_PrecacheSound (sound_precache[i]);
 		CL_KeepaliveMessage ();
+		loading_cur_step++;
+		//Con_Printf("%i,",i);
+		strcpy(loading_name, sound_precache[i]);
+		SCR_UpdateScreen ();
 	}
 	S_EndPrecaching ();
+	
+	SCR_UpdateScreen ();
+   	Clear_LoadingFill ();
 
 // local state
 	cl_entities[0].model = cl.worldmodel = cl.model_precache[1];

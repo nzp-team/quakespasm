@@ -274,36 +274,44 @@ void HUD_EndScreen (void)
 	char			str[80];
 	int				i, k, l;
 	int				y, x, d;
-
-	HUD_Sortpoints ();
-
-	l = scoreboardlines;
-
-	Draw_String ((vid.width/2 - 9*8)/2, vid.height/2 + (vid.height)*40/272, "GAME OVER");
-
-	sprintf (str,"You survived %3i rounds", cl.stats[STAT_ROUNDS]);
-	Draw_String ((vid.width/2 - strlen (str)*8)/2, vid.height/2 + (vid.height)*48/272, str);
-
-	sprintf (str,"Name           Kills     Points");
-	x = (vid.width/2 - strlen (str)*8)/2;
-
-	Draw_String (x, vid.height/2 + vid.height*68/272, str);
-	y = 0;
-	for (i=0; i<l ; i++)
+	
+	//sB hack in to stop showing HUD during boot
+	if(cl.stats[STAT_ROUNDS] >= 1)
 	{
-		k = pointsort[i];
-		s = &cl.scores[k];
-		if (!s->name[0])
-			continue;
+		HUD_Sortpoints ();
 
-		Draw_String (x, vid.height/2 + vid.height*78/272 + y, s->name);
+		l = scoreboardlines;
 
-		d = strlen (va("%i",s->kills));
-		Draw_String (x + (20 - d)*8, vid.height/2 + (vid.height)*78/272 + y, va("%i",s->kills));
+		Draw_String ((vid.width/2 - 9*8)/2, vid.height/2 + (vid.height)*40/272, "GAME OVER");
 
-		d = strlen (va("%i",s->points));
-		Draw_String (x + (31 - d)*8, vid.height/2 + (vid.height)*78/272 + y, va("%i",s->points));
-		y += 20;
+		sprintf (str,"You survived %3i rounds", cl.stats[STAT_ROUNDS]);
+		Draw_String ((vid.width/2 - strlen (str)*8)/2, vid.height/2 + (vid.height)*48/272, str);
+
+		sprintf (str,"Name           Kills     Points");
+		x = (vid.width/2 - strlen (str)*8)/2;
+
+		Draw_String (x, vid.height/2 + vid.height*68/272, str);
+		y = 0;
+		for (i=0; i<l ; i++)
+		{
+			k = pointsort[i];
+			s = &cl.scores[k];
+			if (!s->name[0])
+				continue;
+
+			Draw_String (x, vid.height/2 + vid.height*78/272 + y, s->name);
+
+			d = strlen (va("%i",s->kills));
+			Draw_String (x + (20 - d)*8, vid.height/2 + (vid.height)*78/272 + y, va("%i",s->kills));
+
+			d = strlen (va("%i",s->points));
+			Draw_String (x + (31 - d)*8, vid.height/2 + (vid.height)*78/272 + y, va("%i",s->points));
+			y += 20;
+		}
+	}
+	else
+	{
+		return;
 	}
 
 }
@@ -1006,8 +1014,8 @@ void HUD_ProgressBar (void)
 		progressbar = 100 - ((cl.progress_bar-sv.time)*10);
 		if (progressbar >= 100)
 			progressbar = 100;
-		Draw_FillByColor  ((vid.width)/4 - 51, vid.height/2 + (vid.height/2)*0.75 - 1, 102, 5, 0, 100/255.0);
-		Draw_FillByColor ((vid.width)/4 - 50, vid.height/2 + (vid.height/2)*0.75, progressbar, 3, 1, 100/255.0);
+		Draw_FillByColor  ((vid.width)/4 - 51, vid.height/2 + (vid.height/2)*0.75 - 1, 102, 5, 0, 0, 0, 100/255.0);
+		Draw_FillByColor ((vid.width)/4 - 50, vid.height/2 + (vid.height/2)*0.75, progressbar, 3, 1, 0, 0, 100/255.0);
 
 		Draw_String ((vid.width/2 - (88))/2, vid.height/2 + (vid.height/2)*0.75 + 10, "Reviving...");
 	}
@@ -1298,7 +1306,7 @@ void HUD_Draw (void) {
 		return;
 	}
 
-	if (cl.stats[STAT_HEALTH] <= 0)
+	if (cl.stats[STAT_HEALTH] <= 0) 
 	{
 		HUD_EndScreen ();
 		GL_SetCanvas(CANVAS_DEFAULT);

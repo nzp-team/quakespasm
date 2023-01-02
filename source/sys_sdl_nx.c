@@ -209,12 +209,12 @@ void Sys_Error (const char *error, ...)
 	q_vsnprintf (text, sizeof(text), error, argptr);
 	va_end (argptr);
 
-	f = fopen ("/switch/nzportable/error.log", "w");
+	/*f = fopen ("/switch/nzportable/error.log", "w");
 	if (f)
 	{
 		fprintf (f, "Error: %s\n", text);
 		fclose (f);
-	}
+	}*/
 
 	fputs (errortxt1, stderr);
 	Host_Shutdown ();

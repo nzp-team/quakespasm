@@ -104,6 +104,7 @@ returns a pointer to hunk allocated RGBA data
 byte *Image_LoadImage (const char *name, int *width, int *height)
 {
 	FILE	*f;
+	
 	q_snprintf (loadfilename, sizeof(loadfilename), "%s.tga", name);
 	COM_FOpenFile (loadfilename, &f, NULL);
 	if (f) {
@@ -258,6 +259,9 @@ byte *Image_LoadTGA (FILE *fin, int *width, int *height)
 
 	if (targa_header.colormap_type !=0 || (targa_header.pixel_size!=32 && targa_header.pixel_size!=24))
 		Sys_Error ("Image_LoadTGA: %s is not a 24bit or 32bit targa\n", loadfilename);
+	
+	//if(targa_header.id_length == 0)
+		//Sys_Error ("This TGA is non-existent\n");
 
 	columns = targa_header.width;
 	rows = targa_header.height;

@@ -42,6 +42,13 @@ qpic_t		*pic_nul; //johnfitz -- for missing gfx, don't crash
 qpic_t		*sniper_scope;
 int			zombie_skins[2][2];
 
+//Loading Fill by Crow_bar
+float 	loading_cur_step;
+char	loading_name[32];
+float 	loading_num_step;
+int 	loading_step;
+float 	loading_cur_step_bk;
+
 
 //johnfitz -- new pics
 byte pic_ovr_data[8][8] =
@@ -295,6 +302,9 @@ qpic_t	*Draw_CachePic (const char *path)
 	int			i;
 	qpic_t		*dat;
 	glpic_t		gl;
+	
+	if (!COM_FileExists(path, NULL))
+		return NULL;
 
 	for (pic=menu_cachepics, i=0 ; i<menu_numcachepics ; pic++, i++)
 	{
@@ -318,13 +328,14 @@ qpic_t	*Draw_CachePic (const char *path)
 		src_type = SRC_TGA;
 
 		dat = (qpic_t *)LoadTGAPic(path_noext);
-
+		if (!dat)
+			Host_Error ("Draw_CachePic: failed to load %s", path);
 	} else {
 		src_type = SRC_INDEXED;
 
 		dat = (qpic_t *)COM_LoadTempFile (path, NULL);
 		if (!dat)
-			Sys_Error ("Draw_CachePic: failed to load %s", path);
+			Host_Error ("Draw_CachePic: failed to load %s", path);
 		SwapPic (dat);
 	}
 
@@ -455,6 +466,7 @@ void Draw_Init (void)
 
 	// load game pics
 	Draw_LoadPics ();
+	Clear_LoadingFill ();
 }
 
 //==============================================================================
@@ -839,7 +851,7 @@ void Draw_ConsoleBackground (void)
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		}
 
-			Draw_FillByColor  (0, 0, vid.conwidth, vid.conheight, 0, alpha);
+			Draw_FillByColor  (0, 0, vid.conwidth, vid.conheight, 0, 0, 0, alpha);
 
 
 		if (alpha < 1.0)
@@ -850,6 +862,63 @@ void Draw_ConsoleBackground (void)
 			glColor4f (1,1,1,1);
 		}
 	}
+}
+
+/*
+================
+Draw_LoadingFill
+By Crow_bar
+================
+*/
+void Draw_LoadingFill(void)
+{
+    if(!loading_num_step)
+		return;
+
+	int size       	= 8;
+	int max_step   	= 350;
+    int x          	= (vid.width  / 2) - (max_step / 2);
+    int y          	= vid.height - (size/ 2) - 25;
+	int l;
+	char str[64];
+	char* text;
+
+
+	if(loading_cur_step > loading_num_step)
+	      loading_cur_step = loading_num_step;
+
+	if (loading_cur_step < loading_cur_step_bk)
+		loading_cur_step = loading_cur_step_bk;
+
+	if (loading_cur_step == loading_num_step && loading_cur_step_bk != loading_num_step)
+		loading_cur_step = loading_cur_step_bk;
+
+    float loadsize = loading_cur_step * (max_step / loading_num_step);
+	Draw_FillByColor (x - 2, y - 2, max_step + 4, size + 4, 69, 69, 69, 255);
+	Draw_FillByColor (x, y, loadsize, size, 0, 0, 0, 200);
+
+	switch(loading_step) {
+		case 1: text = "Loading Models.."; break;
+		case 2: text = "Loading World.."; break;
+		case 3: text = "Running Test Frame.."; break;
+		case 4: text = "Loading Sounds.."; break;
+		default: text = "Initializing.."; break;
+	}
+
+	l = strlen (text);
+	Draw_String((vid.width - l*8)/2, y, text);
+
+	loading_cur_step_bk = loading_cur_step;
+}
+
+void Clear_LoadingFill (void)
+{
+    //it is end loading
+	loading_cur_step = 0;
+	loading_cur_step_bk = 0;
+	loading_num_step = 0;
+	loading_step = -1;
+	memset(loading_name, 0, sizeof(loading_name));
 }
 
 
@@ -918,24 +987,24 @@ Draw_FillByColor
 Fills a box of pixels with a single color not in basepal
 =============
 */
-void Draw_FillByColor (int x, int y, int w, int h, unsigned int c, float alpha) //johnfitz -- added alpha
+void Draw_FillByColor (int x, int y, int w, int h, float r, float g, float b, float a)
 {
-	glDisable (GL_TEXTURE_2D);
-	glEnable (GL_BLEND); //johnfitz -- for alpha
-	glDisable (GL_ALPHA_TEST); //johnfitz -- for alpha
-	glColor4f (c, c, c, alpha); //johnfitz -- added alpha
+    glDisable (GL_TEXTURE_2D);
+    glEnable (GL_BLEND);
+    glDisable (GL_ALPHA_TEST);
+    glColor4f (r/255, g/255, b/255, a/255);
 
-	glBegin (GL_QUADS);
-	glVertex2f (x,y);
-	glVertex2f (x+w, y);
-	glVertex2f (x+w, y+h);
-	glVertex2f (x, y+h);
-	glEnd ();
+    glBegin (GL_QUADS);
+    glVertex2f (x,y);
+    glVertex2f (x+w, y);
+    glVertex2f (x+w, y+h);
+    glVertex2f (x, y+h);
+    glEnd ();
 
-	glColor3f (1,1,1);
-	glDisable (GL_BLEND); //johnfitz -- for alpha
-	glEnable(GL_ALPHA_TEST); //johnfitz -- for alpha
-	glEnable (GL_TEXTURE_2D);
+    glColor4f (1,1,1,1);
+    glDisable (GL_BLEND);
+    glEnable(GL_ALPHA_TEST);
+    glEnable (GL_TEXTURE_2D);
 }
 
 /*
@@ -1106,7 +1175,7 @@ void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,
 		}
 	}
 }
-
+/*
 int loading_cur_step;
 int loading_num_step;
 
@@ -1116,7 +1185,7 @@ void Clear_LoadingFill (void)
 	loading_cur_step = 0;
 	loading_num_step = 0;
 }
-
+*/
 
 /*
 =============
@@ -1132,11 +1201,6 @@ gltexture_t *loadtextureimage (char* filename)
 	int w, h;
 
 	data = Image_LoadImage (filename, &w, &h);
-	if(data == NULL)
-	{
-		Sys_Error("loadtextureimage: Cannot load the image %s\n", filename);
-		return 0;
-	}
 	
 	gl.gltexture = TexMgr_LoadImage (NULL, filename, w, h, SRC_RGBA, data, filename, sizeof(int)*2, TEXPREF_ALPHA | TEXPREF_NEAREST | TEXPREF_NOPICMIP);
 
