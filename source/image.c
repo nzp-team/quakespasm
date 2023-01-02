@@ -107,8 +107,9 @@ byte *Image_LoadImage (const char *name, int *width, int *height)
 	
 	q_snprintf (loadfilename, sizeof(loadfilename), "%s.tga", name);
 	COM_FOpenFile (loadfilename, &f, NULL);
-	if (f)
+	if (f) {
 		return Image_LoadSTBI (f, width, height);
+	}
 
 	q_snprintf (loadfilename, sizeof(loadfilename), "%s.png", name);
 	COM_FOpenFile (loadfilename, &f, NULL);
