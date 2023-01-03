@@ -1988,8 +1988,8 @@ void SCR_UpdateScreen (void)
 		}
 		if(scr_dynamic_fov.value == 0) //sB add dynamic FOV toggle
 		{
-			original_fov = 0;
-			original_view_fov = 0;
+			Cvar_SetValue ("fov", scr_fov.value);
+			Cvar_SetValue ("r_viewmodel_fov", scr_fov_viewmodel.value);
 		}
 		else if(scr_dynamic_fov.value == 1)
 		{
