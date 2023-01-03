@@ -129,6 +129,7 @@ typedef struct client_s
 #define	MOVETYPE_NOCLIP			8
 #define	MOVETYPE_FLYMISSILE		9		// extra size to monsters
 #define	MOVETYPE_BOUNCE			10
+#define MOVETYPE_FOLLOW			12
 #define MOVETYPE_HEAD			13		// track movement of head
 #define MOVETYPE_LARM			14		// track movement of larm
 #define MOVETYPE_RARM			15		// track movement of rarm

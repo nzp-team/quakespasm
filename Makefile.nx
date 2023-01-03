@@ -106,6 +106,7 @@ SOURCEFILES	:=\
 	source/cfgfile.c \
 	source/host.c \
 	source/host_cmd.c \
+	source/matrixlib.o \
 	source/mathlib.c \
 	source/pr_cmds.c \
 	source/pr_edict.c \

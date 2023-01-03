@@ -32,6 +32,12 @@ float _mathlib_temp_float1, _mathlib_temp_float2, _mathlib_temp_float3;
 //#define DEG2RAD( a ) ( a * M_PI ) / 180.0F
 #define DEG2RAD( a ) ( (a) * M_PI_DIV_180 ) //johnfitz
 
+void SinCos( float radians, float *sine, float *cosine )
+{
+    *sine = sin(radians);
+    *cosine = cos(radians);
+}
+
 void ProjectPointOnPlane( vec3_t dst, const vec3_t p, const vec3_t normal )
 {
 	float d;
