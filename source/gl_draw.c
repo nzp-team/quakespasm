@@ -783,9 +783,9 @@ void Draw_AlphaStretchPic (int x, int y, int width, int height, float alpha, qpi
 	glTexCoord2f (gl->sh, gl->tl);
 	glVertex2f (x+width, y);
 	glTexCoord2f (gl->sh, gl->th);
-	glVertex2f (x+width, yheight);
+	glVertex2f (x+width, y+height);
 	glTexCoord2f (gl->sl, gl->th);
-	glVertex2f (x, yheight);
+	glVertex2f (x, y+height);
 	glEnd ();
 
 	if (alpha <= 1.0)
