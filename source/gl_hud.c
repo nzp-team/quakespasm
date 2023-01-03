@@ -492,7 +492,7 @@ void HUD_Blood (void)
     if(alpha < 0.0)
 	    return;
     
-    Draw_AlphaPic (0, vid.height/2, fx_blood_lu, alpha);
+    Draw_AlphaStretchPic (0, 0, vid.width, vid.height, alpha, fx_blood_lu);
 }
 
 //=============================================================================

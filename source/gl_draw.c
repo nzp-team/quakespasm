@@ -758,6 +758,45 @@ void Draw_Pic (int x, int y, qpic_t *pic)
 Draw_Pic -- johnfitz -- modified
 =============
 */
+
+// motolegacy -- ultimate draw function!! probably annihilates gl calls so use wisely lol
+// TODO: color shifting?
+void Draw_AlphaStretchPic (int x, int y, int width, int height, float alpha, qpic_t *pic)
+{
+	glpic_t *gl;
+
+	if (alpha <= 1.0) {
+		glEnable (GL_BLEND);
+		glColor4f (1,1,1,alpha);
+		glDisable (GL_ALPHA_TEST);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	}
+
+	if (scrap_dirty)
+		Scrap_Upload ();
+
+	gl = (glpic_t *)pic->data;
+	GL_Bind (gl->gltexture);
+	glBegin (GL_QUADS);
+	glTexCoord2f (gl->sl, gl->tl);
+	glVertex2f (x, y);
+	glTexCoord2f (gl->sh, gl->tl);
+	glVertex2f (x+width, y);
+	glTexCoord2f (gl->sh, gl->th);
+	glVertex2f (x+width, yheight);
+	glTexCoord2f (gl->sl, gl->th);
+	glVertex2f (x, yheight);
+	glEnd ();
+
+	if (alpha <= 1.0)
+	{
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		glEnable(GL_ALPHA_TEST);
+		glDisable (GL_BLEND);
+		glColor4f (1,1,1,1);
+	}
+}
+
 void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 {
 	glpic_t			*gl;
@@ -774,14 +813,6 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	gl = (glpic_t *)pic->data;
 	GL_Bind (gl->gltexture);
 	glBegin (GL_QUADS);
-#ifdef VITA // Somehow on Vita it renders just 2/3 of the texture...
-	if (pic == sniper_scope) {
-		gl->sl = 0;
-		gl->tl = 0;
-		gl->sh = 1;
-		gl->th = 1;
-	}
-#endif
 	glTexCoord2f (gl->sl, gl->tl);
 	glVertex2f (x, y);
 	glTexCoord2f (gl->sh, gl->tl);

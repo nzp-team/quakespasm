@@ -35,6 +35,7 @@ void Draw_StretchPic (int x, int y, qpic_t *pic, int x_value, int y_value);
 void Draw_Pic (int x, int y, qpic_t *pic);
 void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha);
 void Draw_ColorPic (int x, int y, qpic_t *pic, float r, float g, float b, float alpha);
+void Draw_AlphaStretchPic (int x, int y, int width, int height, float alpha, qpic_t *pic);
 void Draw_TransPicTranslate (int x, int y, qpic_t *pic, int top, int bottom); //johnfitz -- more parameters
 void Draw_ConsoleBackground (void); //johnfitz -- removed parameter int lines
 void Draw_LoadingFill(void);
