@@ -1290,6 +1290,8 @@ void HUD_Draw (void) {
 		return;
 	}
 
+	GL_SetCanvas(CANVAS_USEPRINT);
+
 	if (waypoint_mode.value) {
 #ifndef VITA
 		Draw_ColoredStringScale(949, 3,   "WAYPOINT MODE", 1, 1, 1, 1, 1.5f);
@@ -1334,4 +1336,6 @@ void HUD_Draw (void) {
 /*
 	HUD_Achievement();
 */
+
+	GL_SetCanvas(CANVAS_DEFAULT);
 }
