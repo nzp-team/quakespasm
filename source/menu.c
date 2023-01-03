@@ -1044,7 +1044,7 @@ void M_Menu_Maps_Draw (void)
 				menu_cuthum = Draw_CachePic(custom_maps[i + multiplier].map_thumbnail_path);
 				if (menu_cuthum != NULL)
 				{
-					Draw_Pic(x_map_info_disp + 305, y + 55, menu_cuthum);
+					Draw_StretchPic(x_map_info_disp + 290, y + 55, menu_cuthum, 300, 170);
 				}
 			}
 
@@ -1055,54 +1055,54 @@ void M_Menu_Maps_Draw (void)
 
 			if (custom_maps[i + multiplier].map_desc_1 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_1, " ") != 0) {
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 215, custom_maps[i + multiplier].map_desc_1, 1, 1, 1, 1, 1.5f);
+					Draw_ColoredStringScale(x_map_info_disp + 245, y + 235, custom_maps[i + multiplier].map_desc_1, 1, 1, 1, 1, 1.5f);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_2 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_2, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 230, custom_maps[i + multiplier].map_desc_2, 1, 1, 1, 1, 1.5f);
+					Draw_ColoredStringScale(x_map_info_disp + 245, y + 250, custom_maps[i + multiplier].map_desc_2, 1, 1, 1, 1, 1.5f);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_3 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_3, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 245, custom_maps[i + multiplier].map_desc_3, 1, 1, 1, 1, 1.5f);
+					Draw_ColoredStringScale(x_map_info_disp + 245, y + 265, custom_maps[i + multiplier].map_desc_3, 1, 1, 1, 1, 1.5f);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_4 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_4, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 260, custom_maps[i + multiplier].map_desc_4, 1, 1, 1, 1, 1.5f);
+					Draw_ColoredStringScale(x_map_info_disp + 245, y + 280, custom_maps[i + multiplier].map_desc_4, 1, 1, 1, 1, 1.5f);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_5 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_5, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 275, custom_maps[i + multiplier].map_desc_5, 1, 1, 1, 1, 1.5f);
+					Draw_ColoredStringScale(x_map_info_disp + 245, y + 295, custom_maps[i + multiplier].map_desc_5, 1, 1, 1, 1, 1.5f);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_6 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_6, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 290, custom_maps[i + multiplier].map_desc_6, 1, 1, 1, 1, 1.5f);
+					Draw_ColoredStringScale(x_map_info_disp + 245, y + 310, custom_maps[i + multiplier].map_desc_6, 1, 1, 1, 1, 1.5f);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_7 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_7, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 305, custom_maps[i + multiplier].map_desc_7, 1, 1, 1, 1, 1.5f);
+					Draw_ColoredStringScale(x_map_info_disp + 245, y + 325, custom_maps[i + multiplier].map_desc_7, 1, 1, 1, 1, 1.5f);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_8 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_8, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 320, custom_maps[i + multiplier].map_desc_8, 1, 1, 1, 1, 1.5f);
+					Draw_ColoredStringScale(x_map_info_disp + 245, y + 340, custom_maps[i + multiplier].map_desc_8, 1, 1, 1, 1, 1.5f);
 				}
 			}
 			if (custom_maps[i + multiplier].map_author != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_author, " ") != 0) {
-					int author_offset = 230 + (15 * line_increment);
+					int author_offset = 250 + (15 * line_increment);
 					Draw_ColoredStringScale(x_map_info_disp + 245, y + author_offset, custom_maps[i + multiplier].map_author, 1, 1, 0, 1, 1.5f);
 				}
 			}
