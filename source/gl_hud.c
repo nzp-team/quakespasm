@@ -1292,13 +1292,23 @@ void HUD_Draw (void) {
 	GL_SetCanvas(CANVAS_USEPRINT);
 
 	if (waypoint_mode.value) {
-		Draw_String (vid.width/2 - 112, vid.height/2 + 0, "WAYPOINTMODE");
-		Draw_String (vid.width/2 - 240, vid.height/2 + 8, "Press fire to create waypoint");
-		Draw_String (vid.width/2 - 232, vid.height/2 + 16, "Press use to select waypoint");
-		Draw_String (vid.width/2 - 216, vid.height/2 + 24, "Press aim to link waypoint");
-		Draw_String (vid.width/2 - 248, vid.height/2 + 32, "Press knife to remove waypoint");
-		Draw_String (vid.width/2 - 272, vid.height/2 + 40, "Press switch to move waypoint here");
-		Draw_String (vid.width/2 - 304, vid.height/2 + 48, "Press reload to make special waypoint");
+#ifndef VITA
+		Draw_ColoredStringScale(949, 3,   "WAYPOINT MODE", 1.5f);
+		Draw_ColoredStringScale(658, 39,  "FIRE   to Create Waypoint", 1.5f);
+		Draw_ColoredStringScale(658, 65,  "USE    to Select Waypoint", 1.5f);
+		Draw_ColoredStringScale(658, 91,  "AIM    to Link   Waypoint", 1.5f);
+		Draw_ColoredStringScale(658, 117, "KNIFE  to Remove Waypoint", 1.5f);
+		Draw_ColoredStringScale(658, 143, "SWITCH to Move   Waypoint", 1.5f);
+		Draw_ColoredStringScale(658, 169, "RELOAD to Evolve Waypoint", 1.5f);
+#else
+		Draw_ColoredStringScale(712, 2,   "WAYPOINT MODE", 2.0f);
+		Draw_ColoredStringScale(530, 29,  "FIRE   to Create Waypoint", 2.0f);
+		Draw_ColoredStringScale(530, 49,  "USE    to Select Waypoint", 2.0f);
+		Draw_ColoredStringScale(530, 69,  "AIM    to Link   Waypoint", 2.0f);
+		Draw_ColoredStringScale(530, 89,  "KNIFE  to Remove Waypoint", 2.0f);
+		Draw_ColoredStringScale(530, 109, "SWITCH to Move   Waypoint", 2.0f);
+		Draw_ColoredStringScale(530, 129, "RELOAD to Evolve Waypoint", 2.0f);
+#endif
 		GL_SetCanvas (CANVAS_DEFAULT);
 		return;
 	}
