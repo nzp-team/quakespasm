@@ -1289,7 +1289,6 @@ void HUD_Draw (void) {
 	if (key_dest == key_menu_pause || paused_hack == true) {
 		return;
 	}
-	GL_SetCanvas(CANVAS_USEPRINT);
 
 	if (waypoint_mode.value) {
 #ifndef VITA
@@ -1309,14 +1308,12 @@ void HUD_Draw (void) {
 		Draw_ColoredStringScale(530, 109, "SWITCH to Move   Waypoint", 1, 1, 1, 1, 2.0f);
 		Draw_ColoredStringScale(530, 129, "RELOAD to Evolve Waypoint", 1, 1, 1, 1, 2.0f);
 #endif
-		GL_SetCanvas (CANVAS_DEFAULT);
 		return;
 	}
 
 	if (cl.stats[STAT_HEALTH] <= 0) 
 	{
 		HUD_EndScreen ();
-		GL_SetCanvas(CANVAS_DEFAULT);
 		return;
 	}
 
@@ -1337,6 +1334,4 @@ void HUD_Draw (void) {
 /*
 	HUD_Achievement();
 */
-
-	GL_SetCanvas(CANVAS_DEFAULT);
 }
