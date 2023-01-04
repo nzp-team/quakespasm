@@ -1294,21 +1294,21 @@ void HUD_Draw (void) {
 
 	if (waypoint_mode.value) {
 #ifndef VITA
-		Draw_ColoredStringScale(949, 3,   "WAYPOINT MODE", 1, 1, 1, 1, 1.5f);
-		Draw_ColoredStringScale(658, 39,  "FIRE   to Create Waypoint", 1, 1, 1, 1, 1.5f);
-		Draw_ColoredStringScale(658, 65,  "USE    to Select Waypoint", 1, 1, 1, 1, 1.5f);
-		Draw_ColoredStringScale(658, 91,  "AIM    to Link   Waypoint", 1, 1, 1, 1, 1.5f);
-		Draw_ColoredStringScale(658, 117, "KNIFE  to Remove Waypoint", 1, 1, 1, 1, 1.5f);
-		Draw_ColoredStringScale(658, 143, "SWITCH to Move   Waypoint", 1, 1, 1, 1, 1.5f);
-		Draw_ColoredStringScale(658, 169, "RELOAD to Evolve Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(475, 2,   "WAYPOINT MODE", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(353, 20,  "FIRE   to Create Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(353, 33,  "USE    to Select Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(353, 46,  "AIM    to Link   Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(353, 59,  "KNIFE  to Remove Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(353, 72,  "SWITCH to Move   Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(353, 85,  "RELOAD to Evolve Waypoint", 1, 1, 1, 1, 1.5f);
 #else
-		Draw_ColoredStringScale(712, 2,   "WAYPOINT MODE", 1, 1, 1, 1, 2.0f);
-		Draw_ColoredStringScale(530, 29,  "FIRE   to Create Waypoint", 1, 1, 1, 1, 2.0f);
-		Draw_ColoredStringScale(530, 49,  "USE    to Select Waypoint", 1, 1, 1, 1, 2.0f);
-		Draw_ColoredStringScale(530, 69,  "AIM    to Link   Waypoint", 1, 1, 1, 1, 2.0f);
-		Draw_ColoredStringScale(530, 89,  "KNIFE  to Remove Waypoint", 1, 1, 1, 1, 2.0f);
-		Draw_ColoredStringScale(530, 109, "SWITCH to Move   Waypoint", 1, 1, 1, 1, 2.0f);
-		Draw_ColoredStringScale(530, 129, "RELOAD to Evolve Waypoint", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale(741, 2,   "WAYPOINT MODE", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale(549, 29,  "FIRE   to Create Waypoint", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale(549, 49,  "USE    to Select Waypoint", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale(549, 69,  "AIM    to Link   Waypoint", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale(549, 89,  "KNIFE  to Remove Waypoint", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale(549, 109, "SWITCH to Move   Waypoint", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale(549, 129, "RELOAD to Evolve Waypoint", 1, 1, 1, 1, 2.0f);
 #endif
 		return;
 	}
