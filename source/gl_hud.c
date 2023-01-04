@@ -933,57 +933,55 @@ int current_perk_order;
 
 void HUD_Perks (void)
 {
-	int x, y;
+	int x, y, scale;
 
 #ifdef VITA
 	x = 36;
-	y = 4;
+	y = 6;
+	scale = 45;
 #else
 	x = 26;
-	y = 364;
+	y = 366;
+	scale = 30;
 #endif // VITA
 
-	// Draw Even numbered Perks first -- these need to be
-	// overlayed below odd numbers/starts of columns.
-	for (int i = 0; i < 9; i++) {
-		if (i % 2 == 0) {
-			if (perk_order[i]) {
-				if (perk_order[i] == P_JUG) {Draw_StretchPic(x, y, jugpic, 28, 28);}
-				if (perk_order[i] == P_DOUBLE) {Draw_StretchPic(x, y, doublepic, 28, 28);}
-				if (perk_order[i] == P_SPEED) {Draw_StretchPic(x, y, speedpic, 28, 28);}
-				if (perk_order[i] == P_REVIVE) {Draw_StretchPic(x, y, revivepic, 28, 28);}
-				if (perk_order[i] == P_FLOP) {Draw_StretchPic(x, y, floppic, 28, 28);}
-				if (perk_order[i] == P_STAMIN) {Draw_StretchPic(x, y, staminpic, 28, 28);}
-				if (perk_order[i] == P_DEAD) {Draw_StretchPic(x, y, deadpic, 28, 28);}
-				if (perk_order[i] == P_MULE) {Draw_StretchPic(x, y, mulepic, 28, 28);}
-			}
-			y += 28;
+	// Draw second column first -- these need to be
+	// overlayed below the first column.
+	for (int i = 4; i < 8; i++) {
+		if (perk_order[i]) {
+			if (perk_order[i] == P_JUG) {Draw_StretchPic(x, y, jugpic, scale, scale);}
+			if (perk_order[i] == P_DOUBLE) {Draw_StretchPic(x, y, doublepic, scale, scale);}
+			if (perk_order[i] == P_SPEED) {Draw_StretchPic(x, y, speedpic, scale, scale);}
+			if (perk_order[i] == P_REVIVE) {Draw_StretchPic(x, y, revivepic, scale, scale);}
+			if (perk_order[i] == P_FLOP) {Draw_StretchPic(x, y, floppic, scale, scale);}
+			if (perk_order[i] == P_STAMIN) {Draw_StretchPic(x, y, staminpic, scale, scale);}
+			if (perk_order[i] == P_DEAD) {Draw_StretchPic(x, y, deadpic, scale, scale);}
+			if (perk_order[i] == P_MULE) {Draw_StretchPic(x, y, mulepic, scale, scale);}
 		}
+		y += scale;
 	}
 
 #ifdef VITA
 	x = 12;
-	y = 4;
+	y = 6;
 #else
 	x = 10;
 	y = 364;
 #endif // VITA
 
-	// Now the Odd numbered ones.
-	for (int i = 0; i < 9; i++) {
-		if (i % 2 != 0) {
-			if (perk_order[i]) {
-				if (perk_order[i] == P_JUG) {Draw_StretchPic(x, y, jugpic, 28, 28);}
-				if (perk_order[i] == P_DOUBLE) {Draw_StretchPic(x, y, doublepic, 28, 28);}
-				if (perk_order[i] == P_SPEED) {Draw_StretchPic(x, y, speedpic, 28, 28);}
-				if (perk_order[i] == P_REVIVE) {Draw_StretchPic(x, y, revivepic, 28, 28);}
-				if (perk_order[i] == P_FLOP) {Draw_StretchPic(x, y, floppic, 28, 28);}
-				if (perk_order[i] == P_STAMIN) {Draw_StretchPic(x, y, staminpic, 28, 28);}
-				if (perk_order[i] == P_DEAD) {Draw_StretchPic(x, y, deadpic, 28, 28);}
-				if (perk_order[i] == P_MULE) {Draw_StretchPic(x, y, mulepic, 28, 28);}
-			}
-			y += 28;
+	// Now the first column.
+	for (int i = 0; i < 4; i++) {
+		if (perk_order[i]) {
+			if (perk_order[i] == P_JUG) {Draw_StretchPic(x, y, jugpic, scale, scale);}
+			if (perk_order[i] == P_DOUBLE) {Draw_StretchPic(x, y, doublepic, scale, scale);}
+			if (perk_order[i] == P_SPEED) {Draw_StretchPic(x, y, speedpic, scale, scale);}
+			if (perk_order[i] == P_REVIVE) {Draw_StretchPic(x, y, revivepic, scale, scale);}
+			if (perk_order[i] == P_FLOP) {Draw_StretchPic(x, y, floppic, scale, scale);}
+			if (perk_order[i] == P_STAMIN) {Draw_StretchPic(x, y, staminpic, scale, scale);}
+			if (perk_order[i] == P_DEAD) {Draw_StretchPic(x, y, deadpic, scale, scale);}
+			if (perk_order[i] == P_MULE) {Draw_StretchPic(x, y, mulepic, scale, scale);}
 		}
+		y += scale;
 	}
 }
 
