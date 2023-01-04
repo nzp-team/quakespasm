@@ -966,7 +966,7 @@ void HUD_Perks (void)
 	y = 6;
 #else
 	x = 10;
-	y = 364;
+	y = 366;
 #endif // VITA
 
 	// Now the first column.
@@ -994,10 +994,39 @@ HUD_Powerups
 */
 void HUD_Powerups (void)
 {
-	if(cl.stats[STAT_X2])
-		Draw_Pic ((vid.width/4) - 32, vid.height/2, x2pic);
-	if(cl.stats[STAT_INSTA])
-		Draw_Pic ((vid.width/4) + 2, vid.height/2, instapic);
+	int count;
+
+	// horrible way to offset check :)))))))))))))))))) :DDDDDDDD XOXO
+
+	if (cl.stats[STAT_X2])
+		count++;
+
+	if (cl.stats[STAT_INSTA])
+		count++;
+
+	// both are avail draw fixed order
+	if (count == 2) {
+#ifdef VITA
+		Draw_StretchPic(422, 486, x2pic, 55, 55);
+		Draw_StretchPic(480, 486, instapic, 55, 55);
+#else
+		Draw_StretchPic(275, 714, x2pic, 42, 42);
+		Draw_StretchPic(319, 714, instapic, 42, 42);
+#endif // VITA
+	} else {
+		if (cl.stats[STAT_X2])
+#ifdef VITA
+			Draw_StretchPic(451, 486, x2pic, 55, 55);
+#else
+			Draw_StretchPic(299, 714, x2pic, 42, 42);
+#endif // VITA
+		if(cl.stats[STAT_INSTA])
+#ifdef VITA
+			Draw_StretchPic(451, 486, instapic, 55, 55);
+#else
+			Draw_StretchPic(299, 714, instapic, 42, 42);
+#endif // VITA
+	}
 }
 
 //=============================================================================
