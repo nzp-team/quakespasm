@@ -492,7 +492,10 @@ void HUD_Blood (void)
     if(alpha < 0.0)
 	    return;
     
+	// Set the canvas to default so we can stretch by normal bounds
+	GL_SetCanvas(CANVAS_DEFAULT);
     Draw_AlphaStretchPic (0, 0, vid.width, vid.height, alpha, fx_blood_lu);
+	GL_SetCanvas(CANVAS_USEPRINT);
 }
 
 //=============================================================================
@@ -1294,13 +1297,13 @@ void HUD_Draw (void) {
 
 	if (waypoint_mode.value) {
 #ifndef VITA
-		Draw_ColoredStringScale(475, 362, "WAYPOINT MODE", 1, 1, 1, 1, 1.5f);
-		Draw_ColoredStringScale(353, 380, "FIRE   to Create Waypoint", 1, 1, 1, 1, 1.5f);
-		Draw_ColoredStringScale(353, 393, "USE    to Select Waypoint", 1, 1, 1, 1, 1.5f);
-		Draw_ColoredStringScale(353, 406, "AIM    to Link   Waypoint", 1, 1, 1, 1, 1.5f);
-		Draw_ColoredStringScale(353, 419, "KNIFE  to Remove Waypoint", 1, 1, 1, 1, 1.5f);
-		Draw_ColoredStringScale(353, 432, "SWITCH to Move   Waypoint", 1, 1, 1, 1, 1.5f);
-		Draw_ColoredStringScale(353, 445, "RELOAD to Evolve Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(475, 364, "WAYPOINT MODE", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(329, 382, "FIRE   to Create Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(329, 395, "USE    to Select Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(329, 408, "AIM    to Link   Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(329, 421, "KNIFE  to Remove Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(329, 434, "SWITCH to Move   Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(329, 447, "RELOAD to Evolve Waypoint", 1, 1, 1, 1, 1.5f);
 #else
 		Draw_ColoredStringScale(741, 4,   "WAYPOINT MODE", 1, 1, 1, 1, 2.0f);
 		Draw_ColoredStringScale(549, 29,  "FIRE   to Create Waypoint", 1, 1, 1, 1, 2.0f);
