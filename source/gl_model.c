@@ -2983,27 +2983,30 @@ void * Mod_LoadSpriteFrame (void * pin, mspriteframe_t **ppframe, int framenum)
 	//johnfitz
 
 	// rbaldwin2 -- new sprite loading
-	COM_StripExtension(loadmodel->name, possiblename, strlen(loadmodel->name));
-	q_snprintf (withext, sizeof(possiblename), "%s_%i.tga", possiblename, framenum);
-	q_snprintf (possiblename, sizeof(possiblename), "%s_%i", possiblename, framenum);
+    char filename[MAX_QPATH];
+    byte *data;
+    int fwidth = 0, fheight = 0;
+    qboolean malloced=false;
+    
+    q_snprintf (filename, sizeof(filename), "%s_%i", loadmodel->name, framenum);
 
-	FILE	*f;
-	COM_FOpenFile (withext, &f, NULL);
-	if (f) {
-		// New sprite loading with _<framenum>.tga
-		pspriteframe->gltexture = loadtextureimage(possiblename);
-	} else {
-		// Old spr loading
-		q_snprintf (name, sizeof(name), "%s:frame%i", loadmodel->name, framenum);
-		offset = (src_offset_t)(pinframe+1) - (src_offset_t)mod_base; //johnfitz
-		pspriteframe->gltexture =
-			TexMgr_LoadImage (loadmodel, name, width, height, SRC_INDEXED,
-					  (byte *)(pinframe + 1), loadmodel->name, offset,
-					  TEXPREF_PAD | TEXPREF_ALPHA | TEXPREF_NOPICMIP); //johnfitz -- TexMgr
-	}
+    data = Image_LoadImage(filename, &fwidth, &fheight);
+
+    if (data) {
+        pspriteframe->gltexture = TexMgr_LoadImage (loadmodel, filename, fwidth, fheight,
+                    SRC_RGBA, data, filename, 0, TEXPREF_ALPHA|TEXPREF_PAD|TEXPREF_MIPMAP);
+    } else {
+        // Old spr loading
+        q_snprintf (name, sizeof(name), "%s:frame%i", loadmodel->name, framenum);
+        offset = (src_offset_t)(pinframe+1) - (src_offset_t)mod_base; //johnfitz
+        pspriteframe->gltexture =
+            TexMgr_LoadImage (loadmodel, name, width, height, SRC_INDEXED,
+                      (byte *)(pinframe + 1), loadmodel->name, offset,
+                      TEXPREF_PAD | TEXPREF_ALPHA | TEXPREF_NOPICMIP); //johnfitz -- TexMgr
+    }
 
 
-	return (void *)((byte *)pinframe + sizeof (dspriteframe_t) + size);
+    return (void *)((byte *)pinframe + sizeof (dspriteframe_t) + size);
 }
 
 
