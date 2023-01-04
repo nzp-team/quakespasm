@@ -933,54 +933,57 @@ int current_perk_order;
 
 void HUD_Perks (void)
 {
-	int i;
-	int y;
-	y = vid.height - sb_round[1]->height - jugpic->height - 14;
+	int row, column = 0;
+	int x, y = 0;
 
-	for (i = 0; i < 9; i++)
-	{
-		if (perk_order[i])
-		{
-			if (perk_order[i] == P_JUG)
-			{
-				Draw_Pic (2, y, jugpic);
-				y = y - 34;
+#ifdef VITA
+	int x = 36;
+	int y = 4;
+#else
+	int x = 26;
+	int y = 364;
+#endif // VITA
+
+	// Draw Even numbered Perks first -- these need to be
+	// overlayed below odd numbers/starts of columns.
+	for (int i = 0; i < 9; i++) {
+		if (i % 2 == 0) {
+			if (perk_order[i]) {
+				if (perk_order[i] == P_JUG) {Draw_StretchPic(x, y, jugpic, 28, 28);}
+				if (perk_order[i] == P_DOUBLE) {Draw_StretchPic(x, y, doublepic, 28, 28);}
+				if (perk_order[i] == P_SPEED) {Draw_StretchPic(x, y, speedpic, 28, 28);}
+				if (perk_order[i] == P_REVIVE) {Draw_StretchPic(x, y, revivepic, 28, 28);}
+				if (perk_order[i] == P_FLOP) {Draw_StretchPic(x, y, floppic, 28, 28);}
+				if (perk_order[i] == P_STAMIN) {Draw_StretchPic(x, y, staminpic, 28, 28);}
+				if (perk_order[i] == P_DEAD) {Draw_StretchPic(x, y, deadpic, 28, 28);}
+				if (perk_order[i] == P_MULE) {Draw_StretchPic(x, y, mulepic, 28, 28);}
 			}
-			else if (perk_order[i] == P_DOUBLE)
-			{
-				Draw_Pic (2, y, doublepic);
-				y = y - 34;
+			y += 28;
+		}
+	}
+
+#ifdef VITA
+	int x = 12;
+	int y = 4;
+#else
+	int x = 10;
+	int y = 364;
+#endif // VITA
+
+	// Now the Odd numbered ones.
+	for (int i = 0; i < 9; i++) {
+		if (i % 2 != 0) {
+			if (perk_order[i]) {
+				if (perk_order[i] == P_JUG) {Draw_StretchPic(x, y, jugpic, 28, 28);}
+				if (perk_order[i] == P_DOUBLE) {Draw_StretchPic(x, y, doublepic, 28, 28);}
+				if (perk_order[i] == P_SPEED) {Draw_StretchPic(x, y, speedpic, 28, 28);}
+				if (perk_order[i] == P_REVIVE) {Draw_StretchPic(x, y, revivepic, 28, 28);}
+				if (perk_order[i] == P_FLOP) {Draw_StretchPic(x, y, floppic, 28, 28);}
+				if (perk_order[i] == P_STAMIN) {Draw_StretchPic(x, y, staminpic, 28, 28);}
+				if (perk_order[i] == P_DEAD) {Draw_StretchPic(x, y, deadpic, 28, 28);}
+				if (perk_order[i] == P_MULE) {Draw_StretchPic(x, y, mulepic, 28, 28);}
 			}
-			else if (perk_order[i] == P_SPEED)
-			{
-				Draw_Pic (2, y, speedpic);
-				y = y - 34;
-			}
-			else if (perk_order[i] == P_REVIVE)
-			{
-				Draw_Pic (2, y, revivepic);
-				y = y - 34;
-			}
-			else if (perk_order[i] == P_FLOP)
-			{
-				Draw_Pic (2, y, floppic);
-				y = y - 34;
-			}
-			else if (perk_order[i] == P_STAMIN)
-			{
-				Draw_Pic (2, y, staminpic);
-				y = y - 34;
-			}
-			else if (perk_order[i] == P_DEAD)
-			{
-				Draw_Pic (2, y, deadpic);
-				y = y - 34;
-			}
-			else if (perk_order[i] == P_MULE)
-			{
-				Draw_Pic (2, y, mulepic);
-				y = y - 34;
-			}
+			y += 28;
 		}
 	}
 }
