@@ -933,15 +933,14 @@ int current_perk_order;
 
 void HUD_Perks (void)
 {
-	int row, column = 0;
-	int x, y = 0;
+	int x, y;
 
 #ifdef VITA
-	int x = 36;
-	int y = 4;
+	x = 36;
+	y = 4;
 #else
-	int x = 26;
-	int y = 364;
+	x = 26;
+	y = 364;
 #endif // VITA
 
 	// Draw Even numbered Perks first -- these need to be
@@ -963,11 +962,11 @@ void HUD_Perks (void)
 	}
 
 #ifdef VITA
-	int x = 12;
-	int y = 4;
+	x = 12;
+	y = 4;
 #else
-	int x = 10;
-	int y = 364;
+	x = 10;
+	y = 364;
 #endif // VITA
 
 	// Now the Odd numbered ones.
