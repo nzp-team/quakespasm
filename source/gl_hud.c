@@ -492,7 +492,10 @@ void HUD_Blood (void)
     if(alpha < 0.0)
 	    return;
     
+	// Set the canvas to default so we can stretch by normal bounds
+	GL_SetCanvas(CANVAS_DEFAULT);
     Draw_AlphaStretchPic (0, 0, vid.width, vid.height, alpha, fx_blood_lu);
+	GL_SetCanvas(CANVAS_USEPRINT);
 }
 
 //=============================================================================
@@ -930,55 +933,55 @@ int current_perk_order;
 
 void HUD_Perks (void)
 {
-	int i;
-	int y;
-	y = vid.height - sb_round[1]->height - jugpic->height - 14;
+	int x, y, scale;
 
-	for (i = 0; i < 9; i++)
-	{
-		if (perk_order[i])
-		{
-			if (perk_order[i] == P_JUG)
-			{
-				Draw_Pic (2, y, jugpic);
-				y = y - 34;
-			}
-			else if (perk_order[i] == P_DOUBLE)
-			{
-				Draw_Pic (2, y, doublepic);
-				y = y - 34;
-			}
-			else if (perk_order[i] == P_SPEED)
-			{
-				Draw_Pic (2, y, speedpic);
-				y = y - 34;
-			}
-			else if (perk_order[i] == P_REVIVE)
-			{
-				Draw_Pic (2, y, revivepic);
-				y = y - 34;
-			}
-			else if (perk_order[i] == P_FLOP)
-			{
-				Draw_Pic (2, y, floppic);
-				y = y - 34;
-			}
-			else if (perk_order[i] == P_STAMIN)
-			{
-				Draw_Pic (2, y, staminpic);
-				y = y - 34;
-			}
-			else if (perk_order[i] == P_DEAD)
-			{
-				Draw_Pic (2, y, deadpic);
-				y = y - 34;
-			}
-			else if (perk_order[i] == P_MULE)
-			{
-				Draw_Pic (2, y, mulepic);
-				y = y - 34;
-			}
+#ifdef VITA
+	x = 36;
+	y = 6;
+	scale = 45;
+#else
+	x = 26;
+	y = 366;
+	scale = 30;
+#endif // VITA
+
+	// Draw second column first -- these need to be
+	// overlayed below the first column.
+	for (int i = 4; i < 8; i++) {
+		if (perk_order[i]) {
+			if (perk_order[i] == P_JUG) {Draw_StretchPic(x, y, jugpic, scale, scale);}
+			if (perk_order[i] == P_DOUBLE) {Draw_StretchPic(x, y, doublepic, scale, scale);}
+			if (perk_order[i] == P_SPEED) {Draw_StretchPic(x, y, speedpic, scale, scale);}
+			if (perk_order[i] == P_REVIVE) {Draw_StretchPic(x, y, revivepic, scale, scale);}
+			if (perk_order[i] == P_FLOP) {Draw_StretchPic(x, y, floppic, scale, scale);}
+			if (perk_order[i] == P_STAMIN) {Draw_StretchPic(x, y, staminpic, scale, scale);}
+			if (perk_order[i] == P_DEAD) {Draw_StretchPic(x, y, deadpic, scale, scale);}
+			if (perk_order[i] == P_MULE) {Draw_StretchPic(x, y, mulepic, scale, scale);}
 		}
+		y += scale;
+	}
+
+#ifdef VITA
+	x = 12;
+	y = 6;
+#else
+	x = 10;
+	y = 366;
+#endif // VITA
+
+	// Now the first column.
+	for (int i = 0; i < 4; i++) {
+		if (perk_order[i]) {
+			if (perk_order[i] == P_JUG) {Draw_StretchPic(x, y, jugpic, scale, scale);}
+			if (perk_order[i] == P_DOUBLE) {Draw_StretchPic(x, y, doublepic, scale, scale);}
+			if (perk_order[i] == P_SPEED) {Draw_StretchPic(x, y, speedpic, scale, scale);}
+			if (perk_order[i] == P_REVIVE) {Draw_StretchPic(x, y, revivepic, scale, scale);}
+			if (perk_order[i] == P_FLOP) {Draw_StretchPic(x, y, floppic, scale, scale);}
+			if (perk_order[i] == P_STAMIN) {Draw_StretchPic(x, y, staminpic, scale, scale);}
+			if (perk_order[i] == P_DEAD) {Draw_StretchPic(x, y, deadpic, scale, scale);}
+			if (perk_order[i] == P_MULE) {Draw_StretchPic(x, y, mulepic, scale, scale);}
+		}
+		y += scale;
 	}
 }
 
@@ -991,10 +994,39 @@ HUD_Powerups
 */
 void HUD_Powerups (void)
 {
-	if(cl.stats[STAT_X2])
-		Draw_Pic ((vid.width/4) - 32, vid.height/2, x2pic);
-	if(cl.stats[STAT_INSTA])
-		Draw_Pic ((vid.width/4) + 2, vid.height/2, instapic);
+	int count;
+
+	// horrible way to offset check :)))))))))))))))))) :DDDDDDDD XOXO
+
+	if (cl.stats[STAT_X2])
+		count++;
+
+	if (cl.stats[STAT_INSTA])
+		count++;
+
+	// both are avail draw fixed order
+	if (count == 2) {
+#ifdef VITA
+		Draw_StretchPic(422, 486, x2pic, 55, 55);
+		Draw_StretchPic(480, 486, instapic, 55, 55);
+#else
+		Draw_StretchPic(275, 714, x2pic, 42, 42);
+		Draw_StretchPic(319, 714, instapic, 42, 42);
+#endif // VITA
+	} else {
+		if (cl.stats[STAT_X2])
+#ifdef VITA
+			Draw_StretchPic(451, 486, x2pic, 55, 55);
+#else
+			Draw_StretchPic(299, 714, x2pic, 42, 42);
+#endif // VITA
+		if(cl.stats[STAT_INSTA])
+#ifdef VITA
+			Draw_StretchPic(451, 486, instapic, 55, 55);
+#else
+			Draw_StretchPic(299, 714, instapic, 42, 42);
+#endif // VITA
+	}
 }
 
 //=============================================================================
@@ -1289,27 +1321,33 @@ void HUD_Draw (void) {
 	if (key_dest == key_menu_pause || paused_hack == true) {
 		return;
 	}
-#ifdef VITA
-	GL_SetCanvas(CANVAS_HUD);
-#else
+
 	GL_SetCanvas(CANVAS_USEPRINT);
-#endif
+
 	if (waypoint_mode.value) {
-		Draw_String (vid.width/2 - 112, vid.height/2 + 0, "WAYPOINTMODE");
-		Draw_String (vid.width/2 - 240, vid.height/2 + 8, "Press fire to create waypoint");
-		Draw_String (vid.width/2 - 232, vid.height/2 + 16, "Press use to select waypoint");
-		Draw_String (vid.width/2 - 216, vid.height/2 + 24, "Press aim to link waypoint");
-		Draw_String (vid.width/2 - 248, vid.height/2 + 32, "Press knife to remove waypoint");
-		Draw_String (vid.width/2 - 272, vid.height/2 + 40, "Press switch to move waypoint here");
-		Draw_String (vid.width/2 - 304, vid.height/2 + 48, "Press reload to make special waypoint");
-		GL_SetCanvas (CANVAS_DEFAULT);
+#ifndef VITA
+		Draw_ColoredStringScale(475, 364, "WAYPOINT MODE", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(329, 382, "FIRE   to Create Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(329, 395, "USE    to Select Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(329, 408, "AIM    to Link   Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(329, 421, "KNIFE  to Remove Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(329, 434, "SWITCH to Move   Waypoint", 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale(329, 447, "RELOAD to Evolve Waypoint", 1, 1, 1, 1, 1.5f);
+#else
+		Draw_ColoredStringScale(741, 4,   "WAYPOINT MODE", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale(549, 29,  "FIRE   to Create Waypoint", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale(549, 49,  "USE    to Select Waypoint", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale(549, 69,  "AIM    to Link   Waypoint", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale(549, 89,  "KNIFE  to Remove Waypoint", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale(549, 109, "SWITCH to Move   Waypoint", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale(549, 129, "RELOAD to Evolve Waypoint", 1, 1, 1, 1, 2.0f);
+#endif
 		return;
 	}
 
 	if (cl.stats[STAT_HEALTH] <= 0) 
 	{
 		HUD_EndScreen ();
-		GL_SetCanvas(CANVAS_DEFAULT);
 		return;
 	}
 
