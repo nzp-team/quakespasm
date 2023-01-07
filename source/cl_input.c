@@ -296,8 +296,8 @@ void CL_AdjustAngles (void)
 	up = CL_KeyState (&in_lookup);
 	down = CL_KeyState(&in_lookdown);
 
-	cl.viewangles[PITCH] -= speed*cl_pitchspeed.value * up;
-	cl.viewangles[PITCH] += speed*cl_pitchspeed.value * down;
+	cl.viewangles[PITCH] -= speed*cl_pitchspeed.value *up; // *up
+	cl.viewangles[PITCH] += speed*cl_pitchspeed.value *down; //down
 
 	if (up || down)
 		V_StopPitchDrift ();
@@ -317,7 +317,7 @@ void CL_AdjustAngles (void)
 	// vita gyro support by rinnegatamante (originally from vitaquake)
 	// creds to the switch-examples for nx support
 	if (motioncam.value) {
-		if (gyromode.value && cl.stats[STAT_ZOOM] == 0 || client_sprinting == 1) //sB fix gyro activating while sprinting. 
+		if (gyromode.value && cl.stats[STAT_ZOOM] == 0 && client_sprinting == 1) //sB fix gyro activating while sprinting. 
 			return;
 
 #ifdef VITA
@@ -352,7 +352,7 @@ void CL_AdjustAngles (void)
 		cl.viewangles[YAW] += x_gyro_cam;
 
 		V_StopPitchDrift();
-
+		
 		if (joy_invert.value)
 			cl.viewangles[PITCH] += y_gyro_cam;
 		else
