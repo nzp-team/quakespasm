@@ -406,7 +406,11 @@ void HUD_Points (void)
 				point_change_interval_neg = 0;
 			}
 		}
-		Draw_Pic (x, y, sb_moneyback);
+#ifdef VITA
+		Draw_StretchPic(12, 407, sb_moneyback, 128, 32);
+#else
+		Draw_StretchPic(8, 629, sb_moneyback, 86, 21);
+#endif // VITA
 		xplus = HUD_itoa (f, str);
 		Draw_String (vid.width/2 - (xplus*8) - 16, y + 3, va("%i", current_points));
 
@@ -1010,21 +1014,21 @@ void HUD_Powerups (void)
 		Draw_StretchPic(422, 486, x2pic, 55, 55);
 		Draw_StretchPic(480, 486, instapic, 55, 55);
 #else
-		Draw_StretchPic(275, 714, x2pic, 42, 42);
-		Draw_StretchPic(319, 714, instapic, 42, 42);
+		Draw_StretchPic(275, 672, x2pic, 42, 42);
+		Draw_StretchPic(319, 672, instapic, 42, 42);
 #endif // VITA
 	} else {
 		if (cl.stats[STAT_X2])
 #ifdef VITA
 			Draw_StretchPic(451, 486, x2pic, 55, 55);
 #else
-			Draw_StretchPic(299, 714, x2pic, 42, 42);
+			Draw_StretchPic(299, 672, x2pic, 42, 42);
 #endif // VITA
 		if(cl.stats[STAT_INSTA])
 #ifdef VITA
 			Draw_StretchPic(451, 486, instapic, 55, 55);
 #else
-			Draw_StretchPic(299, 714, instapic, 42, 42);
+			Draw_StretchPic(299, 672, instapic, 42, 42);
 #endif // VITA
 	}
 }
