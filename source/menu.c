@@ -411,13 +411,13 @@ void M_Paused_Menu_Key (int key)
 {
 	switch (key)
 	{
-	/*case K_BBUTTON:
+	case K_BBUTTON:
 	case K_ESCAPE:
 		paused_hack = false;
 		key_dest = key_game;
 		m_state = m_none;
 		break;
-*/
+
 	case K_DOWNARROW:
 		S_LocalSound ("sounds/menu/navigate.wav");
         if (++M_Paused_Cusor >= Max_Paused_Items)
