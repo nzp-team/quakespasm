@@ -1965,9 +1965,9 @@ void SCR_UpdateScreen (void)
 		if(scr_fov.value > (GetWeaponZoomAmmount() + 1))//+1 for accounting for floating point inaccurraces
 		{
 			scr_fov.value += ((original_fov - GetWeaponZoomAmmount()) - scr_fov.value) * 0.25;
-			//scr_fov_viewmodel.value += ((original_view_fov - GetWeaponZoomAmmount()) - scr_fov_viewmodel.value) * 0.25;
+			scr_fov_viewmodel.value += ((original_view_fov - GetWeaponZoomAmmount()) - scr_fov_viewmodel.value) * 0.25;
 			Cvar_SetValue("fov",scr_fov.value);
-			//Cvar_SetValue("r_viewmodel_fov", scr_fov_viewmodel.value);
+			Cvar_SetValue("r_viewmodel_fov", scr_fov_viewmodel.value);
 		}
 	}
 	else if (cl.stats[STAT_ZOOM] == 2)

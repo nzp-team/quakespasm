@@ -799,14 +799,15 @@ void CalcGunAngle (void)
 	{
 		cl.viewent.angles[YAW] = (r_refdef.viewangles[YAW] + yaw) - (angledelta((r_refdef.viewangles[YAW] + yaw) - OldYawTheta ) * 0.6);//0.6
 	}
-
-	cl.viewent.angles[PITCH] = -1 * ((r_refdef.viewangles[PITCH] + pitch) - (angledelta((r_refdef.viewangles[PITCH] + pitch) + OldPitchTheta ) * 0.2));
+	
+	cl.viewent.angles[PITCH] = -1 * ((r_refdef.viewangles[PITCH] + pitch) - (angledelta((r_refdef.viewangles[PITCH] + pitch) + OldPitchTheta ) * 0.2)); //sB something here...
+	
 	OldYawTheta = cl.viewent.angles[YAW];
 	OldPitchTheta = cl.viewent.angles[PITCH];
-
+	
+	/*
 	//cl.viewent.angles[YAW] = r_refdef.viewangles[YAW] + yaw;
-	//cl.viewent.angles[PITCH] = - (r_refdef.viewangles[PITCH] + pitch);
-
+	cl.viewent.angles[PITCH] = - (angledelta(r_refdef.viewangles[PITCH] + pitch));
 	cl.viewent.angles[ROLL] -= v_idlescale.value * sin(cl.time*v_iroll_cycle.value) * v_iroll_level.value;
 	cl.viewent.angles[PITCH] -= v_idlescale.value * sin(cl.time*v_ipitch_cycle.value) * v_ipitch_level.value;
 	cl.viewent.angles[YAW] -= v_idlescale.value * sin(cl.time*v_iyaw_cycle.value) * v_iyaw_level.value;
@@ -814,8 +815,11 @@ void CalcGunAngle (void)
 	cl.viewent2.angles[ROLL] = cl.viewent.angles[ROLL] -= v_idlescale.value * sinf(cl.time*v_iroll_cycle.value * 2) * v_iroll_level.value;
 	cl.viewent2.angles[PITCH] = cl.viewent.angles[PITCH] -= v_idlescale.value * sinf(cl.time*v_ipitch_cycle.value * 2) * v_ipitch_level.value;
 	cl.viewent2.angles[YAW] = cl.viewent.angles[YAW] -= v_idlescale.value * sinf(cl.time*v_iyaw_cycle.value * 2) * v_iyaw_level.value;
-
+	*/
 	
+	cl.viewent2.angles[ROLL] = cl.viewent.angles[ROLL] -= v_idlescale.value * sinf(cl.time*v_iroll_cycle.value * 2) * v_iroll_level.value;
+	cl.viewent2.angles[PITCH] = cl.viewent.angles[PITCH] -= v_idlescale.value * sinf(cl.time*v_ipitch_cycle.value * 2) * v_ipitch_level.value;
+	cl.viewent2.angles[YAW] = cl.viewent.angles[YAW] -= v_idlescale.value * sinf(cl.time*v_iyaw_cycle.value * 2) * v_iyaw_level.value;
 
 	//Evaluating total offset
 	CWeaponRot[PITCH] -= cl.viewent.angles[PITCH];
@@ -1237,7 +1241,7 @@ void V_CalcRefdef (void)
 	}
 	//Side offset
 	cADSOfs [0] += (ADSOffset[0] - cADSOfs[0]) * 0.25;
-	cADSOfs [1] = (ADSOffset[1] /*- cADSOfs[1]*/) * 0.25; // naievil -- removed this because it caused some viewmodel errors
+	cADSOfs [1] += (ADSOffset[1] - cADSOfs[1]) * 0.25; // naievil -- removed "- cADSOfs[1]" because it caused some viewmodel errors. sB re-enabled it for now.
 
 	temp_right[0] *= cADSOfs[0];
 	temp_right[1] *= cADSOfs[0];
@@ -1245,7 +1249,7 @@ void V_CalcRefdef (void)
 
 	temp_up[0] *= cADSOfs[1];
 	temp_up[1] *= cADSOfs[1];
-	temp_up[2] *= (cADSOfs[1] * 4); // motolegacy -- another vmodel hack: standard ADS offsets don't go up enough
+	temp_up[2] *= cADSOfs[1]; // motolegacy -- another vmodel hack: standard ADS offsets don't go up enough. sB was cADSOfs[1]
 
 	view->origin[0] +=(temp_right[0] + temp_up[0]);
 	view->origin[1] +=(temp_right[1] + temp_up[1]);
