@@ -334,9 +334,11 @@ qmodel_t *Mod_LoadModel (qmodel_t *mod, qboolean crash)
 	buf = COM_LoadStackFile (mod->name, stackbuf, sizeof(stackbuf), & mod->path_id);
 	if (!buf)
 	{
-		if (crash)
-			Host_Error ("Mod_LoadModel: %s not found", mod->name); //johnfitz -- was "Mod_NumForName"
-		return NULL;
+		buf = (unsigned*)COM_LoadStackFile ("models/missing_model.mdl", stackbuf, sizeof(stackbuf), NULL);
+		if (buf){
+			Con_Printf ("Missing model %s substituted\n", mod->name);
+		}
+		return mod;
 	}
 
 //
@@ -382,7 +384,7 @@ Loads in a model for the given name
 qmodel_t *Mod_ForName (const char *name, qboolean crash)
 {
 	qmodel_t	*mod;
-
+	
 	mod = Mod_FindName (name);
 
 	return Mod_LoadModel (mod, crash);
