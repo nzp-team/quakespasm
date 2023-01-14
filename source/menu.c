@@ -580,7 +580,13 @@ void M_Main_Draw (void)
 		case 1: Draw_ColoredStringScale(10, y + 305, "Adjust your Settings to Optimize your Experience.", 1, 1, 1, 1, 1.5f); break;
 		//case 2: Draw_ColoredStringScale(10, y + 305, "View locked or unlocked Achievements.", 1, 1, 1, 1, 1.5f); break;
 		case 2: Draw_ColoredStringScale(10, y + 305, "See who made NZ:P possible.", 1, 1, 1, 1, 1.5f); break;
-		case 3: Draw_ColoredStringScale(10, y + 305, "Return to Horizon (SwitchOS).", 1, 1, 1, 1, 1.5f); break;
+		case 3: 
+		#ifdef NX 
+		Draw_ColoredStringScale(10, y + 305, "Return to Horizon (SwitchOS).", 1, 1, 1, 1, 1.5f);
+		#else
+		Draw_ColoredStringScale(10, y + 305, "Return to Vita Homescreen.", 1, 1, 1, 1, 1.5f);
+		#endif
+		break;
 		default: break;
 	}
 }
