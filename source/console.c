@@ -1203,9 +1203,11 @@ void Con_DrawConsole (int lines, qboolean drawinput)
 	GL_SetCanvas (CANVAS_CONSOLE);
 
 // draw the background
-	Draw_ConsoleBackground ();
+	
 	if (!console_enabled && !developer.value)
 		return;
+	
+	Draw_ConsoleBackground ();
 
 // draw the buffer text
 	rows = (con_vislines +7)/8;

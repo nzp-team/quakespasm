@@ -862,37 +862,10 @@ Draw_ConsoleBackground -- johnfitz -- rewritten
 */
 void Draw_ConsoleBackground (void)
 {
-	float alpha;
 
-	//pic = Draw_CachePic ("gfx/conback.lmp");
-	//pic->width = vid.conwidth;
-	//pic->height = vid.conheight;
+	//GL_SetCanvas (CANVAS_CONSOLE); //in case this is called from weird places
 
-	alpha = (con_forcedup) ? 1.0 : scr_conalpha.value;
-
-	GL_SetCanvas (CANVAS_CONSOLE); //in case this is called from weird places
-
-	if (alpha > 0.0)
-	{
-		if (alpha < 1.0)
-		{
-			glEnable (GL_BLEND);
-			glColor4f (1,1,1,alpha);
-			glDisable (GL_ALPHA_TEST);
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		}
-
-			Draw_FillByColor  (0, 0, vid.conwidth, vid.conheight, 0, 0, 0, alpha);
-
-
-		if (alpha < 1.0)
-		{
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-			glEnable(GL_ALPHA_TEST);
-			glDisable (GL_BLEND);
-			glColor4f (1,1,1,1);
-		}
-	}
+	Draw_FillByColor  (0, 0, vid.conwidth, vid.conheight, 0, 0, 0, 1);
 }
 
 /*
@@ -1232,6 +1205,11 @@ gltexture_t *loadtextureimage (char* filename)
 	int w, h;
 
 	data = Image_LoadImage (filename, &w, &h);
+	if(data == NULL)
+	{
+		Sys_Error("loadtextureimage: Cannot load the image %s\n", filename);
+		return 0;
+	}
 	
 	gl.gltexture = TexMgr_LoadImage (NULL, filename, w, h, SRC_RGBA, data, filename, sizeof(int)*2, TEXPREF_ALPHA | TEXPREF_NEAREST | TEXPREF_NOPICMIP);
 

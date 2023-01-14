@@ -76,7 +76,7 @@ const char *svc_strings[] =
 	"svc_useprint", // 38
 	"", // 39
 	"svc_bf", // 40						// no data
-	"svc_fog", // 41					// [byte] density [byte] red [byte] green [byte] blue [float] time
+	"svc_fog", // 41					// [byte] start [byte] end [byte] red [byte] green [byte] blue [float] time
 	"svc_spawnbaseline2", //42			// support for large modelindex, large framenum, alpha, using flags
 	"svc_spawnstatic2", // 43			// support for large modelindex, large framenum, alpha, using flags
 	"svc_spawnstaticsound2", //	44		// [coord3] [short] samp [byte] vol [byte] aten
