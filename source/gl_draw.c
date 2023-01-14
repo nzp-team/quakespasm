@@ -868,9 +868,13 @@ void Draw_ConsoleBackground (void)
 	//pic->width = vid.conwidth;
 	//pic->height = vid.conheight;
 
-	alpha = (con_forcedup) ? 1.0 : scr_conalpha.value;
+	#ifdef VITA
+		alpha = (con_forcedup) ? 1.0 : scr_conalpha.value;
+	#else
+		alpha = 1.0;
+	#endif
 
-	GL_SetCanvas (CANVAS_CONSOLE); //in case this is called from weird places
+	//GL_SetCanvas (CANVAS_CONSOLE); //in case this is called from weird places
 
 	if (alpha > 0.0)
 	{
@@ -1232,6 +1236,11 @@ gltexture_t *loadtextureimage (char* filename)
 	int w, h;
 
 	data = Image_LoadImage (filename, &w, &h);
+	if(data == NULL)
+	{
+		Sys_Error("loadtextureimage: Cannot load the image %s\n", filename);
+		return 0;
+	}
 	
 	gl.gltexture = TexMgr_LoadImage (NULL, filename, w, h, SRC_RGBA, data, filename, sizeof(int)*2, TEXPREF_ALPHA | TEXPREF_NEAREST | TEXPREF_NOPICMIP);
 
