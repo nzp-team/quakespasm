@@ -139,6 +139,8 @@ void R_DrawSpriteModel (entity_t *e)
 	default:
 		return;
 	}
+	
+	Fog_DisableGFog ();
 
 	//johnfitz: offset decals
 	if (psprite->type == SPR_ORIENTED)
@@ -179,4 +181,6 @@ void R_DrawSpriteModel (entity_t *e)
 	//johnfitz: offset decals
 	if (psprite->type == SPR_ORIENTED)
 		GL_PolygonOffset (OFFSET_NONE);
+	
+	Fog_EnableGFog ();
 }

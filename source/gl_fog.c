@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 //gl_fog.c -- global and volumetric fog
 
+//sB EDITED THIS AND GOT RID OF VOLUMETRIC FOG IN ORDER TO ADD CONSISTENCY TO NZP BUILDS. SWITCHED TO A START/END VALUE. 
+
 #include "quakedef.h"
 
 //==============================================================================
@@ -29,17 +31,23 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 //==============================================================================
 
-#define DEFAULT_DENSITY 0.0
+#define DEFAULT_DENSITY 1.0
 #define DEFAULT_GRAY 0.3
 
-float fog_start;
-float fog_end;
+//extern refdef_t r_refdef;
+
+float density = 1.0;
 float fog_density_gl;
-float fog_red;
-float fog_green;
-float fog_blue;
+
+float 		fog_start;
+float 		fog_end;
+float 		fog_red;
+float 		fog_green;
+float 		fog_blue;
 
 float old_density;
+float old_start;
+float old_end;
 float old_red;
 float old_green;
 float old_blue;
@@ -54,7 +62,7 @@ Fog_Update
 update internal variables
 =============
 */
-void Fog_Update (float density, float red, float green, float blue, float time)
+void Fog_Update (float start, float end, float red, float green, float blue, float time)
 {
 	//save previous settings for fade
 	if (time > 0)
@@ -65,26 +73,32 @@ void Fog_Update (float density, float red, float green, float blue, float time)
 			float f;
 
 			f = (fade_done - cl.time) / fade_time;
-			old_density = f * old_density + (1.0 - f) * fog_density_gl;
+			old_start = f * old_start + (1.0 - f) * fog_start;
+			old_end = f * old_end + (1.0 - f) * fog_end;
 			old_red = f * old_red + (1.0 - f) * fog_red;
 			old_green = f * old_green + (1.0 - f) * fog_green;
 			old_blue = f * old_blue + (1.0 - f) * fog_blue;
+			old_density = f * old_density + (1.0 - f) * fog_density_gl;
 		}
 		else
 		{
-			old_density = fog_density_gl;
+			old_start = fog_start;
+			old_end = fog_end;
 			old_red = fog_red;
 			old_green = fog_green;
 			old_blue = fog_blue;
+			old_density = fog_density_gl;
 		}
 	}
 
-	fog_density_gl = density;
+	fog_start = start;
+	fog_end = end;
 	fog_red = red;
 	fog_green = green;
 	fog_blue = blue;
 	fade_time = time;
 	fade_done = cl.time + time;
+	fog_density_gl = ((fog_start / fog_end))/3.5;
 }
 
 /*
@@ -96,15 +110,16 @@ handle an SVC_FOG message from server
 */
 void Fog_ParseServerMessage (void)
 {
-	float density, red, green, blue, time;
+	float start, end, red, green, blue, time;
 
-	density = MSG_ReadByte() / 255.0;
+	start = MSG_ReadByte() / 255.0;
+	end = MSG_ReadByte() / 255.0;
 	red = MSG_ReadByte() / 255.0;
 	green = MSG_ReadByte() / 255.0;
 	blue = MSG_ReadByte() / 255.0;
 	time = q_max(0.0, MSG_ReadShort() / 100.0);
 
-	Fog_Update (density, red, green, blue, time);
+	Fog_Update (start, end, red, green, blue, time);
 }
 
 /*
@@ -121,49 +136,67 @@ void Fog_FogCommand_f (void)
 	default:
 	case 1:
 		Con_Printf("usage:\n");
-		Con_Printf("   fog <density>\n");
+		Con_Printf("   fog <fade>\n");
+		Con_Printf("   fog <start> <end>\n");
 		Con_Printf("   fog <red> <green> <blue>\n");
-		Con_Printf("   fog <density> <red> <green> <blue>\n");
+		Con_Printf("   fog <fade> <red> <green> <blue>\n");
+		Con_Printf("   fog <start> <end> <red> <green> <blue>\n");
+		Con_Printf("   fog <start> <end> <red> <green> <blue> <fade>\n");
 		Con_Printf("current values:\n");
-		Con_Printf("   \"density\" is \"%f\"\n", fog_density_gl);
+		Con_Printf("   \"start\" is \"%f\"\n", fog_start);
+		Con_Printf("   \"end\" is \"%f\"\n", fog_end);
 		Con_Printf("   \"red\" is \"%f\"\n", fog_red);
 		Con_Printf("   \"green\" is \"%f\"\n", fog_green);
 		Con_Printf("   \"blue\" is \"%f\"\n", fog_blue);
+		Con_Printf("   \"fade\" is \"%f\"\n", fade_time);
 		break;
-	case 2:
+	case 2: //TEST
+		Fog_Update(fog_start,
+				   fog_end,
+				   fog_red,
+				   fog_green,
+				   fog_blue,
+				   q_max(0.0, atof(Cmd_Argv(1))));
+		break;
+	case 3:
 		Fog_Update(q_max(0.0, atof(Cmd_Argv(1))),
+				   q_max(0.0, atof(Cmd_Argv(2))),
 				   fog_red,
 				   fog_green,
 				   fog_blue,
 				   0.0);
-		break;
-	case 3: //TEST
-		Fog_Update(q_max(0.0, atof(Cmd_Argv(1))),
-				   fog_red,
-				   fog_green,
-				   fog_blue,
-				   atof(Cmd_Argv(2)));
 		break;
 	case 4:
-		Fog_Update(fog_density_gl,
-				   CLAMP(0.0, atof(Cmd_Argv(1)), 1.0),
-				   CLAMP(0.0, atof(Cmd_Argv(2)), 1.0),
-				   CLAMP(0.0, atof(Cmd_Argv(3)), 1.0),
+		Fog_Update(fog_start,
+				   fog_end,
+				   CLAMP(0.0, atof(Cmd_Argv(1)), 255.0),
+				   CLAMP(0.0, atof(Cmd_Argv(2)), 255.0),
+				   CLAMP(0.0, atof(Cmd_Argv(3)), 255.0),
 				   0.0);
 		break;
-	case 5:
+	case 5: //TEST
+		Fog_Update(fog_start,
+				   fog_end,
+				   CLAMP(0.0, atof(Cmd_Argv(1)), 255.0),
+				   CLAMP(0.0, atof(Cmd_Argv(2)), 255.0),
+				   CLAMP(0.0, atof(Cmd_Argv(3)), 255.0),
+				   q_max(0.0, atof(Cmd_Argv(4))));
+		break;
+	case 6:
 		Fog_Update(q_max(0.0, atof(Cmd_Argv(1))),
-				   CLAMP(0.0, atof(Cmd_Argv(2)), 1.0),
-				   CLAMP(0.0, atof(Cmd_Argv(3)), 1.0),
-				   CLAMP(0.0, atof(Cmd_Argv(4)), 1.0),
+				   q_max(0.0, atof(Cmd_Argv(2))),
+				   CLAMP(0.0, atof(Cmd_Argv(3)), 255.0),
+				   CLAMP(0.0, atof(Cmd_Argv(4)), 255.0),
+				   CLAMP(0.0, atof(Cmd_Argv(5)), 255.0),
 				   0.0);
 		break;
-	case 6: //TEST
+	case 7:
 		Fog_Update(q_max(0.0, atof(Cmd_Argv(1))),
-				   CLAMP(0.0, atof(Cmd_Argv(2)), 1.0),
-				   CLAMP(0.0, atof(Cmd_Argv(3)), 1.0),
-				   CLAMP(0.0, atof(Cmd_Argv(4)), 1.0),
-				   atof(Cmd_Argv(5)));
+				   q_max(0.0, atof(Cmd_Argv(2))),
+				   CLAMP(0.0, atof(Cmd_Argv(3)), 255.0),
+				   CLAMP(0.0, atof(Cmd_Argv(4)), 255.0),
+				   CLAMP(0.0, atof(Cmd_Argv(5)), 255.0),
+				   q_max(0.0, atof(Cmd_Argv(6))));
 		break;
 	}
 }
@@ -180,16 +213,22 @@ void Fog_ParseWorldspawn (void)
 	char key[128], value[4096];
 	const char *data;
 
-	//initially no fog
 	fog_density_gl = DEFAULT_DENSITY;
-	fog_red = DEFAULT_GRAY;
-	fog_green = DEFAULT_GRAY;
-	fog_blue = DEFAULT_GRAY;
+	//initially no fog
+	fog_start = 0;
+	old_start = 0;
 
-	old_density = DEFAULT_DENSITY;
-	old_red = DEFAULT_GRAY;
-	old_green = DEFAULT_GRAY;
-	old_blue = DEFAULT_GRAY;
+	fog_end = -1;
+	old_end = -1;
+
+	fog_red = 0.0;
+	old_red = 0.0;
+
+	fog_green = 0.0;
+	old_green = 0.0;
+
+	fog_blue = 0.0;
+	old_blue = 0.0;
 
 	fade_time = 0.0;
 	fade_done = 0.0;
@@ -222,7 +261,7 @@ void Fog_ParseWorldspawn (void)
 			sscanf(value, "%f %f %f %f %f", &fog_start, &fog_end, &fog_red, &fog_green, &fog_blue);
 		}
 
-		fog_density_gl = ((fog_end - fog_start))/6000;
+		fog_density_gl = ((fog_start / fog_end))/3.5;
 	}
 }
 
@@ -235,8 +274,8 @@ calculates fog color for this frame, taking into account fade times
 */
 float *Fog_GetColor (void)
 {
-	static float c[4] = {0.3f, 0.3f, 0.3f, 1.0f};
-#ifndef VITA
+	static float c[4]; // = {0.1f, 0.1f, 0.1f, 1.0f}
+//#ifndef VITA
 	float f;
 	int i;
 
@@ -257,9 +296,9 @@ float *Fog_GetColor (void)
 	}
 
 	//find closest 24-bit RGB value, so solid-colored sky can match the fog perfectly
-	for (i=0;i<3;i++)
-		c[i] = (float)(Q_rint(c[i] * 255)) / 255.0f;
-#endif
+	//for (i=0;i<3;i++)
+		//c[i] = (float)(Q_rint(c[i] * 255)) / 255.0f;
+//#endif
 	return c;
 }
 
@@ -268,6 +307,7 @@ float *Fog_GetColor (void)
 Fog_GetDensity
 
 returns current density of fog
+
 =============
 */
 float Fog_GetDensity (void)
@@ -292,8 +332,81 @@ called at the beginning of each frame
 */
 void Fog_SetupFrame (void)
 {
+	//glFogfv(GL_FOG_COLOR, Fog_GetColor());
+	//glFogf(GL_FOG_DENSITY, Fog_GetDensity() / 64.0);
+	
+	/*float c[4];
+	float f, s, e;
+
+	if (fade_done > cl.time)
+	{
+		f = (fade_done - cl.time) / fade_time;
+		s = f * old_start + (1.0 - f) * fog_start;
+		e = f * old_end + (1.0 - f) * fog_end;
+		c[0] = f * old_red + (1.0 - f) * fog_red;
+		c[1] = f * old_green + (1.0 - f) * fog_green;
+		c[2] = f * old_blue + (1.0 - f) * fog_blue;
+		c[3] = 1.0;
+        //c[3] = r_skyfog.value;
+	}
+	else
+	{
+		s = fog_start;
+		e = fog_end;
+		c[0] = fog_red;
+		c[1] = fog_green;
+		c[2] = fog_blue;
+		c[3] = 1.0;
+        //c[3] = r_skyfog.value;
+	}
+
+	if(e == 0)
+		e = -1;*/
+
 	glFogfv(GL_FOG_COLOR, Fog_GetColor());
-	glFogf(GL_FOG_DENSITY, Fog_GetDensity() / 64.0);
+	glFogf(GL_FOG_DENSITY, fog_density_gl);
+	//glFogf(GL_FOG_COLOR, *c);
+
+	//if(s == 0 || e < 0)
+		//glDisable(GL_FOG);
+}
+
+/*
+=============
+Fog_GetStart
+returns current start of fog
+=============
+*/
+float Fog_GetStart (void)
+{
+	float f;
+
+	if (fade_done > cl.time)
+	{
+		f = (fade_done - cl.time) / fade_time;
+		return f * old_start + (1.0 - f) * fog_start;
+	}
+	else
+		return fog_start;
+}
+
+/*
+=============
+Fog_GetEnd
+returns current end of fog
+=============
+*/
+float Fog_GetEnd (void)
+{
+	float f;
+
+	if (fade_done > cl.time)
+	{
+		f = (fade_done - cl.time) / fade_time;
+		return f * old_start + (1.0 - f) * fog_end;
+	}
+	else
+		return fog_end;
 }
 
 /*
@@ -305,7 +418,7 @@ called before drawing stuff that should be fogged
 */
 void Fog_EnableGFog (void)
 {
-	if (Fog_GetDensity() > 0)
+	if (Fog_GetDensity() > 0 || !Fog_GetStart() == 0 || (!Fog_GetEnd()) <= 0)
 		glEnable(GL_FOG);
 }
 
@@ -318,7 +431,7 @@ called after drawing stuff that should be fogged
 */
 void Fog_DisableGFog (void)
 {
-	if (Fog_GetDensity() > 0)
+	if (!Fog_GetStart() == 0 || (!Fog_GetEnd()) <= 0)
 		glDisable(GL_FOG);
 }
 
@@ -346,6 +459,8 @@ called after drawing stuff that is additive blended -- restores fog color
 */
 void Fog_StopAdditive (void)
 {
+	vec3_t color = {0,0,0};
+	
 	if (Fog_GetDensity() > 0)
 		glFogfv(GL_FOG_COLOR, Fog_GetColor());
 }
@@ -358,8 +473,8 @@ void Fog_StopAdditive (void)
 
 cvar_t r_vfog = {"r_vfog", "1", CVAR_NONE};
 
-void Fog_DrawVFog (void){}
-void Fog_MarkModels (void){}
+//void Fog_DrawVFog (void){}
+//void Fog_MarkModels (void){}
 
 //==============================================================================
 //
@@ -377,7 +492,7 @@ called whenever a map is loaded
 void Fog_NewMap (void)
 {
 	Fog_ParseWorldspawn (); //for global fog
-	Fog_MarkModels (); //for volumetric fog
+	//Fog_MarkModels (); //for volumetric fog
 }
 
 /*
@@ -394,10 +509,20 @@ void Fog_Init (void)
 	//Cvar_RegisterVariable (&r_vfog);
 
 	//set up global fog
+	/*
 	fog_density_gl = DEFAULT_DENSITY;
 	fog_red = DEFAULT_GRAY;
 	fog_green = DEFAULT_GRAY;
 	fog_blue = DEFAULT_GRAY;
+	*/
+	
+	fog_start = 0;
+	fog_end = -1;
+	fog_red = 0.5;
+	fog_green = 0.5;
+	fog_blue = 0.5;
+	fade_time = 1;
+	fog_density_gl = DEFAULT_DENSITY;
 
 	Fog_SetupState ();
 }

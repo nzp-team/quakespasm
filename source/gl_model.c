@@ -700,7 +700,7 @@ void Mod_LoadTextures (lump_t *l)
 			}
 		}
 		strcpy(loading_name, mt->name);
-        //free (tx_pixels);
+        //free (pixels);
         loading_cur_step++;
 		SCR_UpdateScreen();
 		//johnfitz

@@ -717,7 +717,7 @@ void Sky_DrawSkyBox (void)
 		rs_skypolys++;
 		rs_skypasses++;
 
-		if (Fog_GetDensity() > 0 && skyfog > 0)
+		/*if (Fog_GetDensity() > 0 && skyfog > 0)
 		{
 			float *c;
 
@@ -738,7 +738,7 @@ void Sky_DrawSkyBox (void)
 			glDisable (GL_BLEND);
 
 			rs_skypasses++;
-		}
+		}*/
 	}
 }
 
@@ -835,7 +835,7 @@ void Sky_DrawFaceQuad (glpoly_t *p)
 	{
 		GL_Bind (solidskytexture);
 
-		if (r_skyalpha.value < 1.0)
+		//if (r_skyalpha.value < 1.0)
 			glColor3f (1, 1, 1);
 
 		glBegin (GL_QUADS);
@@ -847,28 +847,28 @@ void Sky_DrawFaceQuad (glpoly_t *p)
 		}
 		glEnd ();
 
-		GL_Bind (alphaskytexture);
-		glEnable (GL_BLEND);
+		//GL_Bind (alphaskytexture);
+		//glEnable (GL_BLEND);
 
-		if (r_skyalpha.value < 1.0)
-			glColor4f (1, 1, 1, r_skyalpha.value);
+		//if (r_skyalpha.value < 1.0)
+			//glColor4f (1, 1, 1, r_skyalpha.value);
 
-		glBegin (GL_QUADS);
-		for (i=0, v=p->verts[0] ; i<4 ; i++, v+=VERTEXSIZE)
-		{
-			Sky_GetTexCoord (v, 16, &s, &t);
-			glTexCoord2f (s, t);
-			glVertex3fv (v);
-		}
-		glEnd ();
+		//glBegin (GL_QUADS);
+		//for (i=0, v=p->verts[0] ; i<4 ; i++, v+=VERTEXSIZE)
+		//{
+			//Sky_GetTexCoord (v, 16, &s, &t);
+			//glTexCoord2f (s, t);
+			//glVertex3fv (v);
+		//}
+		//glEnd ();
 
-		glDisable (GL_BLEND);
+		//glDisable (GL_BLEND);
 
 		rs_skypolys++;
 		rs_skypasses += 2;
 	}
 
-	if (Fog_GetDensity() > 0 && skyfog > 0)
+	/*if (Fog_GetDensity() > 0 && skyfog > 0)
 	{
 		float *c;
 
@@ -887,7 +887,7 @@ void Sky_DrawFaceQuad (glpoly_t *p)
 		glDisable (GL_BLEND);
 
 		rs_skypasses++;
-	}
+	}*/
 }
 
 /*
@@ -959,15 +959,15 @@ void Sky_DrawSkyLayers (void)
 {
 	int i;
 
-	if (r_skyalpha.value < 1.0)
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	//if (r_skyalpha.value < 1.0)
+		//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	for (i=0 ; i<6 ; i++)
 		if (skymins[0][i] < skymaxs[0][i] && skymins[1][i] < skymaxs[1][i])
 			Sky_DrawFace (i);
 
-	if (r_skyalpha.value < 1.0)
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	//if (r_skyalpha.value < 1.0)
+		//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 }
 
 /*
@@ -999,10 +999,12 @@ void Sky_DrawSky (void)
 	//
 	Fog_DisableGFog ();
 	glDisable (GL_TEXTURE_2D);
-	if (Fog_GetDensity() > 0)
+	/*if (Fog_GetDensity() > 0)
 		glColor3fv (Fog_GetColor());
-	else
-		glColor3fv (skyflatcolor);
+	else*/
+		//glColor3fv (skyflatcolor);
+		
+	//glColor3fv (Fog_GetColor());
 	Sky_ProcessTextureChains ();
 	Sky_ProcessEntities ();
 	glColor3f (1, 1, 1);
@@ -1011,7 +1013,7 @@ void Sky_DrawSky (void)
 	//
 	// render slow sky: cloud layers or skybox
 	//
-	if (!r_fastsky.value && !(Fog_GetDensity() > 0 && skyfog >= 1))
+	/*if (!r_fastsky.value && !(Fog_GetDensity() > 0))
 	{
 		glDepthFunc(GL_GEQUAL);
 		glDepthMask(0);
@@ -1023,7 +1025,11 @@ void Sky_DrawSky (void)
 
 		glDepthMask(1);
 		glDepthFunc(GL_LEQUAL);
-	}
-
+	}*/
+	glDepthFunc(GL_GEQUAL);
+	glDepthMask(0);
+	Sky_DrawSkyBox ();
+	glDepthMask(1);
+	glDepthFunc(GL_LEQUAL);
 	Fog_EnableGFog ();
 }
