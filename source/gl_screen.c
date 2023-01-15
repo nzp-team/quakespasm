@@ -1446,7 +1446,7 @@ Draw_Crosshair
 extern qboolean paused_hack;
 void SCR_DrawCrosshair (void)
 {
-	if (cl.stats[STAT_HEALTH] < 20 || paused_hack == true) {
+	if (cl.stats[STAT_HEALTH] < 20 || paused_hack == true || m_state == m_exit) {
 		return;
 	}
 #ifdef VITA
