@@ -1676,13 +1676,13 @@ void SV_Physics (void)
 //
 	ent = sv.edicts;
 
-/*	if (sv_freezenonclients.value)
+	if (sv_freezenonclients.value)
 	  entity_cap = svs.maxclients + 1; // Only run physics on clients and the world
 	else
 	  entity_cap = sv.num_edicts; 
-*/
-	for (i=0 ; i<sv.num_edicts ; i++, ent = NEXT_EDICT(ent))
-	//for (i=0 ; i<entity_cap ; i++, ent = NEXT_EDICT(ent))
+
+	//for (i=0 ; i<sv.num_edicts ; i++, ent = NEXT_EDICT(ent))
+	for (i=0 ; i<entity_cap ; i++, ent = NEXT_EDICT(ent))
 	{
 		if (ent->free)
 			continue;

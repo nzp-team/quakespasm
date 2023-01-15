@@ -1197,21 +1197,21 @@ void R_DrawTextureChains (qmodel_t *model, entity_t *ent, texchain_t chain)
 			//to make fog work with multipass lightmapping, need to do one pass
 			//with no fog, one modulate pass with black fog, and one additive
 			//pass with black geometry and normal fog
-			//Fog_DisableGFog ();
+			Fog_DisableGFog ();
 			R_DrawTextureChains_TextureOnly (model, ent, chain);
-			//Fog_EnableGFog ();
+			Fog_EnableGFog ();
 			glDepthMask (GL_FALSE);
 			glEnable (GL_BLEND);
 			glBlendFunc (GL_DST_COLOR, GL_SRC_COLOR); //2x modulate
-			//Fog_StartAdditive ();
+			Fog_StartAdditive ();
 			R_DrawLightmapChains ();
-			//Fog_StopAdditive ();
+			Fog_StopAdditive ();
 			//if (Fog_GetDensity() > 0)
 			//{
 				//glBlendFunc(GL_ONE, GL_ONE); //add
 				//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 				//glColor3f(0,0,0);
-				R_DrawTextureChains_TextureOnly (model, ent, chain);
+				//R_DrawTextureChains_TextureOnly (model, ent, chain);
 				//glColor3f(1,1,1);
 				//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 			//}
@@ -1239,21 +1239,21 @@ void R_DrawTextureChains (qmodel_t *model, entity_t *ent, texchain_t chain)
 			//to make fog work with multipass lightmapping, need to do one pass
 			//with no fog, one modulate pass with black fog, and one additive
 			//pass with black geometry and normal fog
-			//Fog_DisableGFog ();
+			Fog_DisableGFog ();
 			R_DrawTextureChains_TextureOnly (model, ent, chain);
-			//Fog_EnableGFog ();
+			Fog_EnableGFog ();
 			glDepthMask (GL_FALSE);
 			glEnable (GL_BLEND);
 			glBlendFunc(GL_ZERO, GL_SRC_COLOR); //modulate
-			//Fog_StartAdditive ();
+			Fog_StartAdditive ();
 			R_DrawLightmapChains ();
-			//Fog_StopAdditive ();
+			Fog_StopAdditive ();
 			//if (Fog_GetDensity() > 0)
 			//{
 				//glBlendFunc(GL_ONE, GL_ONE); //add
 				//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 				//glColor3f(0,0,0);
-				R_DrawTextureChains_TextureOnly (model, ent, chain);
+				//R_DrawTextureChains_TextureOnly (model, ent, chain);
 				//glColor3f(1,1,1);
 				//glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 			//}
@@ -1273,9 +1273,9 @@ fullbrights:
 		glBlendFunc (GL_ONE, GL_ONE);
 		glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		glColor3f (entalpha, entalpha, entalpha);
-		//Fog_StartAdditive ();
+		Fog_StartAdditive ();
 		R_DrawTextureChains_Glow (model, ent, chain);
-		//Fog_StopAdditive ();
+		Fog_StopAdditive ();
 		glColor3f (1, 1, 1);
 		glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

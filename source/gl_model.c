@@ -337,6 +337,8 @@ qmodel_t *Mod_LoadModel (qmodel_t *mod, qboolean crash)
 		buf = (unsigned*)COM_LoadStackFile ("models/missing_model.mdl", stackbuf, sizeof(stackbuf), NULL);
 		if (buf){
 			Con_Printf ("Missing model %s substituted\n", mod->name);
+		}else if(!buf){
+			Con_Printf ("Missing model could not be substituted", mod->name);
 		}
 		return mod;
 	}
@@ -702,7 +704,7 @@ void Mod_LoadTextures (lump_t *l)
 			}
 		}
 		strcpy(loading_name, mt->name);
-        //free (pixels);
+        //free (tx_pixels);
         loading_cur_step++;
 		SCR_UpdateScreen();
 		//johnfitz

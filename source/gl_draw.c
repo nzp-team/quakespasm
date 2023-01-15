@@ -865,7 +865,7 @@ void Draw_ConsoleBackground (void)
 
 	//GL_SetCanvas (CANVAS_CONSOLE); //in case this is called from weird places
 
-	Draw_FillByColor  (0, 0, vid.conwidth, vid.conheight, 0, 0, 0, 1);
+	Draw_FillByColor  (0, 0, vid.conwidth, vid.conheight, 0, 0, 0, 0);
 }
 
 /*
@@ -1205,10 +1205,10 @@ gltexture_t *loadtextureimage (char* filename)
 	int w, h;
 
 	data = Image_LoadImage (filename, &w, &h);
-	if(data == NULL)
+	if(!data)
 	{
 		Sys_Error("loadtextureimage: Cannot load the image %s\n", filename);
-		return 0;
+		//return 0;
 	}
 	
 	gl.gltexture = TexMgr_LoadImage (NULL, filename, w, h, SRC_RGBA, data, filename, sizeof(int)*2, TEXPREF_ALPHA | TEXPREF_NEAREST | TEXPREF_NOPICMIP);
