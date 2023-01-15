@@ -863,9 +863,9 @@ Draw_ConsoleBackground -- johnfitz -- rewritten
 void Draw_ConsoleBackground (void)
 {
 
-	//GL_SetCanvas (CANVAS_CONSOLE); //in case this is called from weird places
+	GL_SetCanvas (CANVAS_CONSOLE); //in case this is called from weird places
 
-	Draw_FillByColor  (0, 0, vid.conwidth, vid.conheight, 0, 0, 0, 0);
+	Draw_FillByColor  (0, 0, vid.conwidth, vid.conheight, 1, 1, 1, 200);
 }
 
 /*
