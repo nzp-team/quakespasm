@@ -1322,7 +1322,7 @@ void HUD_Weapon (void)
 
 
 void HUD_Draw (void) {
-	if (key_dest == key_menu_pause || paused_hack == true) {
+	if (key_dest == key_menu_pause || paused_hack == true || m_state == m_exit) {
 		return;
 	}
 
