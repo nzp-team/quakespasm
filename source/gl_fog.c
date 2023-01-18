@@ -296,8 +296,8 @@ float *Fog_GetColor (void)
 	}
 
 	//find closest 24-bit RGB value, so solid-colored sky can match the fog perfectly
-	//for (i=0;i<3;i++)
-		//c[i] = (float)(Q_rint(c[i] * 255)) / 255.0f;
+	for (i=0;i<3;i++)
+		c[i] = (float)(Q_rint(c[i] * 255)) / 255.0f;
 //#endif
 	return c;
 }
@@ -365,6 +365,8 @@ void Fog_SetupFrame (void)
 
 	glFogfv(GL_FOG_COLOR, Fog_GetColor());
 	glFogf(GL_FOG_DENSITY, fog_density_gl);
+	glFogf(GL_FOG_START, fog_start);
+	glFogf(GL_FOG_END, fog_end);
 	//glFogf(GL_FOG_COLOR, *c);
 
 	//if(s == 0 || e < 0)
@@ -459,8 +461,6 @@ called after drawing stuff that is additive blended -- restores fog color
 */
 void Fog_StopAdditive (void)
 {
-	vec3_t color = {0,0,0};
-	
 	if (Fog_GetDensity() > 0)
 		glFogfv(GL_FOG_COLOR, Fog_GetColor());
 }
