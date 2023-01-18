@@ -412,20 +412,34 @@ void HUD_Points (void)
 		Draw_StretchPic(8, 629, sb_moneyback, 86, 21);
 #endif // VITA
 		xplus = HUD_itoa (f, str);
+		
+#ifdef VITA
+		Draw_ColoredStringScale (90 - (xplus*8), 416, va("%i", current_points), 255, 255, 255, 1, 1.5f); //1.5 Scale/White
+#else
 		Draw_String (vid.width/2 - (xplus*8) - 16, y + 3, va("%i", current_points));
+#endif // VITA
 
 		if (old_points != f)
 		{
 			if (f > old_points)
-				HUD_Parse_Point_Change(f - old_points, 0, vid.width/2 - (xplus*8) - 16, y + 3);
+			{
+			#ifdef VITA
+				HUD_Parse_Point_Change(f - old_points, 0, 90 - (xplus*8), 416);
+			#else 
+				HUD_Parse_Point_Change(f - old_points, 0, vid.width/2 - (xplus*8) - 16, y + 3);	
+			#endif // VITA
+			}
 			else
+			{
+			#ifdef VITA
+				HUD_Parse_Point_Change(old_points - f, 1, 90 - (xplus*8), 416);
+			#else
 				HUD_Parse_Point_Change(old_points - f, 1, vid.width/2 - (xplus*8) - 16, y + 3);
-
+			#endif // VITA
+			}
 			old_points = f;
 		}
-
-
-
+		
 		y += 10;
 	}
 }
