@@ -343,7 +343,11 @@ void HUD_Parse_Point_Change (int points, int negative, int x_start, int y_start)
 	point_change[i].negative = negative;
 
 	f = HUD_itoa (points, str);
+#ifdef VITA
+	point_change[i].x = x_start - 10.0 - 4.0*f;
+#else
 	point_change[i].x = x_start - 10.0 - 8.0*f;
+#endif
 	point_change[i].y = y_start;
 	point_change[i].move_x = 1.0;
 	point_change[i].move_y = ((rand ()&0x7fff) / ((float)0x7fff)) - 0.5;
@@ -414,7 +418,7 @@ void HUD_Points (void)
 		xplus = HUD_itoa (f, str);
 		
 #ifdef VITA
-		Draw_ColoredStringScale (90 - (xplus*8), 416, va("%i", current_points), 255, 255, 255, 1, 1.5f); //1.5 Scale/White
+		Draw_ColoredStringScale (106 - (xplus*16), 415, va("%i", current_points), 1, 1, 1, 1, 2.0f); //2x Scale/White
 #else
 		Draw_String (vid.width/2 - (xplus*8) - 16, y + 3, va("%i", current_points));
 #endif // VITA
@@ -424,7 +428,7 @@ void HUD_Points (void)
 			if (f > old_points)
 			{
 			#ifdef VITA
-				HUD_Parse_Point_Change(f - old_points, 0, 90 - (xplus*8), 416);
+				HUD_Parse_Point_Change(f - old_points, 0, 80 - (xplus*12), 415);
 			#else 
 				HUD_Parse_Point_Change(f - old_points, 0, vid.width/2 - (xplus*8) - 16, y + 3);	
 			#endif // VITA
@@ -432,7 +436,7 @@ void HUD_Points (void)
 			else
 			{
 			#ifdef VITA
-				HUD_Parse_Point_Change(old_points - f, 1, 90 - (xplus*8), 416);
+				HUD_Parse_Point_Change(old_points - f, 1, 80 - (xplus*12), 415);
 			#else
 				HUD_Parse_Point_Change(old_points - f, 1, vid.width/2 - (xplus*8) - 16, y + 3);
 			#endif // VITA
@@ -460,9 +464,21 @@ void HUD_Point_Change (void)
 		if (point_change[i].points)
 		{
 			if (point_change[i].negative)
+			{
+			#ifdef VITA
+				Draw_ColoredStringScale (point_change[i].x, point_change[i].y, va ("-%i", point_change[i].points), 1, 0, 0, 1, 1.5f);
+			#else
 				Draw_ColoredString (point_change[i].x, point_change[i].y, va ("-%i", point_change[i].points), 1, 0, 0, 1);
+			#endif
+			}
 			else
+			{
+			#ifdef VITA
+				Draw_ColoredStringScale (point_change[i].x, point_change[i].y, va ("+%i", point_change[i].points), 1, 1, 0, 1, 1.5f);
+			#else
 				Draw_ColoredString (point_change[i].x, point_change[i].y, va ("+%i", point_change[i].points), 1, 1, 0, 1);
+			#endif
+			}
 			point_change[i].y = point_change[i].y + point_change[i].move_y;
 			point_change[i].x = point_change[i].x - point_change[i].move_x;
 			if (point_change[i].alive_time && point_change[i].alive_time < Sys_DoubleTime())
@@ -535,10 +551,21 @@ void HUD_Rounds (void)
 	int num[3];
 	x_offset = 0;
 	savex = 0;
+	
+	int x_offset2 = 2; //Extra offset for all round images to keep things uniform (may not be neccesary?) -- SPECIFIC TO WHOLE ROUNDS
+	int y_offset = 50; //y_offset -- SPECIFIC TO WHOLE ROUNDS
+	int x_mark_offset = 10; //Needed x offset for stretched marks 
+	int y_mark_offset = 50; //y offset specific to marks
+	int stretch_x = 22; //Stretch round mark image x
+	int stretch_y = 96; //Stretch round mark image y
 
 	if (cl.stats[STAT_ROUNDCHANGE] == 1)//this is the rounds icon at the middle of the screen
 	{
+	#ifdef VITA
+		Draw_ColorStretchPic ((vid.width/2 - sb_round[0]->width) /2 - x_offset2, vid.height*3/4 - sb_round[0]->height/2, stretch_x, stretch_y, sb_round[0], 0.4196, 0.004, 0, alphabling/255);
+	#else
 		Draw_ColorPic ((vid.width/2 - sb_round[0]->width) /2, vid.height*3/4 - sb_round[0]->height/2, sb_round[0], 0.4196, 0.004, 0, alphabling/255);
+	#endif
 
 		alphabling = alphabling + 15;
 
@@ -549,13 +576,25 @@ void HUD_Rounds (void)
 	}
 	else if (cl.stats[STAT_ROUNDCHANGE] == 2)//this is the rounds icon moving from middle
 	{
-		Draw_ColorPic (round_center_x, round_center_y, sb_round[0], 0.4196, 0.004, 0, 1);
+	#ifdef VITA
+		Draw_ColorStretchPic (round_center_x, round_center_y, stretch_x, stretch_y, sb_round[0], 0.4196, 0.004, 0, 1);
+		
 		round_center_x = round_center_x - ((229/108)*2 - 0.2)*(vid.width/2)/480;
 		round_center_y = round_center_y + ((vid.height*1.015)/272);
 		if (round_center_x <= 5)
 			round_center_x = 5;
 		if (round_center_y >= 250*vid.height/272)
 			round_center_y = 250*vid.height/272;
+	#else
+		Draw_ColorPic (round_center_x, round_center_y, sb_round[0], 0.4196, 0.004, 0, 1);
+	
+		round_center_x = round_center_x - ((229/108)*2 - 0.2)*(vid.width/2)/480;
+		round_center_y = round_center_y + ((vid.height*1.015)/272);
+		if (round_center_x <= 5)
+			round_center_x = 5;
+		if (round_center_y >= 250*vid.height/272)
+			round_center_y = 250*vid.height/272;
+	#endif
 	}
 	else if (cl.stats[STAT_ROUNDCHANGE] == 3)//shift to white
 	{
@@ -586,24 +625,37 @@ void HUD_Rounds (void)
 			{
 				if (i == 4)
 				{
+				#ifdef VITA
+					Draw_ColorStretchPic (5*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[4]->height - y_mark_offset, 120, 96, sb_round[4], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				#else
 					Draw_ColorPic (5*(vid.width/2)/272, vid.height - sb_round[4]->height - 4, sb_round[4], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				#endif
 					savex = x_offset + 10;
 					x_offset = x_offset + 10;
 					continue;
 				}
 				if (i == 9)
 				{
+				#ifdef VITA
+					Draw_ColorStretchPic ((5 + savex/2)*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[4]->height - y_mark_offset, 120, 96, sb_round[4], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				#else
 					Draw_ColorPic ((5 + savex/2)*(vid.width/2)/272, vid.height - sb_round[4]->height - 4, sb_round[4], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				#endif
 					continue;
 				}
 				if (i > 4)
 					icon_num = i - 5;
 				else
 					icon_num = i;
-
+			#ifdef VITA
+				Draw_ColorStretchPic ((5 + x_offset/2)*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[icon_num]->height - y_mark_offset, stretch_x, stretch_y, sb_round[icon_num], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				x_offset = x_offset + sb_round[icon_num]->width + 23;
+			#else
 				Draw_ColorPic ((5 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round[icon_num]->height - 4, sb_round[icon_num], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
-
 				x_offset = x_offset + sb_round[icon_num]->width + 3;
+			#endif
+
+				
 			}
 		}
 		else
@@ -611,23 +663,38 @@ void HUD_Rounds (void)
 			if (cl.stats[STAT_ROUNDS] >= 100)
 			{
 				num[2] = (int)(cl.stats[STAT_ROUNDS]/100);
+			#ifdef VITA
+				Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[2]]->height - y_offset, 64, 96, sb_round_num[num[2]], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				x_offset = x_offset + sb_round_num[num[2]]->width + 25;
+			#else
 				Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[2]]->height - 4, sb_round_num[num[2]], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
 				x_offset = x_offset + sb_round_num[num[2]]->width - 8;
+			#endif	
 			}
 			else
 				num[2] = 0;
 			if (cl.stats[STAT_ROUNDS] >= 10)
 			{
 				num[1] = (int)((cl.stats[STAT_ROUNDS] - num[2]*100)/10);
+			#ifdef VITA
+				Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[1]]->height - y_offset, 64, 96, sb_round_num[num[1]], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				x_offset = x_offset + sb_round_num[num[1]]->width + 25;
+			#else
 				Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[1]]->height - 4, sb_round_num[num[1]], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
 				x_offset = x_offset + sb_round_num[num[1]]->width - 8;
+			#endif
 			}
 			else
 				num[1] = 0;
 
 			num[0] = cl.stats[STAT_ROUNDS] - num[2]*100 - num[1]*10;
+		#ifdef VITA
+			Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[0]]->height - y_offset, 64, 96, sb_round_num[num[0]], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+			x_offset = x_offset + sb_round_num[num[0]]->width + 25;
+		#else
 			Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[0]]->height - 4, sb_round_num[num[0]], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
 			x_offset = x_offset + sb_round_num[num[0]]->width - 8;
+		#endif
 		}
 	}
 	else if (cl.stats[STAT_ROUNDCHANGE] == 4)//blink white
@@ -640,24 +707,35 @@ void HUD_Rounds (void)
 			{
 				if (i == 4)
 				{
+				#ifdef VITA
+					Draw_ColorStretchPic (5*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[4]->height - y_mark_offset, 120, 96, sb_round[4], 1, 1, 1, blinking/255);
+				#else
 					Draw_ColorPic (5*(vid.width/2)/272, vid.height - sb_round[4]->height - 4, sb_round[4], 1, 1, 1, blinking/255);
+				#endif
 					savex = x_offset + 10;
 					x_offset = x_offset + 10;
 					continue;
 				}
 				if (i == 9)
 				{
+				#ifdef VITA
+					Draw_ColorStretchPic ((5 + savex/2)*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[4]->height - y_mark_offset, 120, 96, sb_round[4], 1, 1, 1, blinking/255);
+				#else
 					Draw_ColorPic ((5 + savex/2)*(vid.width/2)/272, vid.height - sb_round[4]->height - 4, sb_round[4], 1, 1, 1, blinking/255);
+				#endif
 					continue;
 				}
 				if (i > 4)
 					icon_num = i - 5;
 				else
 					icon_num = i;
-
+			#ifdef VITA
+				Draw_ColorStretchPic ((5 + x_offset/2)*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[icon_num]->height - y_mark_offset, stretch_x, stretch_y, sb_round[icon_num], 1, 1, 1, blinking/255);
+				x_offset = x_offset + sb_round[icon_num]->width + 23;
+			#else
 				Draw_ColorPic ((5 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round[icon_num]->height - 4, sb_round[icon_num], 1, 1, 1, blinking/255);
-
 				x_offset = x_offset + sb_round[icon_num]->width + 3;
+			#endif
 			}
 		}
 		else
@@ -665,23 +743,38 @@ void HUD_Rounds (void)
 			if (cl.stats[STAT_ROUNDS] >= 100)
 			{
 				num[2] = (int)(cl.stats[STAT_ROUNDS]/100);
+			#ifdef VITA
+				Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[2]]->height - y_offset, 64, 96, sb_round_num[num[2]], 1, 1, 1, blinking/255);
+				x_offset = x_offset + sb_round_num[num[2]]->width + 25;
+			#else
 				Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[2]]->height - 4, sb_round_num[num[2]], 1, 1, 1, blinking/255);
 				x_offset = x_offset + sb_round_num[num[2]]->width - 8;
+			#endif
 			}
 			else
 				num[2] = 0;
 			if (cl.stats[STAT_ROUNDS] >= 10)
 			{
 				num[1] = (int)((cl.stats[STAT_ROUNDS] - num[2]*100)/10);
+			#ifdef VITA
+				Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[1]]->height - y_offset, 64, 96, sb_round_num[num[1]], 1, 1, 1, blinking/255);
+				x_offset = x_offset + sb_round_num[num[1]]->width + 25;
+			#else
 				Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[1]]->height - 4, sb_round_num[num[1]], 1, 1, 1, blinking/255);
 				x_offset = x_offset + sb_round_num[num[1]]->width - 8;
+			#endif
 			}
 			else
 				num[1] = 0;
 
 			num[0] = cl.stats[STAT_ROUNDS] - num[2]*100 - num[1]*10;
+		#ifdef VITA
+			Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[0]]->height - y_offset, 64, 96, sb_round_num[num[0]], 1, 1, 1, blinking/255);
+			x_offset = x_offset + sb_round_num[num[0]]->width + 25;
+		#else
 			Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[0]]->height - 4, sb_round_num[num[0]], 1, 1, 1, blinking/255);
 			x_offset = x_offset + sb_round_num[num[0]]->width - 8;
+		#endif
 		}
 	}
 	else if (cl.stats[STAT_ROUNDCHANGE] == 5)//blink white
@@ -696,24 +789,35 @@ void HUD_Rounds (void)
 			{
 				if (i == 4)
 				{
+				#ifdef VITA
+					Draw_ColorStretchPic (5*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[4]->height - y_mark_offset, 120, 96, sb_round[4], 1, 1, 1, blinking/255);
+				#else
 					Draw_ColorPic (5*(vid.width/2)/272, vid.height - sb_round[4]->height - 4, sb_round[4], 1, 1, 1, blinking/255);
+				#endif
 					savex = x_offset + 10;
 					x_offset = x_offset + 10;
 					continue;
 				}
 				if (i == 9)
 				{
+				#ifdef VITA
+					Draw_ColorStretchPic ((5 + savex/2)*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[4]->height - y_mark_offset, 120, 96, sb_round[4], 1, 1, 1, blinking/255);
+				#else 
 					Draw_ColorPic ((5 + savex/2)*(vid.width/2)/272, vid.height - sb_round[4]->height - 4, sb_round[4], 1, 1, 1, blinking/255);
+				#endif
 					continue;
 				}
 				if (i > 4)
 					icon_num = i - 5;
 				else
 					icon_num = i;
-
+			#ifdef VITA
+				Draw_ColorStretchPic ((5 + x_offset/2)*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[icon_num]->height - y_mark_offset, stretch_x, stretch_y, sb_round[icon_num], 1, 1, 1, blinking/255);
+				x_offset = x_offset + sb_round[icon_num]->width + 23;
+			#else
 				Draw_ColorPic ((5 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round[icon_num]->height - 4, sb_round[icon_num], 1, 1, 1, blinking/255);
-
 				x_offset = x_offset + sb_round[icon_num]->width + 3;
+			#endif
 			}
 		}
 		else
@@ -721,23 +825,38 @@ void HUD_Rounds (void)
 			if (cl.stats[STAT_ROUNDS] >= 100)
 			{
 				num[2] = (int)(cl.stats[STAT_ROUNDS]/100);
+			#ifdef VITA
+				Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[2]]->height - y_offset, 64, 96, sb_round_num[num[2]], 1, 1, 1, blinking/255);
+				x_offset = x_offset + sb_round_num[num[2]]->width + 25;
+			#else
 				Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[2]]->height - 4, sb_round_num[num[2]], 1, 1, 1, blinking/255);
 				x_offset = x_offset + sb_round_num[num[2]]->width - 8;
+			#endif
 			}
 			else
 				num[2] = 0;
 			if (cl.stats[STAT_ROUNDS] >= 10)
 			{
 				num[1] = (int)((cl.stats[STAT_ROUNDS] - num[2]*100)/10);
+			#ifdef VITA
+				Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[1]]->height - y_offset, 64, 96, sb_round_num[num[1]], 1, 1, 1, blinking/255);
+				x_offset = x_offset + sb_round_num[num[1]]->width + 25;
+			#else
 				Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[1]]->height - 4, sb_round_num[num[1]], 1, 1, 1, blinking/255);
 				x_offset = x_offset + sb_round_num[num[1]]->width - 8;
+			#endif
 			}
 			else
 				num[1] = 0;
 
 			num[0] = cl.stats[STAT_ROUNDS] - num[2]*100 - num[1]*10;
+		#ifdef VITA
+			Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[0]]->height - y_offset, 64, 96, sb_round_num[num[0]], 1, 1, 1, blinking/255);
+			x_offset = x_offset + sb_round_num[num[0]]->width + 25;
+		#else
 			Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[0]]->height - 4, sb_round_num[num[0]], 1, 1, 1, blinking/255);
 			x_offset = x_offset + sb_round_num[num[0]]->width - 8;
+		#endif
 		}
 	}
 	else if (cl.stats[STAT_ROUNDCHANGE] == 6)//blink white while fading back
@@ -751,24 +870,35 @@ void HUD_Rounds (void)
 			{
 				if (i == 4)
 				{
+				#ifdef VITA
+					Draw_ColorStretchPic (5*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[4]->height - y_mark_offset, 120, 96, sb_round[4], 1, 1, 1, blinking/255);
+				#else
 					Draw_ColorPic (5*(vid.width/2)/272, vid.height - sb_round[4]->height - 4, sb_round[4], 1, 1, 1, blinking/255);
+				#endif
 					savex = x_offset + 10;
 					x_offset = x_offset + 10;
 					continue;
 				}
 				if (i == 9)
 				{
+				#ifdef VITA
+					Draw_ColorStretchPic ((5 + savex/2)*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[4]->height - y_mark_offset, 120, 96, sb_round[4], 1, 1, 1, blinking/255);
+				#else
 					Draw_ColorPic ((5 + savex/2)*(vid.width/2)/272, vid.height - sb_round[4]->height - 4, sb_round[4], 1, 1, 1, blinking/255);
+				#endif
 					continue;
 				}
 				if (i > 4)
 					icon_num = i - 5;
 				else
 					icon_num = i;
-
+			#ifdef VITA
+				Draw_ColorStretchPic ((5 + x_offset/2)*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[icon_num]->height - y_mark_offset, stretch_x, stretch_y, sb_round[icon_num], 1, 1, 1, blinking/255);
+				x_offset = x_offset + sb_round[icon_num]->width + 23;
+			#else
 				Draw_ColorPic ((5 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round[icon_num]->height - 4, sb_round[icon_num], 1, 1, 1, blinking/255);
-
 				x_offset = x_offset + sb_round[icon_num]->width + 3;
+			#endif
 			}
 		}
 		else
@@ -776,23 +906,38 @@ void HUD_Rounds (void)
 			if (cl.stats[STAT_ROUNDS] >= 100)
 			{
 				num[2] = (int)(cl.stats[STAT_ROUNDS]/100);
+			#ifdef VITA
+				Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[2]]->height - y_offset, 64, 96, sb_round_num[num[2]], 1, 1, 1, blinking/255);
+				x_offset = x_offset + sb_round_num[num[2]]->width + 25;
+			#else
 				Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[2]]->height - 4, sb_round_num[num[2]], 1, 1, 1, blinking/255);
 				x_offset = x_offset + sb_round_num[num[2]]->width - 8;
+			#endif
 			}
 			else
 				num[2] = 0;
 			if (cl.stats[STAT_ROUNDS] >= 10)
 			{
 				num[1] = (int)((cl.stats[STAT_ROUNDS] - num[2]*100)/10);
+			#ifdef VITA
+				Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[1]]->height - y_offset, 64, 96, sb_round_num[num[1]], 1, 1, 1, blinking/255);
+				x_offset = x_offset + sb_round_num[num[1]]->width + 25;
+			#else
 				Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[1]]->height - 4, sb_round_num[num[1]], 1, 1, 1, blinking/255);
 				x_offset = x_offset + sb_round_num[num[1]]->width - 8;
+			#endif
 			}
 			else
 				num[1] = 0;
 
 			num[0] = cl.stats[STAT_ROUNDS] - num[2]*100 - num[1]*10;
+		#ifdef VITA
+			Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[0]]->height - y_offset, 64, 96, sb_round_num[num[0]], 1, 1, 1, blinking/255);
+			x_offset = x_offset + sb_round_num[num[0]]->width + 25;
+		#else
 			Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[0]]->height - 4, sb_round_num[num[0]], 1, 1, 1, blinking/255);
 			x_offset = x_offset + sb_round_num[num[0]]->width - 8;
+		#endif
 		}
 	}
 	else if (cl.stats[STAT_ROUNDCHANGE] == 7)//blink white while fading back
@@ -823,24 +968,35 @@ void HUD_Rounds (void)
 			{
 				if (i == 4)
 				{
+				#ifdef VITA
+					Draw_ColorStretchPic (5*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[4]->height - y_mark_offset, 120, 96, sb_round[4], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				#else
 					Draw_ColorPic (5*(vid.width/2)/272, vid.height - sb_round[4]->height - 4, sb_round[4], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				#endif
 					savex = x_offset + 10;
 					x_offset = x_offset + 10;
 					continue;
 				}
 				if (i == 9)
 				{
+				#ifdef VITA
+					Draw_ColorStretchPic ((5 + savex/2)*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[4]->height - y_mark_offset, 120, 96, sb_round[4], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				#else
 					Draw_ColorPic ((5 + savex/2)*(vid.width/2)/272, vid.height - sb_round[4]->height - 4, sb_round[4], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				#endif
 					continue;
 				}
 				if (i > 4)
 					icon_num = i - 5;
 				else
 					icon_num = i;
-
+			#ifdef VITA
+				Draw_ColorStretchPic ((5 + x_offset/2)*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[icon_num]->height - y_mark_offset, stretch_x, stretch_y, sb_round[icon_num], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				x_offset = x_offset + sb_round[icon_num]->width + 23;
+			#else
 				Draw_ColorPic ((5 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round[icon_num]->height - 4, sb_round[icon_num], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
-
 				x_offset = x_offset + sb_round[icon_num]->width + 3;
+			#endif
 			}
 		}
 		else
@@ -848,23 +1004,38 @@ void HUD_Rounds (void)
 			if (cl.stats[STAT_ROUNDS] >= 100)
 			{
 				num[2] = (int)(cl.stats[STAT_ROUNDS]/100);
+			#ifdef VITA
+				Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[2]]->height - y_offset, 64, 96, sb_round_num[num[2]], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				x_offset = x_offset + sb_round_num[num[2]]->width + 25;
+			#else
 				Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[2]]->height - 4, sb_round_num[num[2]], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
 				x_offset = x_offset + sb_round_num[num[2]]->width - 8;
+			#endif
 			}
 			else
 				num[2] = 0;
 			if (cl.stats[STAT_ROUNDS] >= 10)
 			{
 				num[1] = (int)((cl.stats[STAT_ROUNDS] - num[2]*100)/10);
+			#ifdef VITA
+				Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[1]]->height - y_offset, 64, 96, sb_round_num[num[1]], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+				x_offset = x_offset + sb_round_num[num[1]]->width + 25;
+			#else
 				Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[1]]->height - 4, sb_round_num[num[1]], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
 				x_offset = x_offset + sb_round_num[num[1]]->width - 8;
+			#endif
 			}
 			else
 				num[1] = 0;
 
 			num[0] = cl.stats[STAT_ROUNDS] - num[2]*100 - num[1]*10;
+		#ifdef VITA
+			Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[0]]->height - y_offset, 64, 96, sb_round_num[num[0]], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
+			x_offset = x_offset + sb_round_num[num[0]]->width + 25;
+		#else
 			Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[0]]->height - 4, sb_round_num[num[0]], (color_shift[0]/255), (color_shift[1]/255), (color_shift[2]/255), 1);
 			x_offset = x_offset + sb_round_num[num[0]]->width - 8;
+		#endif
 		}
 	}
 	else
@@ -880,24 +1051,35 @@ void HUD_Rounds (void)
 			{
 				if (i == 4)
 				{
+				#ifdef VITA
+					Draw_ColorStretchPic (5*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[4]->height - y_mark_offset, 120, 96, sb_round[4], 0.4196, 0.004, 0, 1);
+				#else
 					Draw_ColorPic (5*(vid.width/2)/272, vid.height - sb_round[4]->height - 4, sb_round[4], 0.4196, 0.004, 0, 1);
+				#endif
 					savex = x_offset + 10;
 					x_offset = x_offset + 10;
 					continue;
 				}
 				if (i == 9)
 				{
+				#ifdef VITA
+					Draw_ColorStretchPic ((5 + savex/2)*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[4]->height - y_mark_offset, 120, 96, sb_round[4], 0.4196, 0.004, 0, 1);
+				#else
 					Draw_ColorPic ((5 + savex/2)*(vid.width/2)/272, vid.height - sb_round[4]->height - 4, sb_round[4], 0.4196, 0.004, 0, 1);
+				#endif
 					continue;
 				}
 				if (i > 4)
 					icon_num = i - 5;
 				else
 					icon_num = i;
-
+			#ifdef VITA
+				Draw_ColorStretchPic ((5 + x_offset/2)*(vid.width/2)/272 + x_mark_offset, vid.height - sb_round[icon_num]->height - y_mark_offset, stretch_x, stretch_y, sb_round[icon_num], 0.4196, 0.004, 0, 1);
+				x_offset = x_offset + sb_round[icon_num]->width + 23;
+			#else
 				Draw_ColorPic ((5 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round[icon_num]->height - 4, sb_round[icon_num], 0.4196, 0.004, 0, 1);
-
 				x_offset = x_offset + sb_round[icon_num]->width + 3;
+			#endif
 			}
 		}
 		else
@@ -905,16 +1087,26 @@ void HUD_Rounds (void)
 			if (cl.stats[STAT_ROUNDS] >= 100)
 			{
 				num[2] = (int)(cl.stats[STAT_ROUNDS]/100);
+			#ifdef VITA
+				Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[2]]->height - y_offset, 64, 96, sb_round_num[num[2]], 0.4196, 0.004, 0, 1);
+				x_offset = x_offset + sb_round_num[num[2]]->width + 25;
+			#else
 				Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[2]]->height - 4, sb_round_num[num[2]], 0.4196, 0.004, 0, 1);
 				x_offset = x_offset + sb_round_num[num[2]]->width - 8;
+			#endif
 			}
 			else
 				num[2] = 0;
 			if (cl.stats[STAT_ROUNDS] >= 10)
 			{
 				num[1] = (int)((cl.stats[STAT_ROUNDS] - num[2]*100)/10);
+			#ifdef VITA
+				Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[1]]->height - y_offset, 64, 96, sb_round_num[num[1]], 0.4196, 0.004, 0, 1);
+				x_offset = x_offset + sb_round_num[num[1]]->width + 25;
+			#else
 				Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[1]]->height - 4, sb_round_num[num[1]], 0.4196, 0.004, 0, 1);
 				x_offset = x_offset + sb_round_num[num[1]]->width - 8;
+			#endif
 			}
 			else
 				num[1] = 0;
@@ -923,9 +1115,13 @@ void HUD_Rounds (void)
 			
 			if(cl.stats[STAT_ROUNDS] == 0)
 				return;
-			
+		#ifdef VITA
+			Draw_ColorStretchPic ((2 + x_offset/2)*(vid.width/2)/272 - x_offset2, vid.height - sb_round_num[num[0]]->height - y_offset, 64, 96, sb_round_num[num[0]], 0.4196, 0.004, 0, 1);
+			x_offset = x_offset + sb_round_num[num[0]]->width + 25;
+		#else
 			Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[0]]->height - 4, sb_round_num[num[0]], 0.4196, 0.004, 0, 1);
 			x_offset = x_offset + sb_round_num[num[0]]->width - 8;
+		#endif
 		}
 	}
 }
@@ -1025,8 +1221,8 @@ void HUD_Powerups (void)
 	// both are avail draw fixed order
 	if (count == 2) {
 #ifdef VITA
-		Draw_StretchPic(422, 486, x2pic, 55, 55);
-		Draw_StretchPic(480, 486, instapic, 55, 55);
+		Draw_StretchPic(422, 480, x2pic, 64, 64);
+		Draw_StretchPic(480, 480, instapic, 64, 64);
 #else
 		Draw_StretchPic(275, 672, x2pic, 42, 42);
 		Draw_StretchPic(319, 672, instapic, 42, 42);
@@ -1034,13 +1230,13 @@ void HUD_Powerups (void)
 	} else {
 		if (cl.stats[STAT_X2])
 #ifdef VITA
-			Draw_StretchPic(451, 486, x2pic, 55, 55);
+			Draw_StretchPic(451, 480, x2pic, 64, 64);
 #else
 			Draw_StretchPic(299, 672, x2pic, 42, 42);
 #endif // VITA
 		if(cl.stats[STAT_INSTA])
 #ifdef VITA
-			Draw_StretchPic(451, 486, instapic, 55, 55);
+			Draw_StretchPic(451, 480, instapic, 64, 64);
 #else
 			Draw_StretchPic(299, 672, instapic, 42, 42);
 #endif // VITA
@@ -1118,31 +1314,53 @@ void HUD_Ammo (void)
 	char *magstring;
 	char *mag2string;
 
+#ifdef VITA
+	y_value = vid.height - 36;
+#else
 	y_value = vid.height - 16;
+#endif
 	if (GetLowAmmo(cl.stats[STAT_ACTIVEWEAPON], 1) >= cl.stats[STAT_CURRENTMAG])
 		magstring = va ("%i",cl.stats[STAT_CURRENTMAG]);
 	else
 		magstring = va ("%i",cl.stats[STAT_CURRENTMAG]);
 
 	xplus = HUD_itoa (cl.stats[STAT_CURRENTMAG], str);
+#ifdef VITA
+	Draw_ColoredStringScale (790 - (xplus*16), y_value, magstring, 1, 1, 1, 1, 2.0f);
+#else
 	Draw_ColoredString (vid.width/2 - 42 - (xplus*8), y_value, magstring, 1, 1, 1, 1);
+#endif
 
 	mag2string = va("%i", cl.stats[STAT_CURRENTMAG2]);
 	xplus2 = HUD_itoa (cl.stats[STAT_CURRENTMAG2], str2);
 
 	if (IsDualWeapon(cl.stats[STAT_ACTIVEWEAPON])) {
+	#ifdef VITA
+		Draw_ColoredStringScale (790 - (xplus2*16), y_value, mag2string, 1, 1, 1, 1, 2.0f);
+	#else
 		Draw_ColoredString (vid.width/2 - 56 - (xplus2*8), y_value, mag2string, 1, 1, 1, 1);
+	#endif
 	}
 
 	if (GetLowAmmo(cl.stats[STAT_ACTIVEWEAPON], 0) >= cl.stats[STAT_AMMO])
 	{
+	#ifdef VITA
+		Draw_ColoredStringScale (795, y_value, "/", 1, 0, 0, 1, 2.0f);
+		Draw_ColoredStringScale (810, y_value, va ("%i",cl.stats[STAT_AMMO]), 1, 0, 0, 1, 2.0f);
+	#else
 		Draw_ColoredString (vid.width/2 - 42, y_value, "/", 1, 0, 0, 1);
 		Draw_ColoredString (vid.width/2 - 34, y_value, va ("%i",cl.stats[STAT_AMMO]), 1, 0, 0, 1);
+	#endif
 	}
 	else
 	{
+	#ifdef VITA
+		Draw_ColoredStringScale (795, y_value, "/", 1, 1, 1, 1, 2.0f);
+		Draw_ColoredStringScale (810, y_value, va ("%i",cl.stats[STAT_AMMO]), 1, 1, 1, 1, 2.0f);
+	#else
 		Draw_Character (vid.width/2 - 42, y_value, '/');
 		Draw_String (vid.width/2 - 34, y_value, va ("%i",cl.stats[STAT_AMMO]));
+	#endif
 	}
 }
 
@@ -1159,11 +1377,23 @@ void HUD_AmmoString (void)
 	if (GetLowAmmo(cl.stats[STAT_ACTIVEWEAPON], 1) >= cl.stats[STAT_CURRENTMAG])
 	{
 		if (0 < cl.stats[STAT_AMMO] && cl.stats[STAT_CURRENTMAG] >= 0) {
+		#ifdef VITA
+			Draw_ColoredStringScale ((vid.width)/2 - 43, (vid.height)/2 + 34, "Reload", 1, 1, 1, 1, 2.0f);
+		#else
 			Draw_String ((vid.width)/4, (vid.height)*3/4 + 40, "Reload");
+		#endif
 		} else if (0 < cl.stats[STAT_CURRENTMAG]) {
+		#ifdef VITA
+			Draw_ColoredStringScale ((vid.width)/2 - 73, (vid.height)/2 + 34, "LOW AMMO", 1, 1, 0, 1, 2.5f);
+		#else
 			Draw_ColoredString ((vid.width/2 - len*8)/2, (vid.height)*3/4 + 40, "LOW AMMO", 1, 1, 0, 1);
+		#endif
 		} else {
+		#ifdef VITA
+			Draw_ColoredStringScale ((vid.width)/2 - 66, (vid.height)/2 + 34, "NO AMMO", 1, 0, 0, 1, 2.5f);
+		#else
 			Draw_ColoredString ((vid.width/2 - len*8)/2, (vid.height)*3/4 + 40, "NO AMMO", 1, 0, 0, 1);
+		#endif
 		}
 	}
 
@@ -1183,25 +1413,47 @@ void HUD_Grenades (void)
 {
 	if (cl.stats[STAT_GRENADES])
 	{	
+	#ifdef VITA
+		x_value = vid.width - bettypic->width - 70;
+		y_value = vid.height - 40 - fragpic->height;
+	#else
 		x_value = vid.width/2 - 50;
 		y_value = vid.height - 16 - fragpic->height - 4;
+	#endif
 	}
 	if (cl.stats[STAT_GRENADES] & UI_FRAG)
 	{
+	#ifdef VITA
+		Draw_StretchPic (x_value, y_value, fragpic, 64, 64);
+		if (cl.stats[STAT_PRIGRENADES] <= 0)
+			Draw_ColoredStringScale (x_value + 36, y_value + 44, va ("%i",cl.stats[STAT_PRIGRENADES]), 1, 0, 0, 1, 2.0f);
+		else
+			Draw_ColoredStringScale (x_value + 36, y_value + 44, va ("%i",cl.stats[STAT_PRIGRENADES]), 1, 1, 1, 1, 2.0f);
+	#else
 		Draw_Pic (x_value, y_value, fragpic);
 		if (cl.stats[STAT_PRIGRENADES] <= 0)
 			Draw_ColoredString (x_value + 24, y_value + 28, va ("%i",cl.stats[STAT_PRIGRENADES]), 1, 0, 0, 1);
 		else
 			Draw_String (x_value + 24, y_value + 28, va ("%i",cl.stats[STAT_PRIGRENADES]));
+	#endif
 	}
 	if (cl.stats[STAT_GRENADES] & UI_BETTY)
 	{
+	#ifdef VITA
+		Draw_StretchPic (x_value - fragpic->width - 5, y_value, bettypic, 64, 64);
+		if (cl.stats[STAT_PRIGRENADES] <= 0) {
+			Draw_ColoredStringScale (x_value + 36, y_value + 44, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 0, 0, 1, 2.0f);
+		} else {
+			Draw_ColoredStringScale (x_value - fragpic->width + 32, y_value + 44, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 1, 1, 1, 2.0f);
+		}
+	#else
 		Draw_Pic (x_value - fragpic->width - 5, y_value, bettypic);
 		if (cl.stats[STAT_PRIGRENADES] <= 0) {
 			Draw_ColoredString (x_value + 24, y_value + 28, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 0, 0, 1);
 		} else {
 			Draw_String (x_value - fragpic->width + 20, y_value + 28, va ("%i",cl.stats[STAT_SECGRENADES]));
 		}
+	#endif
 	}
 }
 
@@ -1323,13 +1575,20 @@ void HUD_Weapon (void)
 {
 	char str[32];
 	float l;
+#ifdef VITA
+	y_value = 480;
+#else
 	y_value = vid.height - 16 - fragpic->height - 4 - 16;
-
+#endif
 	strcpy(str, GetWeaponName(cl.stats[STAT_ACTIVEWEAPON]));
 	l = strlen(str);
-
+#ifdef VITA
+	x_value = vid.width - fragpic->width - 60 - l*16;
+	Draw_ColoredStringScale (x_value, y_value, str, 1, 1, 1, 1, 2.0f);
+#else
 	x_value = vid.width/2 - 8 - l*8;
 	Draw_String (x_value, y_value, str);
+#endif
 }
 
 //=============================================================================
