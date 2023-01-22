@@ -555,6 +555,60 @@ void Draw_Character (int x, int y, int num)
 
 /*
 ================
+Draw_CharacterRGBA
+
+This is the same as Draw_Character, but with RGBA color codes.
+- MotoLegacy and ported to Quakespasm by sB :)
+================
+*/
+void Draw_CharacterRGBA(int x, int y, int num, float r, float g, float b, float a)
+{
+	int				row, col;
+	float			frow, fcol, size;
+	
+	if (y <= -8)
+		return;			// totally off screen
+
+	num &= 255;
+
+	if (num == 32)
+		return; //don't waste verts on spaces
+	
+	glEnable (GL_BLEND);
+    glColor4f(r, g, b, a);
+	glDisable (GL_ALPHA_TEST);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	GL_Bind (char_texture);
+	glBegin (GL_QUADS);
+
+	row = num>>4;
+	col = num&15;
+
+	frow = row*0.0625;
+	fcol = col*0.0625;
+	size = 0.0625;
+
+	glTexCoord2f (fcol, frow);
+	glVertex2f (x, y);
+	glTexCoord2f (fcol + size, frow);
+	glVertex2f (x+8, y);
+	glTexCoord2f (fcol + size, frow + size);
+	glVertex2f (x+8, y+8);
+	glTexCoord2f (fcol, frow + size);
+	glVertex2f (x, y+8);
+	
+	glEnd ();
+	
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glEnable(GL_ALPHA_TEST);
+	glDisable (GL_BLEND);
+	glColor4f (1,1,1,1);
+}
+
+
+/*
+================
 Draw_String -- johnfitz -- modified to call Draw_CharacterQuad
 ================
 */

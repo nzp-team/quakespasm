@@ -161,6 +161,7 @@ typedef struct
 	float   	Flash_Size;
 	float   	currentmag2;
 	float   	maxspeed;
+	float 		facingenemy;
 	float   	renderGrayscale;
 	vec3_t		colormod;
 	vec3_t		glowmod;
