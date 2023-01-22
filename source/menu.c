@@ -524,7 +524,7 @@ void M_Main_Draw (void)
 	Draw_BgMenu();
 
 	// Fill black to make everything easier to see
-	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
+	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 150);
 
 	// Version String
 	Draw_ColoredString(vid.width - 40, y + 5, NZP_VERSION, 1, 1, 1, 1);
@@ -543,7 +543,7 @@ void M_Main_Draw (void)
 	Draw_ColoredStringScale(10, y + 70, "Co-Op (Coming Soon!)", 0.5, 0.5, 0.5, 1, 1.5f);
 
 	// Divider
-	Draw_FillByColor(10, y + 90, 240, 3, 1, 1, 1, 1);
+	Draw_FillByColor(10, y + 90, 240, 3, 220, 220, 220, 220);
 
 	// Settings
 	if (m_main_cursor == 1)
@@ -555,7 +555,7 @@ void M_Main_Draw (void)
 	Draw_ColoredStringScale(10, y + 115, "Achievements", 0.5, 0.5, 0.5, 1, 1.5f);
 
 	// Divider
-	Draw_FillByColor(10, y + 135, 240, 3, 1, 1, 1, 1);
+	Draw_FillByColor(10, y + 135, 240, 3, 220, 220, 220, 220);
 
 	// Credits
 	if (m_main_cursor == 2)
@@ -564,7 +564,7 @@ void M_Main_Draw (void)
 		Draw_ColoredStringScale(10, y + 145, "Credits", 1, 1, 1, 1, 1.5f);
 
 	// Divider
-	Draw_FillByColor(10, y + 165, 240, 3, 1, 1, 1, 1);
+	Draw_FillByColor(10, y + 165, 240, 3, 220, 220, 220, 220);
 
 	// Exit
 	if (m_main_cursor == 3)
@@ -851,7 +851,7 @@ void M_SinglePlayer_Draw (void)
 		Draw_ColoredStringScale(10, y + 115, "Christmas Special", 1, 1, 1, 1, 1.5f);
 
 	// Divider
-	Draw_FillByColor(10, y + 135, 240, 3, 1, 1, 1, 1);
+	Draw_FillByColor(10, y + 135, 240, 3, 220, 220, 220, 220);
 
 	// Custom Maps
 	if (m_singleplayer_cursor == 3)
@@ -1980,7 +1980,7 @@ void M_Options_Draw (void)
 		Draw_ColoredStringScale(10, y + 85, "Control Settings", 1, 1, 1, 1, 1.5f);
 
 	// Divider
-	Draw_FillByColor(10, y + 105, 240, 3, 1, 1, 1, 1);
+	Draw_FillByColor(10, y + 105, 240, 3, 220, 220, 220, 220);
 
 	// Console
 	if (options_cursor == 3)

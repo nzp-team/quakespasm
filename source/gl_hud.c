@@ -1440,11 +1440,11 @@ void HUD_Grenades (void)
 	if (cl.stats[STAT_GRENADES] & UI_BETTY)
 	{
 	#ifdef VITA
-		Draw_StretchPic (x_value - fragpic->width - 5, y_value, bettypic, 64, 64);
+		Draw_StretchPic (x_value + fragpic->width + 15, y_value, bettypic, 64, 64);
 		if (cl.stats[STAT_PRIGRENADES] <= 0) {
-			Draw_ColoredStringScale (x_value + 36, y_value + 44, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 0, 0, 1, 2.0f);
+			Draw_ColoredStringScale (x_value + 46, y_value + 44, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 0, 0, 1, 2.0f);
 		} else {
-			Draw_ColoredStringScale (x_value - fragpic->width + 32, y_value + 44, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 1, 1, 1, 2.0f);
+			Draw_ColoredStringScale (x_value + fragpic->width + 46, y_value + 44, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 1, 1, 1, 2.0f);
 		}
 	#else
 		Draw_Pic (x_value - fragpic->width - 5, y_value, bettypic);
@@ -1583,7 +1583,7 @@ void HUD_Weapon (void)
 	strcpy(str, GetWeaponName(cl.stats[STAT_ACTIVEWEAPON]));
 	l = strlen(str);
 #ifdef VITA
-	x_value = vid.width - fragpic->width - 60 - l*16;
+	x_value = vid.width - fragpic->width - 65 - l*16;
 	Draw_ColoredStringScale (x_value, y_value, str, 1, 1, 1, 1, 2.0f);
 #else
 	x_value = vid.width/2 - 8 - l*8;
