@@ -1449,6 +1449,15 @@ void SCR_DrawCrosshair (void)
 	if (cl.stats[STAT_HEALTH] < 20 || paused_hack == true || m_state == m_exit) {
 		return;
 	}
+	
+	float col;
+
+	if (sv_player->v.facingenemy == 1) {
+		col = 0;
+	} else {
+		col = 255;
+	}
+	
 #ifdef VITA
 	GL_SetCanvas(CANVAS_HUD);
 #else
@@ -1472,7 +1481,7 @@ void SCR_DrawCrosshair (void)
 
 	if (cl.stats[STAT_ACTIVEWEAPON] == W_M2)
 	{
-		Draw_Character ((vid.width)/4-4, (vid.height)*3/4, 'O');
+		Draw_CharacterRGBA ((vid.width)/4-4, (vid.height)*3/4, 'O', 255, col, col, 0.7);
 	}
 	else if (crosshair.value == 1 && cl.stats[STAT_ZOOM] != 1 && cl.stats[STAT_ZOOM] != 2 && cl.stats[STAT_ACTIVEWEAPON] != W_PANZER)
     {
@@ -1485,22 +1494,22 @@ void SCR_DrawCrosshair (void)
 
 		x_value = ((vid.width - 8)/4) - crosshair_offset_step;
 		y_value = (vid.height - 8)*3/4;
-		Draw_Character (x_value, y_value, 158);
+		Draw_CharacterRGBA (x_value, y_value, 158, 255, col, col, 0.7);
 
 		x_value = ((vid.width - 8)/4) + crosshair_offset_step;
 		y_value = (vid.height - 8)*3/4;
-		Draw_Character (x_value, y_value, 158);
+		Draw_CharacterRGBA (x_value, y_value, 158, 255, col, col, 0.7);
 
 		x_value = ((vid.width - 8)/4);
 		y_value = (vid.height - 8)*3/4 - crosshair_offset_step;
-		Draw_Character (x_value, y_value, 157);
+		Draw_CharacterRGBA (x_value, y_value, 157, 255, col, col, 0.7);
 
 		x_value = ((vid.width - 8)/4);
 		y_value = (vid.height - 8)*3/4 + crosshair_offset_step;
-		Draw_Character (x_value, y_value, 157);
+		Draw_CharacterRGBA (x_value, y_value, 157, 255, col, col, 0.7);
     }
     else if (crosshair.value && cl.stats[STAT_ZOOM] != 1 && cl.stats[STAT_ZOOM] != 2)
-		Draw_Character ((vid.width - 8)/4/* + crosshair_x*/, (vid.height - 8)*3/4/* + crosshair_y*/, '.');
+		Draw_CharacterRGBA ((vid.width - 8)/4/* + crosshair_x*/, (vid.height - 8)*3/4/* + crosshair_y*/, '.', 255, col, col, 0.7);
 	if (cl.stats[STAT_ZOOM] == 2) {
 		Draw_AlphaStretchPic (0, 0, vid.width, vid.height, 1, sniper_scope);
 	}
