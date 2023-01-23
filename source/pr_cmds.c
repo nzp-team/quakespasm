@@ -1221,8 +1221,12 @@ static void PF_vtos (void)
 
 void PF_etos (void)
 {
-	//sprintf (pr_string_temp, "entity %i", G_EDICTNUM(OFS_PARM0));
-	//G_INT(OFS_RETURN) = pr_string_temp - pr_strings;
+	char *s;
+	
+	s = PR_GetTempString();
+	
+	sprintf (s, "entity %i", G_EDICTNUM(OFS_PARM0));
+	G_INT(OFS_RETURN) = s - pr_strings;
 }
 
 static void PF_Spawn (void)
