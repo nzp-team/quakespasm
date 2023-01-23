@@ -26,3 +26,20 @@ void HUD_Draw (void);
 void HUD_Init (void);
 
 void HUD_NewMap (void);
+
+//achievement stuff
+#define MAX_ACHIEVEMENTS 5//23
+typedef struct achievement_list_s
+{
+    qpic_t      *img;
+    int         unlocked;
+    char        name[64];
+    char        description[256];
+    int         progress;
+} achievement_list_t;
+
+void Achievement_Init (void);
+extern achievement_list_t achievement_list[MAX_ACHIEVEMENTS];
+extern qpic_t *achievement_locked;
+
+void HUD_Parse_Achievement (int ach);
