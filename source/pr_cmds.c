@@ -1729,6 +1729,50 @@ void PF_changeyaw (void)
 }
 
 /*
+==============
+PF_GetSoundLen
+
+Get the lenght of the sound (useful for things like radio)
+==============
+*/
+void PF_GetSoundLen (void)
+{
+
+	char	*name;
+
+	name = G_STRING(OFS_PARM0);
+
+    char	namebuffer[256];
+	byte	*data;
+	wavinfo_t	info;
+	byte	stackbuf[1*1024];		// avoid dirtying the cache heap
+
+//Con_Printf ("S_LoadSound: %x\n", (int)stackbuf);
+// load it in
+    Q_strcpy(namebuffer, "");
+    Q_strcat(namebuffer, name);
+
+	data = COM_LoadStackFile(namebuffer, stackbuf, sizeof(stackbuf), NULL);
+
+	if (!data)
+	{
+		Con_Printf ("Couldn't load %s\n", namebuffer);
+		G_FLOAT(OFS_RETURN) = -1;
+		return;
+	}
+
+	info = GetWavinfo (name, data, com_filesize);
+	if (info.channels != 1)
+	{
+		Con_Printf ("%s is a stereo sample\n",name);
+		G_FLOAT(OFS_RETURN) = -1;
+		return;
+	}
+
+	G_FLOAT(OFS_RETURN) = (float)info.samples/(float)info.rate;
+}
+
+/*
 ===============================================================================
 
 MESSAGE WRITING
@@ -3170,7 +3214,7 @@ static builtin_t pr_builtin[] =
 	PF_nextent, 		// #47
 	PF_particle, 		// #48
 	PF_changeyaw, 		// #49
-	PF_Fixme, 			// #50
+	PF_GetSoundLen, 	// #50 sB fixed :)
 	PF_vectoangles, 	// #51
 	PF_WriteByte,		// #52
 	PF_WriteChar, 		// #53
