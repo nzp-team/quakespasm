@@ -1269,6 +1269,62 @@ void HUD_ProgressBar (void)
 
 //=============================================================================
 
+/*
+===============
+HUD_Achievement
+
+Achievements based on code by Arkage
+===============
+*/
+
+
+int		achievement; // the background image
+int		achievement_unlocked;
+char		achievement_text[MAX_QPATH];
+double		achievement_time;
+float smallsec;
+int ach_pic;
+
+//sb FIXME!
+achievement_list_t achievement_list[MAX_ACHIEVEMENTS];
+qpic_t *achievement_locked;
+
+void HUD_Achievement (void)
+{
+
+	if (achievement_unlocked == 1)
+	{
+		smallsec = smallsec + 0.7;
+		if (smallsec >= 55)
+			smallsec = 55;
+		//Background image
+		//Sbar_DrawPic (176, 5, achievement);
+		// The achievement text
+		Draw_AlphaStretchPic (30, smallsec - 50, 200, 100, 0.7f, achievement_list[ach_pic].img);
+	}
+
+	// Reset the achievement
+	if (Sys_DoubleTime() >= achievement_time)
+	{
+		achievement_unlocked = 0;
+	}
+
+}
+
+void HUD_Parse_Achievement (int ach)
+{
+    if (achievement_list[ach].unlocked)
+        return;
+
+	achievement_unlocked = 1;
+	smallsec = 0;
+	achievement_time = Sys_DoubleTime() + 10;
+	ach_pic = ach;
+	achievement_list[ach].unlocked = 1;
+	//Save_Achivements();
+}
+
+//=============================================================================
 
 /*
 ===============

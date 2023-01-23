@@ -1530,6 +1530,10 @@ void CL_ParseServerMessage (void)
 		case svc_limbupdate:
 			CL_ParseLimbUpdate();
 			break;
+			
+		case svc_achievement:
+			HUD_Parse_Achievement (MSG_ReadByte());
+			break;
 
 		//case svc_bspdecal:
 		//	CL_ParseBSPDecal ();

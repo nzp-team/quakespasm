@@ -1236,6 +1236,37 @@ static void PF_Remove (void)
 	ED_Free (ed);
 }
 
+/*
+=================
+PF_achievement
+
+unlocks the achievement number for entity
+
+achievement(clientent, value)
+=================
+*/
+void PF_achievement (void)
+{
+	int		ach;
+	client_t	*client;
+	int			entnum;
+
+	entnum = G_EDICTNUM(OFS_PARM0);
+	ach = G_FLOAT(OFS_PARM1);
+
+	if (entnum < 1 || entnum > svs.maxclients)
+	{
+		Con_DPrintf ("tried to unlock ach to a non-client\n");
+		return;
+	}
+
+	//Con_Printf (va("Achievement? %i\n", ach));	// JPG
+	client = &svs.clients[entnum-1];
+
+	MSG_WriteByte (&client->message,svc_achievement);
+	MSG_WriteByte (&client->message, ach);
+}
+
 
 /*
 =================
@@ -3272,7 +3303,7 @@ static builtin_t pr_builtin[] =
 	PF_precache_sound,			// #76 precache_sound2 is different only for qcc
 	PF_precache_file, 			// #77
 	PF_setspawnparms, 			// #78
-	NULL,						// #79
+	PF_achievement,				// #79
 	NULL,						// #80
 	PF_stof, 					// #81
 	NULL,						// #82
