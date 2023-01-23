@@ -234,5 +234,7 @@ void SV_RunClients (void);
 void SV_SaveSpawnparms ();
 void SV_SpawnServer (const char *server);
 
+void SV_MoveToOrigin (void);
+
 #endif	/* _QUAKE_SERVER_H */
 
