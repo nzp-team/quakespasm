@@ -1219,6 +1219,12 @@ static void PF_vtos (void)
 	G_INT(OFS_RETURN) = PR_SetEngineString(s);
 }
 
+void PF_etos (void)
+{
+	//sprintf (pr_string_temp, "entity %i", G_EDICTNUM(OFS_PARM0));
+	//G_INT(OFS_RETURN) = pr_string_temp - pr_strings;
+}
+
 static void PF_Spawn (void)
 {
 	edict_t	*ed;
@@ -3289,13 +3295,13 @@ static builtin_t pr_builtin[] =
 	PF_Fixme, 			// #62
 	PF_Fixme, 			// #63
 	PF_Fixme, 			// #64
-	PF_Fixme, 			// #65
+	PF_etos, 			// #65
 	PF_Fixme, 					// #66
 	SV_MoveToGoal, 				// #67
 	PF_precache_file, 			// #68
 	PF_makestatic, 				// #69
 	PF_changelevel, 			// #70
-	PF_Fixme, 					// #71
+	SV_MoveToOrigin, 			// #71
 	PF_cvar_set, 				// #72
 	PF_centerprint, 			// #73
 	PF_ambientsound, 			// #74
