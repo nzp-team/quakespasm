@@ -2457,6 +2457,35 @@ void Open_Waypoint (void)
 	//}
 }
 
+/*
+=================
+Close_Waypoint
+
+void Close_Waypoint (string, string, string, string, string, string, string, string)
+
+moto - basically a carbon copy of open_waypoint lol
+=================
+*/
+void Close_Waypoint (void)
+{
+	int i, t;
+	char *p = G_STRING(OFS_PARM0);
+
+	for (i = 1; i < MAX_WAYPOINTS; i++)
+	{
+		if (waypoints[i].special[0])//no need to open without tag
+		{
+			if (!strcmp(p, waypoints[i].special))
+			{
+				waypoints[i].open = 0;
+				t = 1;
+			}
+			else
+				continue;
+		}
+	}
+}
+
 
 /*
 =================
@@ -3253,7 +3282,7 @@ static builtin_t pr_builtin[] =
 	Get_Next_Waypoint,		    // #86
 	PF_useprint,				// #87
 	Get_First_Waypoint,			// #88
-	NULL,						// #89
+	Close_Waypoint,				// #89
 	PF_tracebox,				// #90
 	NULL,						// #91
 	NULL,						// #92
