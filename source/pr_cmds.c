@@ -1221,8 +1221,8 @@ static void PF_vtos (void)
 
 void PF_etos (void)
 {
-	sprintf (pr_string_temp, "entity %i", G_EDICTNUM(OFS_PARM0));
-	G_INT(OFS_RETURN) = pr_string_temp - pr_strings;
+	//sprintf (pr_string_temp, "entity %i", G_EDICTNUM(OFS_PARM0));
+	//G_INT(OFS_RETURN) = pr_string_temp - pr_strings;
 }
 
 static void PF_Spawn (void)
@@ -3301,7 +3301,7 @@ static builtin_t pr_builtin[] =
 	PF_precache_file, 			// #68
 	PF_makestatic, 				// #69
 	PF_changelevel, 			// #70
-	PF_Fixme, 					// #71
+	SV_MoveToOrigin, 			// #71
 	PF_cvar_set, 				// #72
 	PF_centerprint, 			// #73
 	PF_ambientsound, 			// #74
