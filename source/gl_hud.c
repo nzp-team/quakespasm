@@ -1571,6 +1571,7 @@ char *GetWeaponName (int wep)
 	}
 }
 
+extern char *pr_strings;
 void HUD_Weapon (void)
 {
 	char str[32];
@@ -1580,8 +1581,8 @@ void HUD_Weapon (void)
 #else
 	y_value = vid.height - 16 - fragpic->height - 4 - 16;
 #endif
-	//strcpy(str, pr_strings+sv_player->v.Weapon_Name);
-	strcpy(str, GetWeaponName(cl.stats[STAT_ACTIVEWEAPON]));
+	strcpy(str, pr_strings+sv_player->v.Weapon_Name);
+	//strcpy(str, GetWeaponName(cl.stats[STAT_ACTIVEWEAPON]));
 	l = strlen(str);
 #ifdef VITA
 	x_value = vid.width - fragpic->width - 65 - l*16;
