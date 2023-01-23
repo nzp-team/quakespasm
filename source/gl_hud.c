@@ -1580,6 +1580,7 @@ void HUD_Weapon (void)
 #else
 	y_value = vid.height - 16 - fragpic->height - 4 - 16;
 #endif
+	//strcpy(str, pr_strings+sv_player->v.Weapon_Name);
 	strcpy(str, GetWeaponName(cl.stats[STAT_ACTIVEWEAPON]));
 	l = strlen(str);
 #ifdef VITA

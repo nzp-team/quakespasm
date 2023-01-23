@@ -76,6 +76,7 @@ typedef struct
 	string_t	model;
 	float		frame;
 	float		skin;
+	float       iframetime;
 	float		effects;
 	vec3_t		mins;
 	vec3_t		maxs;
@@ -143,6 +144,7 @@ typedef struct
 	string_t	targetname;
 	float		dmg_take;
 	float		dmg_save;
+	float       bleed_out;
 	float		progress_bar;
 	int			dmg_inflictor;
 	int			owner;
@@ -155,6 +157,7 @@ typedef struct
 	string_t	noise3;
 	float		x2_icon;
 	float		insta_icon;
+	string_t	Weapon_Name;
 	string_t 	Weapon_Name_Touch;
 	vec3_t 		ADS_Offset;
 	vec3_t  	Flash_Offset;
