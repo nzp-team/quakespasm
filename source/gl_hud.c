@@ -546,7 +546,7 @@ void HUD_MaxAmmo(void)
 	maxammoy -= cl.time * 0.003;
 	maxammoopac -= 5;
 
-	Draw_ColoredStringScale(vid.width/2 - strlen("MAX AMMO!")*16, maxammoy, "MAX AMMO!", 255, 255, 255, maxammoopac, 2.0f);
+	Draw_ColoredStringScale(vid.width/2 - strlen("MAX AMMO!")*16 + 55, maxammoy, "MAX AMMO!", 255, 255, 255, maxammoopac, 2.0f);
 
 	if (maxammoopac <= 0) {
 		domaxammo = false;
@@ -1725,7 +1725,7 @@ void HUD_Draw (void) {
 	if (domaxammo == true) {
 		if (maxammoopac <= 0) {
 			maxammoopac = 255;
-			maxammoy = 100;
+			maxammoy = 150;
 		}
 		HUD_MaxAmmo();
 	}
