@@ -28,6 +28,7 @@ enum m_state_e {
     m_start,
 	m_main,
 	m_singleplayer,
+	m_achievement,
 	m_paused_menu,
 	m_restart,
 	m_exit,
