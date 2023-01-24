@@ -263,6 +263,7 @@ char *osk_text2 [] =
 	"     Z X C V B N M   < > ? "
 };
 extern qboolean console_enabled;
+extern char *pr_strings;
 void Key_Console (int key)
 {
 	static	char current[MAXCMDLINE] = "";
@@ -351,6 +352,13 @@ void Key_Console (int key)
 			key_linepos = 1;
 			if (cls.state == ca_disconnected)
 				SCR_UpdateScreen (); // force an update, because the command may take some time
+			
+			// for clientside cmds							
+			if (cls.state == ca_connected)
+			{
+				pr_global_struct->CMD_STRING = (key_lines[edit_line-1]+1 - pr_strings);
+				PR_ExecuteProgram (pr_global_struct->ParseClientCommand);
+			}
 			return;
 		case K_TAB:
 		case K_LSHOULDER:

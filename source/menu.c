@@ -686,7 +686,8 @@ void M_Restart_Key (int key)
 		key_dest = key_game;
 		m_state = m_none;
 		paused_hack = false;
-		Cbuf_AddText ("restart\n");
+		//Cbuf_AddText ("restart\n");
+		PR_ExecuteProgram (pr_global_struct->Soft_Restart);
 		break;
 	default:
 		break;
