@@ -789,6 +789,7 @@ void SV_WriteClientdataToMessage (edict_t *ent, sizebuf_t *msg)
 	int		items;
 	eval_t	*val;
 
+/* sB disabled to allow consistency between platforms
 //
 // send a damage message
 //
@@ -804,7 +805,7 @@ void SV_WriteClientdataToMessage (edict_t *ent, sizebuf_t *msg)
 		ent->v.dmg_take = 0;
 		ent->v.dmg_save = 0;
 	}
-
+*/
 //
 // send the current viewpos offset from the view entity
 //
