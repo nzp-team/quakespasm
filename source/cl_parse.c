@@ -69,8 +69,8 @@ const char *svc_strings[] =
 	"svc_cdtrack",			// [byte] track [byte] looptrack
 	"svc_sellscreen",
 	"svc_cutscene",
-//johnfitz -- new server messages
-	"",	// 35
+	//johnfitz -- new server messages
+	"svc_weaponfire",	// 35
 	"svc_hitmark",	// 36
 	"svc_skybox", // 37					// [string] skyname
 	"svc_useprint", // 38
