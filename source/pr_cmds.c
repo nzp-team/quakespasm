@@ -1248,6 +1248,39 @@ static void PF_Remove (void)
 
 /*
 =================
+PF_SongEgg
+
+plays designated easter egg track
+
+songegg(trackname)
+=================
+*/
+void PF_SongEgg (void)
+{
+	char trackname;
+	
+	trackname = G_STRING(OFS_PARM0);
+
+	MSG_WriteByte (&sv.reliable_datagram,   svc_songegg);
+	MSG_WriteString (&sv.reliable_datagram, trackname);
+}
+
+/*
+=================
+PF_MaxAmmo
+
+activates max ammo text in HUD
+
+nzp_maxammo()
+=================
+*/
+void PF_MaxAmmo(void)
+{
+	MSG_WriteByte(&sv.reliable_datagram, svc_maxammo);
+}
+
+/*
+=================
 PF_achievement
 
 unlocks the achievement number for entity
@@ -3679,6 +3712,65 @@ static builtin_t pr_builtin[] =
 	NULL, 						// #440
 	PF_tokenize,				// #441
 	PF_ArgV,					// #442
+	NULL, 						// #443
+	NULL, 						// #444
+	NULL, 						// #445
+	NULL, 						// #446
+	NULL, 						// #447
+	NULL, 						// #448
+	NULL, 						// #449
+	NULL, 						// #450
+	NULL, 						// #451
+	NULL, 						// #452
+	NULL, 						// #453
+	NULL, 						// #454
+	NULL, 						// #455
+	NULL, 						// #456
+	NULL, 						// #457
+	NULL, 						// #458
+	NULL, 						// #459
+	NULL, 						// #460
+	NULL, 						// #461
+	NULL, 						// #462
+	NULL, 						// #463
+	NULL, 						// #464
+	NULL, 						// #465
+	NULL, 						// #466
+	NULL, 						// #467
+	NULL, 						// #468
+	NULL, 						// #469
+	NULL, 						// #470
+	NULL, 						// #471
+	NULL, 						// #472
+	NULL, 						// #473
+	NULL, 						// #474
+	NULL, 						// #475
+	NULL, 						// #476
+	NULL, 						// #477
+	NULL, 						// #478
+	NULL, 						// #479
+	NULL, 						// #480
+	NULL, 						// #481
+	NULL, 						// #482
+	NULL, 						// #483
+	NULL, 						// #484
+	NULL, 						// #485
+	NULL, 						// #486
+	NULL, 						// #487
+	NULL, 						// #488
+	NULL, 						// #489
+	NULL, 						// #490
+	NULL, 						// #491
+	NULL, 						// #492
+	NULL, 						// #493
+	NULL, 						// #494
+	NULL, 						// #495
+	NULL, 						// #496
+	NULL, 						// #497
+	NULL, 						// #498
+	NULL, 						// #499
+	PF_SongEgg,					// #500
+	PF_MaxAmmo,					// #501
 };
 
 builtin_t *pr_builtins = pr_builtin;
