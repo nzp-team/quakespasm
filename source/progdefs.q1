@@ -145,8 +145,6 @@ typedef struct
 	float		spawnflags;
 	string_t	target;
 	string_t	targetname;
-	float		dmg_take;
-	float		dmg_save;
 	float       bleed_out;
 	float		progress_bar;
 	int			dmg_inflictor;
