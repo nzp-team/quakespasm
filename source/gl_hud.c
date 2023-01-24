@@ -65,6 +65,7 @@ float round_center_x;
 float round_center_y;
 
 extern qboolean paused_hack;
+qboolean domaxammo;
 
 double HUD_Change_time;//hide hud when not chagned
 
@@ -532,7 +533,25 @@ void HUD_Blood (void)
 	GL_SetCanvas(CANVAS_USEPRINT);
 }
 
-//=============================================================================
+/*
+===============
+HUD_MaxAmmo
+===============
+*/
+int maxammoy;
+int maxammoopac;
+
+void HUD_MaxAmmo(void)
+{
+	maxammoy -= cl.time * 0.003;
+	maxammoopac -= 5;
+
+	Draw_ColoredStringScale(vid.width/2 - strlen("MAX AMMO!")*16, maxammoy, "MAX AMMO!", 255, 255, 255, maxammoopac, 2.0f);
+
+	if (maxammoopac <= 0) {
+		domaxammo = false;
+	}
+}
 
 /*
 ===============
@@ -579,12 +598,12 @@ void HUD_Rounds (void)
 	#ifdef VITA
 		Draw_ColorStretchPic (round_center_x, round_center_y, stretch_x, stretch_y, sb_round[0], 0.4196, 0.004, 0, 1);
 		
-		round_center_x = round_center_x - ((229/108)*2 - 0.2)*(vid.width/2)/480;
-		round_center_y = round_center_y + ((vid.height*1.015)/272);
+		round_center_x = round_center_x - ((229/108)*2 - 0.2)*(vid.width/2)/850;
+		round_center_y = round_center_y + ((vid.height*1.015)/2);
 		if (round_center_x <= 5)
 			round_center_x = 5;
-		if (round_center_y >= 250*vid.height/272)
-			round_center_y = 250*vid.height/272;
+		if (round_center_y >= 250*vid.height/340)
+			round_center_y = 250*vid.height/340;
 	#else
 		Draw_ColorPic (round_center_x, round_center_y, sb_round[0], 0.4196, 0.004, 0, 1);
 	
@@ -1703,6 +1722,13 @@ void HUD_Draw (void) {
 /*
 	HUD_Achievement();
 */
+	if (domaxammo == true) {
+		if (maxammoopac <= 0) {
+			maxammoopac = 255;
+			maxammoy = 100;
+		}
+		HUD_MaxAmmo();
+	}
 
 	GL_SetCanvas(CANVAS_DEFAULT);
 }

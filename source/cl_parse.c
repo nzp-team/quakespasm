@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "quakedef.h"
 #include "bgmusic.h"
 
+extern qboolean domaxammo;
+
 const char *svc_strings[] =
 {
 	"svc_bad",
@@ -80,8 +82,8 @@ const char *svc_strings[] =
 	"svc_spawnbaseline2", //42			// support for large modelindex, large framenum, alpha, using flags
 	"svc_spawnstatic2", // 43			// support for large modelindex, large framenum, alpha, using flags
 	"svc_spawnstaticsound2", //	44		// [coord3] [short] samp [byte] vol [byte] aten
-	"", // 45
-	"", // 46
+	"svc_songegg", // 45
+	"svc_maxammo", // 46
 	"", // 47
 	"", // 48
 	"", // 49
@@ -89,7 +91,6 @@ const char *svc_strings[] =
 	"svc_limbupdate", // 51
     "svc_achievement", // 52
     "svc_updatekills"  // 53
-
 
 //johnfitz
 };
@@ -1533,6 +1534,10 @@ void CL_ParseServerMessage (void)
 			
 		case svc_achievement:
 			HUD_Parse_Achievement (MSG_ReadByte());
+			break;
+			
+		case svc_maxammo:
+			domaxammo = true;
 			break;
 
 		//case svc_bspdecal:
