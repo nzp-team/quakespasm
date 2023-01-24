@@ -328,6 +328,24 @@ dlight_t *CL_AllocDlight (int key)
 	return dl;
 }
 
+dlighttype_t SetDlightColor (float f, dlighttype_t def, qboolean random)
+{
+	dlighttype_t	colors[NUM_DLIGHTTYPES-4] = {lt_red, lt_blue, lt_redblue, lt_green};
+
+	if ((int)f == 1)
+		return lt_red;
+	else if ((int)f == 2)
+		return lt_blue;
+	else if ((int)f == 3)
+		return lt_redblue;
+	else if ((int)f == 4)
+		return lt_green;
+	else if (((int)f == NUM_DLIGHTTYPES - 3) && random)
+		return colors[rand()%(NUM_DLIGHTTYPES-4)];
+	else
+		return def;
+}
+
 
 /*
 ===============
@@ -712,8 +730,8 @@ void CL_RelinkEntities (void)
 			dl->color[2] = 1;
 		}
 
-// naievil -- fixme
-/*
+		// naievil -- fixme sB FIXED
+
 		if (ent->effects & EF_RAYGREEN)
 		{
 			R_RocketTrail (oldorg, ent->origin, 12);
@@ -739,7 +757,7 @@ void CL_RelinkEntities (void)
 			dl->color[2] = 0;
 	        dl->type = SetDlightColor (2, lt_rocket, true);
 		}
-*/
+
 
 		if (ent->model->flags & EF_GIB)
 			R_RocketTrail (oldorg, ent->origin, 2);
@@ -756,6 +774,7 @@ void CL_RelinkEntities (void)
 			VectorCopy (ent->origin, dl->origin);
 			dl->radius = 200;
 			dl->die = cl.time + 0.01;
+			dl->type = SetDlightColor (2, lt_rocket, true);
 		}
 		else if (ent->model->flags & EF_GRENADE)
 			R_RocketTrail (oldorg, ent->origin, 1);

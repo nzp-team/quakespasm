@@ -49,6 +49,13 @@ typedef struct
 	int		percent;		// 0-256
 } cshift_t;
 
+typedef enum
+{
+	lt_default, lt_muzzleflash, lt_explosion, lt_rocket,
+	lt_red, lt_blue, lt_redblue, lt_green, NUM_DLIGHTTYPES,
+	lt_explosion2, lt_explosion3, lt_rayred, lt_raygreen
+} dlighttype_t;
+
 #define	CSHIFT_CONTENTS	0
 #define	CSHIFT_DAMAGE	1
 #define	CSHIFT_BONUS	2
@@ -74,6 +81,7 @@ typedef struct
 	float	minlight;			// don't add when contributing less
 	int		key;
 	vec3_t	color;				//johnfitz -- lit support via lordhavoc
+	int		type;		        // color
 } dlight_t;
 
 
