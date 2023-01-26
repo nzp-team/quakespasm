@@ -1177,21 +1177,27 @@ void Load_Achivements (void)
 {
 	int achievement_file;
 	achievement_file = (byte *)COM_LoadHunkFile ("%s/data/ach.dat", com_gamedir);
+	
+	if(!achievement_file)
+		Sys_Error("Achievement file not preset.");
 
 	if (achievement_file >= 0) {
 		char* buffer = (char*)calloc(2, sizeof(char));
 		for (int i = 0; i < MAX_ACHIEVEMENTS; i++) {
-			//sceIoRead(achievement_file, buffer, sizeof(char)*2);
+			Sys_FileRead(achievement_file, buffer, sizeof(char)*2);
 			achievement_list[i].unlocked = atoi(buffer);
-			//sceIoRead(achievement_file, buffer, sizeof(char)*2);
+			Sys_FileRead(achievement_file, buffer, sizeof(char)*2);
 			achievement_list[i].progress = atoi(buffer);
 		}
 	} else {
 		achievement_file = (byte *)COM_LoadHunkFile ("%s/data/ach.dat", com_gamedir);
+		
+		if(!achievement_file)
+			Sys_Error("Achievement file not preset.");
 
 		for (int i = 0; i < MAX_ACHIEVEMENTS; i++) {
-			COM_WriteFile(achievement_file, "0\n", sizeof(char)*2);
-			COM_WriteFile(achievement_file, "0\n", sizeof(char)*2);
+			Sys_FileWrite(achievement_file, "0\n", sizeof(char)*2);
+			Sys_FileWrite(achievement_file, "0\n", sizeof(char)*2);
 		}
 	}
 	COM_CloseFile(achievement_file);
@@ -1200,13 +1206,16 @@ void Save_Achivements (void)
 {
 	int achievement_file;
 	achievement_file = (byte *)COM_LoadHunkFile ("%s/data/ach.dat", com_gamedir);
+		
+	if(!achievement_file)
+		Sys_Error("Achievement file not preset.");
 
 	if (achievement_file >= 0) {
 		for (int i = 0; i < MAX_ACHIEVEMENTS; i++) {
 			char* buffer = va("%i\n", achievement_list[i].unlocked);
 			char* buffer2 = va("%i\n", achievement_list[i].progress);
-			COM_WriteFile(achievement_file, va("%i\n", achievement_list[i].unlocked), strlen(buffer));
-			COM_WriteFile(achievement_file, va("%i\n", achievement_list[i].progress), strlen(buffer2));
+			Sys_FileWrite(achievement_file, va("%i\n", achievement_list[i].unlocked), strlen(buffer));
+			Sys_FileWrite(achievement_file, va("%i\n", achievement_list[i].progress), strlen(buffer2));
 		}
 	} else {
 		Load_Achivements();
@@ -1219,7 +1228,7 @@ void M_Menu_Achievement_f (void)
 	key_dest = key_menu;
 	m_state = m_achievement;
 	m_entersound = true;
-	Load_Achivements();
+	//Load_Achivements();
 }
 
 void M_Achievement_Draw (void)
