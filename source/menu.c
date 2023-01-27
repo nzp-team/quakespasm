@@ -122,6 +122,7 @@ void M_Menu_Main_f (void);
 		void M_Menu_GameOptions_f (void);
 		void M_Menu_Search_f (void);
 		void M_Menu_ServerList_f (void);
+	void M_Menu_Achievement_f (void);
 	void M_Menu_Options_f (void);
 		void M_Menu_Keys_f (void);
 		void M_Control_Settings_f (void);
@@ -636,7 +637,7 @@ void M_Main_Key (int key)
 			break;
 
 		//case 2:
-			//M_Menu_Achievements_f ();
+			//M_Menu_Achievement_f ();
 			//break;
 
 		case 2:
@@ -991,6 +992,419 @@ void M_SinglePlayer_Key (int key)
 			// Back
 			M_Menu_Main_f ();
 			break;
+		}
+	}
+}
+
+//-------------------------------------------------------
+//----------------------ACHIEVMENTS----------------------
+//------------------------------------------------------- 
+
+//=============================================================================
+/* ACHIEVEMENT MENU */
+
+
+int m_achievement_cursor;
+int m_achievement_selected;
+int m_achievement_scroll[2];
+int total_unlocked_achievements;
+int total_locked_achievements;
+
+
+extern achievement_list_t achievement_list[MAX_ACHIEVEMENTS];
+extern qpic_t *achievement_locked;
+
+void Achievement_Init (void)
+{
+	achievement_list[0].img = Draw_CachePic("gfx/achievement/ready");
+	achievement_list[0].unlocked = 0;
+	achievement_list[0].progress = 0;
+	strcpy(achievement_list[0].name, "Ready..");
+	strcpy(achievement_list[0].description, "Reach round 5");
+
+	achievement_list[1].img = Draw_CachePic("gfx/achievement/steady");
+	achievement_list[1].unlocked = 0;
+	achievement_list[1].progress = 0;
+	strcpy(achievement_list[1].name, "Steady..");
+	strcpy(achievement_list[1].description, "Reach round 10");
+
+	achievement_list[2].img = Draw_CachePic("gfx/achievement/go_hell_no");
+	achievement_list[2].unlocked = 0;
+	achievement_list[2].progress = 0;
+	strcpy(achievement_list[2].name, "Go? Hell No...");
+	strcpy(achievement_list[2].description, "Reach round 15");
+
+	achievement_list[3].img = Draw_CachePic("gfx/achievement/where_legs_go");
+	achievement_list[3].unlocked = 0;
+	achievement_list[3].progress = 0;
+	strcpy(achievement_list[3].name, "Where Did Legs Go?");
+	strcpy(achievement_list[3].description, "Turn a zombie into a crawler");
+
+	achievement_list[4].img = Draw_CachePic("gfx/achievement/the_f_bomb");
+	achievement_list[4].unlocked = 0;
+	achievement_list[4].progress = 0;
+	strcpy(achievement_list[4].name, "The F Bomb");
+	strcpy(achievement_list[4].description, "Use the Nuke power-up to kill a single Zombie");
+
+	/*achievement_list[3].img = Draw_CachePic("gfx/achievement/beast");
+	achievement_list[3].unlocked = 0;
+	achievement_list[3].progress = 0;
+	strcpy(achievement_list[3].name, "Beast");
+	strcpy(achievement_list[3].description, "Survive round after round 5 with knife and grenades only");
+
+	achievement_list[4].img = Draw_CachePic("gfx/achievement/survival");
+	achievement_list[4].unlocked = 0;
+	achievement_list[4].progress = 0;
+	strcpy(achievement_list[4].name, "Survival Expert");
+	strcpy(achievement_list[4].description, "Use pistol and knife only to reach round 10");
+
+	achievement_list[5].img = Draw_CachePic("gfx/achievement/boomstick");
+	achievement_list[5].unlocked = 0;
+	achievement_list[5].progress = 0;
+	strcpy(achievement_list[5].name, "Boomstick");
+	strcpy(achievement_list[5].description, "3 for 1 with shotgun blast");
+
+	achievement_list[6].img = Draw_CachePic("gfx/achievement/boom_headshots");
+	achievement_list[6].unlocked = 0;
+	achievement_list[6].progress = 0;
+	strcpy(achievement_list[6].name, "Boom Headshots");
+	strcpy(achievement_list[6].description, "Get 10 headshots");
+
+	achievement_list[7].img = Draw_CachePic("gfx/achievement/where_did");
+	achievement_list[7].unlocked = 0;
+	achievement_list[7].progress = 0;
+	strcpy(achievement_list[7].name, "Where Did Legs Go?");
+	strcpy(achievement_list[7].description, "Make a crawler zombie");
+
+	achievement_list[8].img = Draw_CachePic("gfx/achievement/keep_the_change");
+	achievement_list[8].unlocked = 0;
+	achievement_list[8].progress = 0;
+	strcpy(achievement_list[8].name, "Keep The Change");
+	strcpy(achievement_list[8].description, "Purchase everything");
+
+	achievement_list[9].img = Draw_CachePic("gfx/achievement/big_thanks");
+	achievement_list[9].unlocked = 0;
+	achievement_list[9].progress = 0;
+	strcpy(achievement_list[9].name, "Big Thanks To Explosion");
+	strcpy(achievement_list[9].description, "Get 10 kills with one grenade");
+
+	achievement_list[10].img = Draw_CachePic("gfx/achievement/warmed-up");
+	achievement_list[10].unlocked = 0;
+	achievement_list[10].progress = 0;
+	strcpy(achievement_list[10].name, "Getting Warmed-Up");
+	strcpy(achievement_list[10].description, "Achieve 10 achievements");
+
+	achievement_list[11].img = Draw_CachePic("gfx/achievement/mysterybox_maniac");
+	achievement_list[11].unlocked = 0;
+	achievement_list[11].progress = 0;
+	strcpy(achievement_list[11].name, "Mysterybox Maniac");
+	strcpy(achievement_list[11].description, "use mysterybox 20 times");
+
+	achievement_list[12].img = Draw_CachePic("gfx/achievement/instant_help");
+	achievement_list[12].unlocked = 0;
+	achievement_list[12].progress = 0;
+	strcpy(achievement_list[12].name, "Instant Help");
+	strcpy(achievement_list[12].description, "Kill 100 zombies with insta-kill");
+
+	achievement_list[13].img = Draw_CachePic("gfx/achievement/blow_the_bank");
+	achievement_list[13].unlocked = 0;
+	achievement_list[13].progress = 0;
+	strcpy(achievement_list[13].name, "Blow The Bank");
+	strcpy(achievement_list[13].description, "earn 1,000,000");
+
+	achievement_list[14].img = Draw_CachePic("gfx/achievement/ammo_cost");
+	achievement_list[14].unlocked = 0;
+	achievement_list[14].progress = 0;
+	strcpy(achievement_list[14].name, "Ammo Cost Too Much");
+	strcpy(achievement_list[14].description, "After round 5, don't fire a bullet for whole round");
+
+	achievement_list[15].img = Draw_CachePic("gfx/achievement/the_f_bomb");
+	achievement_list[15].unlocked = 0;
+	achievement_list[15].progress = 0;
+	strcpy(achievement_list[15].name, "The F Bomb");
+	strcpy(achievement_list[15].description, "Only nuke one zombie");
+
+	achievement_list[16].img = Draw_CachePic("gfx/achievement/why_are");
+	achievement_list[16].unlocked = 0;
+	achievement_list[16].progress = 0;
+	strcpy(achievement_list[16].name, "Why Are We Waiting?");
+	strcpy(achievement_list[16].description, "Stand still for 2 minutes");
+
+	achievement_list[17].img = Draw_CachePic("gfx/achievement/never_missed");
+	achievement_list[17].unlocked = 0;
+	achievement_list[17].progress = 0;
+	strcpy(achievement_list[17].name, "Never Missed A Shot");
+	strcpy(achievement_list[17].description, "Make it to round 5 without missing a shot");
+
+	achievement_list[18].img = Draw_CachePic("gfx/achievement/300_bastards_less");
+	achievement_list[18].unlocked = 0;
+	achievement_list[18].progress = 0;
+	strcpy(achievement_list[18].name, "300 Bastards less");
+	strcpy(achievement_list[18].description, "Kill 300 zombies");
+
+	achievement_list[19].img = Draw_CachePic("gfx/achievement/music_fan");
+	achievement_list[19].unlocked = 0;
+	achievement_list[19].progress = 0;
+	strcpy(achievement_list[19].name, "Music Fan");
+	strcpy(achievement_list[19].description, "Turn on radio 20 times");
+
+	achievement_list[20].img = Draw_CachePic("gfx/achievement/one_clip");
+	achievement_list[20].unlocked = 0;
+	achievement_list[20].progress = 0;
+	strcpy(achievement_list[20].name, "One Clip");
+	strcpy(achievement_list[20].description, "Complete a round with mg42 without reloading");
+
+	achievement_list[21].img = Draw_CachePic("gfx/achievement/one_20_20");
+	achievement_list[21].unlocked = 0;
+	achievement_list[21].progress = 0;
+	strcpy(achievement_list[21].name, "One Clip, 20 Bullets, 20 Headshots");
+	strcpy(achievement_list[21].description, "Score 20 headshots, with 20 bullets, and don't reload");
+
+	achievement_list[22].img = Draw_CachePic("gfx/achievement/and_stay_out");
+	achievement_list[22].unlocked = 0;
+	achievement_list[22].progress = 0;
+	strcpy(achievement_list[22].name, "And Stay out");
+	strcpy(achievement_list[22].description, "Don't let zombies in for 2 rounds");*/
+
+	achievement_locked = Draw_CachePic("gfx/achievement/achievement_locked");
+
+	m_achievement_scroll[0] = 0;
+	m_achievement_scroll[1] = 0;
+}
+
+
+void Load_Achivements (void)
+{
+	int achievement_file;
+	achievement_file = (byte *)COM_LoadHunkFile ("%s/data/ach.dat", com_gamedir);
+	
+	if(!achievement_file)
+		Sys_Error("Achievement file not preset.");
+
+	if (achievement_file >= 0) {
+		char* buffer = (char*)calloc(2, sizeof(char));
+		for (int i = 0; i < MAX_ACHIEVEMENTS; i++) {
+			Sys_FileRead(achievement_file, buffer, sizeof(char)*2);
+			achievement_list[i].unlocked = atoi(buffer);
+			Sys_FileRead(achievement_file, buffer, sizeof(char)*2);
+			achievement_list[i].progress = atoi(buffer);
+		}
+	} else {
+		achievement_file = (byte *)COM_LoadHunkFile ("%s/data/ach.dat", com_gamedir);
+		
+		if(!achievement_file)
+			Sys_Error("Achievement file not preset.");
+
+		for (int i = 0; i < MAX_ACHIEVEMENTS; i++) {
+			Sys_FileWrite(achievement_file, "0\n", sizeof(char)*2);
+			Sys_FileWrite(achievement_file, "0\n", sizeof(char)*2);
+		}
+	}
+	COM_CloseFile(achievement_file);
+}
+void Save_Achivements (void)
+{
+	int achievement_file;
+	achievement_file = (byte *)COM_LoadHunkFile ("%s/data/ach.dat", com_gamedir);
+		
+	if(!achievement_file)
+		Sys_Error("Achievement file not preset.");
+
+	if (achievement_file >= 0) {
+		for (int i = 0; i < MAX_ACHIEVEMENTS; i++) {
+			char* buffer = va("%i\n", achievement_list[i].unlocked);
+			char* buffer2 = va("%i\n", achievement_list[i].progress);
+			Sys_FileWrite(achievement_file, va("%i\n", achievement_list[i].unlocked), strlen(buffer));
+			Sys_FileWrite(achievement_file, va("%i\n", achievement_list[i].progress), strlen(buffer2));
+		}
+	} else {
+		Load_Achivements();
+	}
+}
+
+
+void M_Menu_Achievement_f (void)
+{
+	key_dest = key_menu;
+	m_state = m_achievement;
+	m_entersound = true;
+	//Load_Achivements();
+}
+
+void M_Achievement_Draw (void)
+{
+    int i, b, y;
+    int unlocked_achievement[MAX_ACHIEVEMENTS];
+    int locked_achievement[MAX_ACHIEVEMENTS];
+	int maxLenght = floor((vid.width - 155)/8);
+	int	stringLenght;
+	char *description;
+	char *string_line = (char*) malloc(maxLenght);
+	int lines;
+
+    y = 0;
+    total_unlocked_achievements = 0;
+    total_locked_achievements = 0;
+
+    for (i = 0; i < MAX_ACHIEVEMENTS; i++)
+    {
+        unlocked_achievement[i] = -1;
+        locked_achievement[i] = -1;
+        if (achievement_list[i].unlocked)
+        {
+            unlocked_achievement[total_unlocked_achievements] = i;
+            total_unlocked_achievements += 1;
+        }
+        else
+        {
+            locked_achievement[total_locked_achievements] = i;
+            total_locked_achievements += 1;
+        }
+    }
+
+	// Background
+	if (key_dest != key_menu_pause)
+		Draw_Pic (0, 0, menu_bk);
+
+	// Fill black to make everything easier to see
+	Draw_FillByColor(0, 0, 480, 272, 0, 0, 0, 102);
+
+	// Version String
+	Draw_ColoredStringScale(vid.width - 40, 5, "v1.0", 255, 255, 255, 1, 2.0f);
+
+    if (!m_achievement_selected)
+    {
+        Draw_FillByColor(15, 8, 225, 12, 204, 0, 0, 100);
+        Draw_FillByColor(240, 8, 225, 12, 0, 0, 0, 100);
+
+        if (total_unlocked_achievements <= 0)
+        {
+            Draw_FillByColor(15, 25, vid.width - 30, 60, 0, 0, 0, 100);
+            Draw_Pic (20, 30 + y, achievement_locked);
+            Draw_ColoredStringScale (125, 30 + y, "No achievements unlocked :(", 255, 255, 255, 1, 2.0f);
+        }
+        else
+        {
+            for (i = 0; i < 3; i++)
+            {
+                if (unlocked_achievement[i + m_achievement_scroll[0]] >= 0)
+                {
+                    Draw_FillByColor(15, 25 + y, vid.width - 30, 60, 0, 0, 0, 100);
+
+                    Draw_Pic (20, 30 + y, achievement_list[unlocked_achievement[i + m_achievement_scroll[0]]].img);
+                    Draw_ColoredStringScale (125, 30 + y, achievement_list[unlocked_achievement[i + m_achievement_scroll[0]]].name, 255, 255, 255, 1, 2.0f);
+					description = achievement_list[unlocked_achievement[i + m_achievement_scroll[0]]].description;
+					stringLenght = strlen(description);
+					lines = stringLenght/maxLenght;
+					if ((maxLenght % stringLenght) != 0)
+						lines++;
+					
+					for (b = 0; b < lines; b++) {
+						strncpy(string_line, description+maxLenght*b, (maxLenght-1));
+						Draw_ColoredStringScale (125, 40 + y + b*8, string_line, 255, 255, 255, 1, 2.0f);
+					}
+					
+					//if (stringLenght <= maxLenght)
+					//	Draw_String (125, 40 + y, description);
+
+                    y += 75;
+                }
+            }
+        }
+    }
+    else
+    {
+        if (total_locked_achievements <= 0)
+        {
+            Draw_FillByColor(15, 25, vid.width - 30, 60, 0, 0, 0, 100);
+            Draw_Pic (20, 30 + y, achievement_locked);
+            Draw_ColoredStringScale (125, 30 + y, "All achievements unlocked :)", 255, 255, 255, 1, 2.0f);
+        }
+
+        Draw_FillByColor(15, 8, 225, 12, 0, 0, 0, 100);
+        Draw_FillByColor(240, 8, 225, 12, 204, 0, 0, 100);
+
+        for (i = 0; i < 3; i++)
+        {
+            if (locked_achievement[i + m_achievement_scroll[1]] >= 0)
+            {
+                Draw_FillByColor(15, 25 + y, vid.width - 30, 60, 0, 0, 0, 100);
+
+                Draw_Pic (20, 30 + y, achievement_locked);
+                Draw_ColoredStringScale (125, 30 + y, achievement_list[locked_achievement[i + m_achievement_scroll[1]]].name, 255, 255, 255, 1, 2.0f);
+				description = achievement_list[locked_achievement[i + m_achievement_scroll[1]]].description;
+				stringLenght = strlen(description);
+				lines = stringLenght/maxLenght;
+				if ((maxLenght % stringLenght) != 0)
+					lines++;
+				
+				for (b = 0; b < lines; b++) {
+					strncpy(string_line, description+maxLenght*b, (maxLenght-1));
+					Draw_ColoredStringScale (125, 40 + y + b*8, string_line, 255, 255, 255, 1, 2.0f);
+				}
+					
+					
+				//if (stringLenght <= maxLenght)
+				//	Draw_String (125, 40 + y, description);
+
+                y += 70;
+            }
+        }
+    }
+
+	free(string_line);
+    Draw_ColoredStringScale (15, 10, "Unlocked Achievements", 255, 255, 255, 1, 2.0f);
+    Draw_ColoredStringScale (vid.width - 167, 10, "Locked Achievements", 255, 255, 255, 1, 2.0f);
+}
+
+void M_Achievement_Key (int key)
+{
+	switch (key)
+	{
+	case K_ESCAPE:
+		if (key_dest == key_menu_pause)
+			M_Paused_Menu_f();
+		else
+			M_Menu_Main_f ();
+		break;
+
+    case K_AUX1:
+    case K_LEFTARROW:
+        m_achievement_selected = 0;
+        break;
+
+    case K_AUX2:
+    case K_RIGHTARROW:
+        m_achievement_selected = 1;
+        break;
+
+    case K_UPARROW:
+        m_achievement_scroll[m_achievement_selected]--;
+        if (m_achievement_scroll[m_achievement_selected] < 0)
+            m_achievement_scroll[m_achievement_selected] = 0;
+        break;
+
+    case K_DOWNARROW:
+        m_achievement_scroll[m_achievement_selected]++;
+
+        if (m_achievement_selected)
+        {
+            if (m_achievement_scroll[1] > total_locked_achievements - 3)
+                m_achievement_scroll[1] = total_locked_achievements - 3;
+        }
+        else
+        {
+            if (m_achievement_scroll[0] > total_unlocked_achievements - 3)
+                m_achievement_scroll[0] = total_unlocked_achievements - 3;
+        }
+        if (m_achievement_scroll[m_achievement_selected] < 0)
+            m_achievement_scroll[m_achievement_selected] = 0;
+        break;
+
+	case K_ENTER:
+		m_entersound = true;
+		switch (m_achievement_cursor)
+		{
 		}
 	}
 }
@@ -3972,6 +4386,9 @@ void M_Draw (void)
 	case m_multiplayer:
 		M_MultiPlayer_Draw ();
 		break;
+	case m_achievement:
+		M_Achievement_Draw ();
+		break;
 	case m_setup:
 		GL_SetCanvas (CANVAS_MENU); //johnfitz
 		M_Setup_Draw ();
@@ -4065,6 +4482,10 @@ void M_Keydown (int key)
 
 	case m_multiplayer:
 		M_MultiPlayer_Key (key);
+		return;
+		
+	case m_achievement:
+		M_Achievement_Key (key);
 		return;
 
 	case m_setup:
