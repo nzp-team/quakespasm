@@ -183,8 +183,13 @@ void HUD_NewMap (void)
 	point_change_interval = 0;
 	point_change_interval_neg = 0;
 
+#ifdef VITA
+	round_center_x = vid.width/2 - sb_round[0]->width + 3;
+	round_center_y = vid.height/2 - sb_round[0]->height/2 - 27;
+#else
 	round_center_x = (vid.width/2 - sb_round[0]->width) /2;
 	round_center_y = vid.height*3/4 - sb_round[0]->height/2;
+#endif
 }
 
 
@@ -570,7 +575,7 @@ void HUD_Rounds (void)
 	int num[3];
 	x_offset = 0;
 	savex = 0;
-	
+
 	int x_offset2 = 2; //Extra offset for all round images to keep things uniform (may not be neccesary?) -- SPECIFIC TO WHOLE ROUNDS
 	int y_offset = 50; //y_offset -- SPECIFIC TO WHOLE ROUNDS
 	int x_mark_offset = 10; //Needed x offset for stretched marks 
@@ -581,7 +586,7 @@ void HUD_Rounds (void)
 	if (cl.stats[STAT_ROUNDCHANGE] == 1)//this is the rounds icon at the middle of the screen
 	{
 	#ifdef VITA
-		Draw_ColorStretchPic ((vid.width/2 - sb_round[0]->width) /2 - x_offset2, vid.height*3/4 - sb_round[0]->height/2, stretch_x, stretch_y, sb_round[0], 0.4196, 0.004, 0, alphabling/255);
+		Draw_ColorStretchPic ((vid.width/2 - sb_round[0]->width) - x_offset2 + 5, vid.height/2 - sb_round[0]->height/2 - 27, stretch_x, stretch_y, sb_round[0], 0.4196, 0.004, 0, alphabling/255);
 	#else
 		Draw_ColorPic ((vid.width/2 - sb_round[0]->width) /2, vid.height*3/4 - sb_round[0]->height/2, sb_round[0], 0.4196, 0.004, 0, alphabling/255);
 	#endif
@@ -598,12 +603,13 @@ void HUD_Rounds (void)
 	#ifdef VITA
 		Draw_ColorStretchPic (round_center_x, round_center_y, stretch_x, stretch_y, sb_round[0], 0.4196, 0.004, 0, 1);
 		
-		round_center_x = round_center_x - ((229/108)*2 - 0.2)*(vid.width/2)/850;
-		round_center_y = round_center_y + ((vid.height*1.015)/2);
-		if (round_center_x <= 5)
-			round_center_x = 5;
-		if (round_center_y >= 250*vid.height/340)
-			round_center_y = 250*vid.height/340;
+		round_center_x -= 2.03;
+		round_center_y = round_center_y + ((544*1.015)/544);
+		
+		if (round_center_x <= 5*(vid.width/2)/272 + x_mark_offset)
+			round_center_x = 5*(vid.width/2)/272 + x_mark_offset;
+		if (round_center_y >= vid.height - sb_round[4]->height - y_mark_offset)
+			round_center_y = vid.height - sb_round[4]->height - y_mark_offset;
 	#else
 		Draw_ColorPic (round_center_x, round_center_y, sb_round[0], 0.4196, 0.004, 0, 1);
 	
