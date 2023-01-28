@@ -563,6 +563,7 @@ This is the same as Draw_Character, but with RGBA color codes.
 */
 void Draw_CharacterRGBA(int x, int y, int num, float r, float g, float b, float a)
 {
+#ifdef VITA
 	int				row, col;
 	float			frow, fcol, size;
 	
@@ -604,6 +605,7 @@ void Draw_CharacterRGBA(int x, int y, int num, float r, float g, float b, float 
 	glEnable(GL_ALPHA_TEST);
 	glDisable (GL_BLEND);
 	glColor4f (1,1,1,1);
+#endif
 }
 
 
