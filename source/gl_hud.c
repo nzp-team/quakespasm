@@ -155,6 +155,9 @@ void HUD_Init (void) {
 	b_xbutton = Draw_CachePic ("gfx/butticons/xbutton.tga");
 #endif
 	fx_blood_lu = Draw_CachePic ("gfx/hud/blood.tga");
+#ifdef VITA
+	Achievement_Init();
+#endif
 }
 
 /*
@@ -1302,7 +1305,7 @@ Achievements based on code by Arkage
 ===============
 */
 
-
+#ifdef VITA
 int		achievement; // the background image
 int		achievement_unlocked;
 char		achievement_text[MAX_QPATH];
@@ -1310,22 +1313,19 @@ double		achievement_time;
 float smallsec;
 int ach_pic;
 
-//sb FIXME!
-achievement_list_t achievement_list[MAX_ACHIEVEMENTS];
-qpic_t *achievement_locked;
-
 void HUD_Achievement (void)
 {
 
 	if (achievement_unlocked == 1)
 	{
-		smallsec = smallsec + 0.7;
-		if (smallsec >= 55)
-			smallsec = 55;
+		
+		smallsec = smallsec + 0.4;
+		if (smallsec >= 30)
+			smallsec = 30;
 		//Background image
 		//Sbar_DrawPic (176, 5, achievement);
 		// The achievement text
-		Draw_AlphaStretchPic (30, smallsec - 50, 200, 100, 0.7f, achievement_list[ach_pic].img);
+		Draw_AlphaStretchPic (30, smallsec, 200, 100, 255, achievement_list[ach_pic].img);
 	}
 
 	// Reset the achievement
@@ -1346,9 +1346,9 @@ void HUD_Parse_Achievement (int ach)
 	achievement_time = Sys_DoubleTime() + 10;
 	ach_pic = ach;
 	achievement_list[ach].unlocked = 1;
-	//Save_Achivements();
+	Save_Achivements();
 }
-
+#endif
 //=============================================================================
 
 /*
@@ -1725,9 +1725,9 @@ void HUD_Draw (void) {
 	}
 	HUD_Points();
 	HUD_Point_Change();
-/*
+
 	HUD_Achievement();
-*/
+
 	if (domaxammo == true) {
 		if (maxammoopac <= 0) {
 			maxammoopac = 255;

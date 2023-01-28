@@ -24,6 +24,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "bgmusic.h"
 #include <dirent.h>
 
+#ifdef VITA
+#include <psp2/io/fcntl.h> 
+#endif
+
 #define NZP_VERSION "v1.0"
 
 #ifdef VITA
@@ -134,6 +138,7 @@ void M_Menu_Main_f (void);
 void M_Main_Draw (void);
 	void M_SinglePlayer_Draw (void);
 		void M_Menu_Maps_Draw (void);
+	void M_Achievement_Draw (void);
 	void M_MultiPlayer_Draw (void);
 		void M_Setup_Draw (void);
 		void M_Net_Draw (void);
@@ -154,6 +159,7 @@ void M_Main_Key (int key);
 	void M_SinglePlayer_Key (int key);
 		void M_Load_Key (int key);
 		void M_Save_Key (int key);
+	void M_Achievement_Key (int key);
 	void M_MultiPlayer_Key (int key);
 		void M_Setup_Key (int key);
 		void M_Net_Key (int key);
@@ -496,7 +502,12 @@ void M_Start_Key (int key)
 /* MAIN MENU */
 
 int	m_main_cursor;
+
+#ifdef VITA
+#define	MAIN_ITEMS	5
+#else
 #define	MAIN_ITEMS	4
+#endif
 
 
 void M_Menu_Main_f (void)
@@ -510,6 +521,10 @@ void M_Menu_Main_f (void)
 	key_dest = key_menu;
 	m_state = m_main;
 	m_entersound = true;
+	
+#ifdef VITA
+	Load_Achivements();
+#endif
 }
 
 void M_Main_Draw (void)
@@ -553,42 +568,66 @@ void M_Main_Draw (void)
 		Draw_ColoredStringScale(10, y + 100, "Settings", 1, 1, 1, 1, 1.5f);
 
 	// Achievements (Unavailable, so non-selectable)
+	//Draw_ColoredStringScale(10, y + 115, "Achievements", 0.5, 0.5, 0.5, 1, 1.5f);
+	
+#ifdef VITA
+	if (m_main_cursor == 2)
+		Draw_ColoredStringScale(10, y + 122, "Achievements", 1, 0, 0, 1, 1.5f);
+	else
+		Draw_ColoredStringScale(10, y + 122, "Achievements", 1, 1, 1, 1, 1.5f);
+#else
+	// Achievements (Unavailable, so non-selectable)
 	Draw_ColoredStringScale(10, y + 115, "Achievements", 0.5, 0.5, 0.5, 1, 1.5f);
+#endif
 
 	// Divider
 	Draw_FillByColor(10, y + 135, 240, 3, 220, 220, 220, 0.8);
-
+#ifdef VITA
 	// Credits
+	if (m_main_cursor == 3)
+#else
 	if (m_main_cursor == 2)
+#endif
 		Draw_ColoredStringScale(10, y + 145, "Credits", 1, 0, 0, 1, 1.5f);
 	else
 		Draw_ColoredStringScale(10, y + 145, "Credits", 1, 1, 1, 1, 1.5f);
 
 	// Divider
 	Draw_FillByColor(10, y + 165, 240, 3, 220, 220, 220, 0.8);
-
+#ifdef VITA
 	// Exit
+	if (m_main_cursor == 4)
+#else
 	if (m_main_cursor == 3)
+#endif
 		Draw_ColoredStringScale(10, y + 175, "Exit", 1, 0, 0, 1, 1.5f);
 	else
 		Draw_ColoredStringScale(10, y + 175, "Exit", 1, 1, 1, 1, 1.5f);
+
 
 		// future note: 335 = back
 
 
 	switch (m_main_cursor) {
+	#ifdef VITA
+		case 0: Draw_ColoredStringScale(10, y + 305, "Take on the Hordes by yourself.", 1, 1, 1, 1, 1.5f); break;
+		case 1: Draw_ColoredStringScale(10, y + 305, "Adjust your Settings to Optimize your Experience.", 1, 1, 1, 1, 1.5f); break;
+		case 2: Draw_ColoredStringScale(10, y + 305, "View locked or unlocked Achievements.", 1, 1, 1, 1, 1.5f); break;
+		case 3: Draw_ColoredStringScale(10, y + 305, "See who made NZ:P possible.", 1, 1, 1, 1, 1.5f); break;
+		case 4: 
+		Draw_ColoredStringScale(10, y + 305, "Return to Vita Homescreen.", 1, 1, 1, 1, 1.5f);
+		break;
+		default: break;
+	#else
 		case 0: Draw_ColoredStringScale(10, y + 305, "Take on the Hordes by yourself.", 1, 1, 1, 1, 1.5f); break;
 		case 1: Draw_ColoredStringScale(10, y + 305, "Adjust your Settings to Optimize your Experience.", 1, 1, 1, 1, 1.5f); break;
 		//case 2: Draw_ColoredStringScale(10, y + 305, "View locked or unlocked Achievements.", 1, 1, 1, 1, 1.5f); break;
 		case 2: Draw_ColoredStringScale(10, y + 305, "See who made NZ:P possible.", 1, 1, 1, 1, 1.5f); break;
 		case 3: 
-		#ifdef NX 
 		Draw_ColoredStringScale(10, y + 305, "Return to Horizon (SwitchOS).", 1, 1, 1, 1, 1.5f);
-		#else
-		Draw_ColoredStringScale(10, y + 305, "Return to Vita Homescreen.", 1, 1, 1, 1, 1.5f);
-		#endif
 		break;
 		default: break;
+	#endif
 	}
 }
 
@@ -635,16 +674,24 @@ void M_Main_Key (int key)
 		case 1:
 			M_Menu_Options_f ();
 			break;
-
-		//case 2:
-			//M_Menu_Achievement_f ();
-			//break;
-
+	#ifdef VITA
 		case 2:
+			M_Menu_Achievement_f ();
+			break;
+	#endif
+
+	#ifdef VITA	
+		case 3:
+	#else
+		case 2:
+	#endif
 			M_Menu_Credits_f ();
 			break;
-
+	#ifdef VITA
+		case 4:
+	#else
 		case 3:
+	#endif
 			M_Menu_Quit_f ();
 			break;
 		}
@@ -1002,7 +1049,7 @@ void M_SinglePlayer_Key (int key)
 
 //=============================================================================
 /* ACHIEVEMENT MENU */
-
+#ifdef VITA
 
 int m_achievement_cursor;
 int m_achievement_selected;
@@ -1011,36 +1058,36 @@ int total_unlocked_achievements;
 int total_locked_achievements;
 
 
-extern achievement_list_t achievement_list[MAX_ACHIEVEMENTS];
-extern qpic_t *achievement_locked;
+achievement_list_t achievement_list[MAX_ACHIEVEMENTS];
+qpic_t *achievement_locked;
 
 void Achievement_Init (void)
 {
-	achievement_list[0].img = Draw_CachePic("gfx/achievement/ready");
+	achievement_list[0].img = Draw_CachePic("gfx/achievement/ready.tga");
 	achievement_list[0].unlocked = 0;
 	achievement_list[0].progress = 0;
 	strcpy(achievement_list[0].name, "Ready..");
 	strcpy(achievement_list[0].description, "Reach round 5");
 
-	achievement_list[1].img = Draw_CachePic("gfx/achievement/steady");
+	achievement_list[1].img = Draw_CachePic("gfx/achievement/steady.tga");
 	achievement_list[1].unlocked = 0;
 	achievement_list[1].progress = 0;
 	strcpy(achievement_list[1].name, "Steady..");
 	strcpy(achievement_list[1].description, "Reach round 10");
 
-	achievement_list[2].img = Draw_CachePic("gfx/achievement/go_hell_no");
+	achievement_list[2].img = Draw_CachePic("gfx/achievement/go_hell_no.tga");
 	achievement_list[2].unlocked = 0;
 	achievement_list[2].progress = 0;
 	strcpy(achievement_list[2].name, "Go? Hell No...");
 	strcpy(achievement_list[2].description, "Reach round 15");
 
-	achievement_list[3].img = Draw_CachePic("gfx/achievement/where_legs_go");
+	achievement_list[3].img = Draw_CachePic("gfx/achievement/where_legs_go.tga");
 	achievement_list[3].unlocked = 0;
 	achievement_list[3].progress = 0;
 	strcpy(achievement_list[3].name, "Where Did Legs Go?");
 	strcpy(achievement_list[3].description, "Turn a zombie into a crawler");
 
-	achievement_list[4].img = Draw_CachePic("gfx/achievement/the_f_bomb");
+	achievement_list[4].img = Draw_CachePic("gfx/achievement/the_f_bomb.tga");
 	achievement_list[4].unlocked = 0;
 	achievement_list[4].progress = 0;
 	strcpy(achievement_list[4].name, "The F Bomb");
@@ -1166,7 +1213,7 @@ void Achievement_Init (void)
 	strcpy(achievement_list[22].name, "And Stay out");
 	strcpy(achievement_list[22].description, "Don't let zombies in for 2 rounds");*/
 
-	achievement_locked = Draw_CachePic("gfx/achievement/achievement_locked");
+	achievement_locked = Draw_CachePic("gfx/achievement/achievement_locked.tga");
 
 	m_achievement_scroll[0] = 0;
 	m_achievement_scroll[1] = 0;
@@ -1176,46 +1223,40 @@ void Achievement_Init (void)
 void Load_Achivements (void)
 {
 	int achievement_file;
-	achievement_file = (byte *)COM_LoadHunkFile ("%s/data/ach.dat", com_gamedir);
-	
-	if(!achievement_file)
-		Sys_Error("Achievement file not preset.");
+	achievement_file = sceIoOpen(va("%s/data/ach.dat",com_gamedir), SCE_O_RDONLY, 0);
 
 	if (achievement_file >= 0) {
 		char* buffer = (char*)calloc(2, sizeof(char));
 		for (int i = 0; i < MAX_ACHIEVEMENTS; i++) {
-			Sys_FileRead(achievement_file, buffer, sizeof(char)*2);
+			sceIoRead(achievement_file, buffer, sizeof(char)*2);
 			achievement_list[i].unlocked = atoi(buffer);
-			Sys_FileRead(achievement_file, buffer, sizeof(char)*2);
+			sceIoRead(achievement_file, buffer, sizeof(char)*2);
 			achievement_list[i].progress = atoi(buffer);
 		}
 	} else {
-		achievement_file = (byte *)COM_LoadHunkFile ("%s/data/ach.dat", com_gamedir);
+		achievement_file = sceIoOpen(va("%s/data/ach.dat",com_gamedir), SCE_O_WRONLY | SCE_O_CREAT | SCE_O_TRUNC, 0);
 		
-		if(!achievement_file)
-			Sys_Error("Achievement file not preset.");
-
 		for (int i = 0; i < MAX_ACHIEVEMENTS; i++) {
-			Sys_FileWrite(achievement_file, "0\n", sizeof(char)*2);
-			Sys_FileWrite(achievement_file, "0\n", sizeof(char)*2);
+			sceIoWrite(achievement_file, "0\n", sizeof(char)*2);
+			sceIoWrite(achievement_file, "0\n", sizeof(char)*2);
 		}
 	}
-	COM_CloseFile(achievement_file);
+	sceIoClose(achievement_file);
 }
 void Save_Achivements (void)
 {
 	int achievement_file;
-	achievement_file = (byte *)COM_LoadHunkFile ("%s/data/ach.dat", com_gamedir);
+	achievement_file = sceIoOpen(va("%s/data/ach.dat",com_gamedir), SCE_O_WRONLY, 0);
 		
-	if(!achievement_file)
-		Sys_Error("Achievement file not preset.");
+	//if(!achievement_file)
+		//Sys_Error("Achievement file not preset.");
 
 	if (achievement_file >= 0) {
 		for (int i = 0; i < MAX_ACHIEVEMENTS; i++) {
 			char* buffer = va("%i\n", achievement_list[i].unlocked);
 			char* buffer2 = va("%i\n", achievement_list[i].progress);
-			Sys_FileWrite(achievement_file, va("%i\n", achievement_list[i].unlocked), strlen(buffer));
-			Sys_FileWrite(achievement_file, va("%i\n", achievement_list[i].progress), strlen(buffer2));
+			sceIoWrite(achievement_file, va("%i\n", achievement_list[i].unlocked), strlen(buffer));
+			sceIoWrite(achievement_file, va("%i\n", achievement_list[i].progress), strlen(buffer2));
 		}
 	} else {
 		Load_Achivements();
@@ -1228,7 +1269,7 @@ void M_Menu_Achievement_f (void)
 	key_dest = key_menu;
 	m_state = m_achievement;
 	m_entersound = true;
-	//Load_Achivements();
+	Load_Achivements();
 }
 
 void M_Achievement_Draw (void)
@@ -1236,13 +1277,13 @@ void M_Achievement_Draw (void)
     int i, b, y;
     int unlocked_achievement[MAX_ACHIEVEMENTS];
     int locked_achievement[MAX_ACHIEVEMENTS];
-	int maxLenght = floor((vid.width - 155)/8);
+	int maxLenght = floor((vid.width - 155)/16);
 	int	stringLenght;
 	char *description;
 	char *string_line = (char*) malloc(maxLenght);
 	int lines;
 
-    y = 0;
+    y = 5;
     total_unlocked_achievements = 0;
     total_locked_achievements = 0;
 
@@ -1263,25 +1304,25 @@ void M_Achievement_Draw (void)
     }
 
 	// Background
-	if (key_dest != key_menu_pause)
-		Draw_Pic (0, 0, menu_bk);
+	if (paused_hack == false)
+		Draw_BgMenu();
 
 	// Fill black to make everything easier to see
-	Draw_FillByColor(0, 0, 480, 272, 0, 0, 0, 102);
+	Draw_FillByColor(0, 0, 960, 544, 0, 0, 0, 1);
 
 	// Version String
-	Draw_ColoredStringScale(vid.width - 40, 5, "v1.0", 255, 255, 255, 1, 2.0f);
+	Draw_ColoredStringScale(vid.width - 40, 5, "v1.0", 255, 255, 255, 1, 1.0f);
 
     if (!m_achievement_selected)
     {
-        Draw_FillByColor(15, 8, 225, 12, 204, 0, 0, 100);
-        Draw_FillByColor(240, 8, 225, 12, 0, 0, 0, 100);
+        Draw_FillByColor(15, 8, 225, 12, 204, 0, 0, 150);
+        Draw_FillByColor(240, 8, 225, 12, 0, 0, 0, 150);
 
         if (total_unlocked_achievements <= 0)
         {
-            Draw_FillByColor(15, 25, vid.width - 30, 60, 0, 0, 0, 100);
-            Draw_Pic (20, 30 + y, achievement_locked);
-            Draw_ColoredStringScale (125, 30 + y, "No achievements unlocked :(", 255, 255, 255, 1, 2.0f);
+            Draw_FillByColor(15, 25, vid.width - 30, 60, 0, 0, 0, 150);
+            Draw_StretchPic (20, 30 + y, achievement_locked, 150, 50);
+            Draw_ColoredStringScale (180, 50 + y, "No achievements unlocked :(", 255, 255, 255, 1, 1.0f);
         }
         else
         {
@@ -1289,10 +1330,10 @@ void M_Achievement_Draw (void)
             {
                 if (unlocked_achievement[i + m_achievement_scroll[0]] >= 0)
                 {
-                    Draw_FillByColor(15, 25 + y, vid.width - 30, 60, 0, 0, 0, 100);
+                    Draw_FillByColor(15, 25 + y, vid.width - 30, 60, 0, 0, 0, 150);
 
-                    Draw_Pic (20, 30 + y, achievement_list[unlocked_achievement[i + m_achievement_scroll[0]]].img);
-                    Draw_ColoredStringScale (125, 30 + y, achievement_list[unlocked_achievement[i + m_achievement_scroll[0]]].name, 255, 255, 255, 1, 2.0f);
+                    Draw_StretchPic (20, 30 + y, achievement_list[unlocked_achievement[i + m_achievement_scroll[0]]].img, 150, 50);
+                    Draw_ColoredStringScale (180, 30 + y, achievement_list[unlocked_achievement[i + m_achievement_scroll[0]]].name, 255, 255, 255, 1, 1.0f);
 					description = achievement_list[unlocked_achievement[i + m_achievement_scroll[0]]].description;
 					stringLenght = strlen(description);
 					lines = stringLenght/maxLenght;
@@ -1301,7 +1342,7 @@ void M_Achievement_Draw (void)
 					
 					for (b = 0; b < lines; b++) {
 						strncpy(string_line, description+maxLenght*b, (maxLenght-1));
-						Draw_ColoredStringScale (125, 40 + y + b*8, string_line, 255, 255, 255, 1, 2.0f);
+						Draw_ColoredStringScale (180, 60 + y + b*8, string_line, 255, 255, 255, 1, 1.0f);
 					}
 					
 					//if (stringLenght <= maxLenght)
@@ -1316,22 +1357,22 @@ void M_Achievement_Draw (void)
     {
         if (total_locked_achievements <= 0)
         {
-            Draw_FillByColor(15, 25, vid.width - 30, 60, 0, 0, 0, 100);
-            Draw_Pic (20, 30 + y, achievement_locked);
-            Draw_ColoredStringScale (125, 30 + y, "All achievements unlocked :)", 255, 255, 255, 1, 2.0f);
+            Draw_FillByColor(15, 25, vid.width - 30, 60, 0, 0, 0, 150);
+            Draw_StretchPic (20, 30 + y, achievement_locked, 150, 50);
+            Draw_ColoredStringScale (180, 50 + y, "All achievements unlocked :)", 255, 255, 255, 1, 1.0f);
         }
 
-        Draw_FillByColor(15, 8, 225, 12, 0, 0, 0, 100);
-        Draw_FillByColor(240, 8, 225, 12, 204, 0, 0, 100);
+        Draw_FillByColor(15, 8, 225, 12, 0, 0, 0, 150);
+        Draw_FillByColor(vid.width - 167, 8, 225, 12, 204, 0, 0, 150);
 
         for (i = 0; i < 3; i++)
         {
             if (locked_achievement[i + m_achievement_scroll[1]] >= 0)
             {
-                Draw_FillByColor(15, 25 + y, vid.width - 30, 60, 0, 0, 0, 100);
+                Draw_FillByColor(15, 25 + y, vid.width - 30, 60, 0, 0, 0, 150);
 
-                Draw_Pic (20, 30 + y, achievement_locked);
-                Draw_ColoredStringScale (125, 30 + y, achievement_list[locked_achievement[i + m_achievement_scroll[1]]].name, 255, 255, 255, 1, 2.0f);
+                Draw_StretchPic (20, 30 + y, achievement_locked, 150, 50);
+                Draw_ColoredStringScale (180, 30 + y, achievement_list[locked_achievement[i + m_achievement_scroll[1]]].name, 255, 255, 255, 1, 1.0f);
 				description = achievement_list[locked_achievement[i + m_achievement_scroll[1]]].description;
 				stringLenght = strlen(description);
 				lines = stringLenght/maxLenght;
@@ -1340,7 +1381,7 @@ void M_Achievement_Draw (void)
 				
 				for (b = 0; b < lines; b++) {
 					strncpy(string_line, description+maxLenght*b, (maxLenght-1));
-					Draw_ColoredStringScale (125, 40 + y + b*8, string_line, 255, 255, 255, 1, 2.0f);
+					Draw_ColoredStringScale (180, 60 + y + b*8, string_line, 255, 255, 255, 1, 1.0f);
 				}
 					
 					
@@ -1353,8 +1394,8 @@ void M_Achievement_Draw (void)
     }
 
 	free(string_line);
-    Draw_ColoredStringScale (15, 10, "Unlocked Achievements", 255, 255, 255, 1, 2.0f);
-    Draw_ColoredStringScale (vid.width - 167, 10, "Locked Achievements", 255, 255, 255, 1, 2.0f);
+    Draw_ColoredStringScale (15, 10, "Unlocked Achievements", 255, 255, 255, 1, 1.0f);
+    Draw_ColoredStringScale (vid.width - 167, 10, "Locked Achievements", 255, 255, 255, 1, 1.0f);
 }
 
 void M_Achievement_Key (int key)
@@ -1362,18 +1403,14 @@ void M_Achievement_Key (int key)
 	switch (key)
 	{
 	case K_ESCAPE:
-		if (key_dest == key_menu_pause)
-			M_Paused_Menu_f();
-		else
-			M_Menu_Main_f ();
+	case K_BBUTTON:
+		M_Menu_Main_f ();
 		break;
 
-    case K_AUX1:
     case K_LEFTARROW:
         m_achievement_selected = 0;
         break;
 
-    case K_AUX2:
     case K_RIGHTARROW:
         m_achievement_selected = 1;
         break;
@@ -1402,12 +1439,15 @@ void M_Achievement_Key (int key)
         break;
 
 	case K_ENTER:
+	case K_KP_ENTER:
+	case K_ABUTTON:
 		m_entersound = true;
 		switch (m_achievement_cursor)
 		{
 		}
 	}
 }
+#endif
 
 int m_maps_cursor;
 int	MAP_ITEMS;
@@ -4321,7 +4361,10 @@ void M_Init (void)
 	Cmd_AddCommand ("menu_video", M_Menu_Video_f);
 	Cmd_AddCommand ("help", M_Menu_Credits_f);
 	Cmd_AddCommand ("menu_quit", M_Menu_Quit_f);
-
+#ifdef VITA
+	Cmd_AddCommand ("savea", Save_Achivements);
+	Cmd_AddCommand ("loada", Load_Achivements);
+#endif
 	Cvar_RegisterVariable(&cl_enablereartouchpad);
 
 	Map_Finder();
@@ -4386,9 +4429,11 @@ void M_Draw (void)
 	case m_multiplayer:
 		M_MultiPlayer_Draw ();
 		break;
+#ifdef VITA
 	case m_achievement:
 		M_Achievement_Draw ();
 		break;
+#endif
 	case m_setup:
 		GL_SetCanvas (CANVAS_MENU); //johnfitz
 		M_Setup_Draw ();
@@ -4483,10 +4528,11 @@ void M_Keydown (int key)
 	case m_multiplayer:
 		M_MultiPlayer_Key (key);
 		return;
-		
+#ifdef VITA	
 	case m_achievement:
 		M_Achievement_Key (key);
 		return;
+#endif
 
 	case m_setup:
 		M_Setup_Key (key);
