@@ -1725,8 +1725,9 @@ void HUD_Draw (void) {
 	}
 	HUD_Points();
 	HUD_Point_Change();
-
+#ifdef VITA
 	HUD_Achievement();
+#endif
 
 	if (domaxammo == true) {
 		if (maxammoopac <= 0) {
