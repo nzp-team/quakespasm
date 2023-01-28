@@ -1303,11 +1303,10 @@ void PF_achievement (void)
 		return;
 	}
 
-	//Con_Printf (va("Achievement? %i\n", ach));	// JPG
 	client = &svs.clients[entnum-1];
 
 	MSG_WriteByte (&client->message,svc_achievement);
-	MSG_WriteByte (&client->message, ach);
+	MSG_WriteByte (&client->message,ach);
 }
 
 
