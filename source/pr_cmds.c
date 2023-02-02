@@ -3246,7 +3246,7 @@ void PF_ArgV  (void)
 	strcpy(s, tempc);
 	G_INT(OFS_RETURN) = PR_SetEngineString(s);
 }
-#ifdef VITA
+
 /*
 =================
 PF_rumble
@@ -3260,9 +3260,10 @@ void PF_rumble (void)
 	float intensity_small = G_FLOAT(OFS_PARM0);
 	float intensity_large = G_FLOAT(OFS_PARM1);
 	float duration = G_FLOAT(OFS_PARM2);
+#ifdef VITA
 	IN_StartRumble(intensity_small, intensity_large, duration);
+#endif // VITA
 }
-#endif
 
 static builtin_t pr_builtin[] =
 {
@@ -3398,9 +3399,7 @@ static builtin_t pr_builtin[] =
 	NULL, 						// #129
 	NULL, 						// #130
 	NULL, 						// #131
-	#ifdef VITA
 	PF_rumble,					// #132
-	#endif
 	NULL, 						// #133
 	NULL, 						// #134
 	NULL, 						// #135
