@@ -275,7 +275,7 @@ calculates fog color for this frame, taking into account fade times
 float *Fog_GetColor (void)
 {
 	static float c[4]; // = {0.1f, 0.1f, 0.1f, 1.0f}
-//#ifndef VITA
+
 	float f;
 	int i;
 
@@ -298,7 +298,13 @@ float *Fog_GetColor (void)
 	//find closest 24-bit RGB value, so solid-colored sky can match the fog perfectly
 	for (i=0;i<3;i++)
 		c[i] = (float)(Q_rint(c[i] * 255)) / 255.0f;
-//#endif
+
+	// Dumb descrepancy with NX/VITA gl wrappings.
+#ifndef VITA
+	for (i = 0; i < 3; i++)
+		c[i] /= 64.0;
+#endif // VITA
+
 	return c;
 }
 
@@ -364,7 +370,11 @@ void Fog_SetupFrame (void)
 		e = -1;*/
 
 	glFogfv(GL_FOG_COLOR, Fog_GetColor());
+#ifdef VITA
 	glFogf(GL_FOG_DENSITY, fog_density_gl);
+#else
+	glFogf(GL_FOG_DENSITY, fog_density_gl / 64.0);
+#endif // VITA
 	glFogf(GL_FOG_START, fog_start);
 	glFogf(GL_FOG_END, fog_end);
 	//glFogf(GL_FOG_COLOR, *c);
