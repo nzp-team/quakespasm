@@ -1481,11 +1481,9 @@ void SCR_DrawCrosshair (void)
 
 	if (cl.stats[STAT_ACTIVEWEAPON] == W_M2)
 	{
-	#ifdef VITA
+
 		Draw_CharacterRGBA ((vid.width)/4-4, (vid.height)*3/4, 'O', 255, col, col, 0.7);
-	#else
-		Draw_Character ((vid.width)/4-4, (vid.height)*3/4, 'O');
-	#endif
+
 	}
 	else if (crosshair.value == 1 && cl.stats[STAT_ZOOM] != 1 && cl.stats[STAT_ZOOM] != 2 && cl.stats[STAT_ACTIVEWEAPON] != W_PANZER)
     {
@@ -1498,41 +1496,27 @@ void SCR_DrawCrosshair (void)
 
 		x_value = ((vid.width - 8)/4) - crosshair_offset_step;
 		y_value = (vid.height - 8)*3/4;
-	#ifdef VITA
+
 		Draw_CharacterRGBA (x_value, y_value, 158, 255, col, col, 0.7);
-	#else
-		Draw_Character (x_value, y_value, 158);
-	#endif
+
 		x_value = ((vid.width - 8)/4) + crosshair_offset_step;
 		y_value = (vid.height - 8)*3/4;
-	#ifdef VITA
+
 		Draw_CharacterRGBA (x_value, y_value, 158, 255, col, col, 0.7);
-	#else
-		Draw_Character (x_value, y_value, 158);
-	#endif
+
 		x_value = ((vid.width - 8)/4);
 		y_value = (vid.height - 8)*3/4 - crosshair_offset_step;
-	#ifdef VITA
+
 		Draw_CharacterRGBA (x_value, y_value, 157, 255, col, col, 0.7);
-	#else
-		Draw_Character (x_value, y_value, 157);
-	#endif
 
 		x_value = ((vid.width - 8)/4);
 		y_value = (vid.height - 8)*3/4 + crosshair_offset_step;
-	#ifdef VITA
+
 		Draw_CharacterRGBA (x_value, y_value, 157, 255, col, col, 0.7);
-	#else
-		Draw_Character (x_value, y_value, 157);
-	#endif
     }
     else if (crosshair.value && cl.stats[STAT_ZOOM] != 1 && cl.stats[STAT_ZOOM] != 2)
 	{
-	#ifdef VITA
 		Draw_CharacterRGBA ((vid.width - 8)/4/* + crosshair_x*/, (vid.height - 8)*3/4/* + crosshair_y*/, '.', 255, col, col, 0.7);
-	#else
-		Draw_Character ((vid.width - 8)/4/* + crosshair_x*/, (vid.height - 8)*3/4/* + crosshair_y*/, '.');
-	#endif
 	}
 	if (cl.stats[STAT_ZOOM] == 2) {
 	#ifdef VITA
