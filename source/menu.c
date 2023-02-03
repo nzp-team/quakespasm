@@ -3176,26 +3176,30 @@ void M_Keys_Key (int k)
 		S_LocalSound ("sounds/menu/navigate.wav");
 		keys_cursor--;
 		if (keys_cursor < 0)
-			keys_cursor = NUMCOMMANDS-1;
+			keys_cursor = NUMCOMMANDS;
 		break;
 
 	case K_DOWNARROW:
 	case K_RIGHTARROW:
 		S_LocalSound ("sounds/menu/navigate.wav");
 		keys_cursor++;
-		if (keys_cursor >= (int)NUMCOMMANDS)
+		if (keys_cursor >= (int)NUMCOMMANDS + 1)
 			keys_cursor = 0;
 		break;
 
 	case K_ENTER:		// go into bind mode
 	case K_KP_ENTER:
 	case K_ABUTTON:
-		M_FindKeysForCommand (bindnames[keys_cursor][0], keys);
-		S_LocalSound ("sounds/menu/enter.wav");
-		if (keys[2] != -1)
-			M_UnbindCommand (bindnames[keys_cursor][0]);
-		bind_grab = true;
-		IN_Activate(); // activate to allow mouse key binding
+		if (keys_cursor == NUMCOMMANDS)
+			M_Menu_Options_f();
+		else {
+			M_FindKeysForCommand (bindnames[keys_cursor][0], keys);
+			S_LocalSound ("sounds/menu/enter.wav");
+			if (keys[2] != -1)
+				M_UnbindCommand (bindnames[keys_cursor][0]);
+			bind_grab = true;
+			IN_Activate(); // activate to allow mouse key binding
+		}
 		break;
 
 	case K_BACKSPACE:	// delete bindings
