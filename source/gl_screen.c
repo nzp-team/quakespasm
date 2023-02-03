@@ -969,6 +969,9 @@ SCR_DrawLoadScreen
 	* Omar Alejandro
 	* TheSmashers
 */
+
+// 50 character limit
+
 double loadingtimechange;
 int loadingdot;
 int loadingtextwidth;
@@ -976,32 +979,32 @@ char *lodinglinetext;
 qpic_t *awoo;
 char *ReturnLoadingtex (void)
 {
-    int StringNum = Random_Int(55);
+    int StringNum = Random_Int(74);
     switch(StringNum)
     {
         case 1:
-			return  "Released in 1996, Quake is now over 25 years old!";
+			return  "Released in 1996, Quake is over 25 years old!";
             break;
         case 2:
             return  "Use the Kar98-k to be the hero we want you to be!";
             break;
         case 3:
-            return  "There is a huge number of modern engines based on Quake!";
+            return  "Lots of modern engines are based on Quake!";
             break;
         case 4:
-            return  "Development for NZ:P officially began on September 27, 2009";
+            return  "NZ:P began development on September 27 2009!";
             break;
         case 5:
             return  "NZ:P was first released on December 25, 2010!";
             break;
         case 6:
-            return  "The 1.1 release of NZ:P has over 90,000 downloads!";
+            return  "NZ:P Beta 1.1 has over 300,000 downloads!";
             break;
         case 7:
-            return  "NZ:P has been downloaded over 400,000 times!";
+            return  "NZ:P has been downloaded over 500,000 times!";
             break;
         case 8:
-            return  "The original NZP was made mainly by 3 guys around the world.";
+            return  "NZ:P was made mainly by 3 guys around the world!";
             break;
         case 9:
             return  "Blubswillrule: known as \"blubs\", is from the USA.";
@@ -1013,19 +1016,19 @@ char *ReturnLoadingtex (void)
             return  "Ju[s]tice, or \"tom\" is from Lithuania.";
             break;
         case 12:
-            return  "This game is the reason that we have bad sleeping habits!";
+            return  "This game has given us bad sleeping habits!";
             break;
         case 13:
-            return  "We had a lot of fun making this game.";
+            return  "We had a lot of fun making this game!";
             break;
         case 14:
-            return  "Did you know you can make your own Custom Map?";
+            return  "Pro Tip: you can make your own custom map!";
             break;
         case 15:
             return  "Try Retro Mode, it's in the Graphics Settings!";
             break;
         case 16:
-			return  "Tired of the base maps? Make your own or try some online!";
+			return  "Tired of our maps? Make your own or download some!";
             break;
         case 17:
             return  "Slay zombies & be grateful.";
@@ -1046,7 +1049,11 @@ char *ReturnLoadingtex (void)
             return  "That was epic... EPIC FOR THE WIIIN!"; //why
             break;
         case 23:
-            return  "PPSSPP is an awesome PSP emulator!";
+#ifndef VITA
+            return  "Ryujinx and Yuzu are awesome NX emulators!";
+#else
+			return 	"Vita3k is an awesome PS Vita emulator!";
+#endif // VITA
             break;
         case 24:
             return  "You dead yet?";
@@ -1055,13 +1062,13 @@ char *ReturnLoadingtex (void)
             return  "Now 21% cooler!";
             break;
         case 26:
-            return  "your lg is nothink on the lan"; //what
+            return  "your lg is nothink on the lan!"; //what
             break;
         case 27:
             return  "I'm not your chaotic on dm6!"; 
             break;
         case 28:
-            return  "Shoot zombies to kill them. Or knife them. You choose.";
+            return  "Shoot or knife zombies to kill them, up to you!";
             break;
         case 29:
             return 	"How many people forgot to Compile today?";
@@ -1070,7 +1077,11 @@ char *ReturnLoadingtex (void)
             return  "ggnore";
             break;
         case 31:
-            return  "Have you tried NZ:P on PC or NX?";
+#ifndef VITA
+			return  "NZ:P is also on PC, 3DS, Vita, and PSP!";
+#else
+			return 	"NZ:P is also on PC, 3DS, Switch, and PSP!";
+#endif // VITA
             break;
         case 32:
             return  "Submerge your device in water for godmode!";
@@ -1079,10 +1090,14 @@ char *ReturnLoadingtex (void)
             return  "10/10/10 was a good day.";
             break;
         case 34:
-            return  "Also check out \"No Bugs Allowed\" for the PSP!";
+#ifndef VITA
+            return  "Also check out \"DiabloNX\" for Switch!";
+#else
+			return 	"Also check out \"RPPHS\" for PS Vita!";
+#endif // VITA
             break;
         case 35:
-            return 	"MotoLegacy, or \"Ian\", is from the USA.";
+            return 	"MotoLegacy, or \"Ivy\", is from the USA.";
             break;
         case 36:
             return  "Zombies don't like bullets.";
@@ -1109,13 +1124,17 @@ char *ReturnLoadingtex (void)
 			return 	"Please help me find the meaning of   . Thanks.";
 			break;
 		case 44:
-			return  "NZ:P Discord is ONLY for Thomas the Tank Engine Roleplay!";
+			return  "Discord is ONLY for Thomas the Tank Engine RP!";
 			break;
 		case 45:
-			return 	"Get rid of the 21% cooler tip, it's an MLP reference.";
+			return 	"\"Get rid of the 21% tip, it's an MLP reference.\"";
 			break;
 		case 46:
-			return 	"You're playing on a PS Vita!";
+#ifndef VITA
+			return 	"You're playing on Nintendo Switch!";
+#else
+			return 	"You're playing on PlayStation Vita!";
+#endif // VITA
 			break;
 		case 47:
 			return 	"Don't leak the beta!";
@@ -1136,9 +1155,66 @@ char *ReturnLoadingtex (void)
 			return  "pro tip: aiming helps";
 			break;
 		case 53:
-			return  "If a Nazi Zombie bites you, are you a Nazi, or a Zombie?";
+			return  "\"my mom gave me plunger money\"";
 			break;
 		case 54:
+			return "dolphin dive on top of your friend for god mode";
+			break;
+		case 55:
+			return "no free rides. ass, grass, or cash!";
+			break;
+		case 56:
+			return "nzp-team.github.io/latest/game.html";
+			break;
+		case 57:
+			return "im an mlg gamer girl so its pretty guaranteed";
+			break;
+		case 58:
+			return "this is a w because you cant have enough fnaf";
+			break;
+		case 59:
+			return "i hope santa drops bombs on the uk";
+			break;
+		case 60:
+			return "Hoyl shit, bro! You fucking ported fortnite!";
+			break;
+		case 61:
+			return "icarly feet futtishist.";
+			break;
+		case 62:
+			return "Well, it's impossible to play, I'm disgusted.";
+			break;
+		case 63:
+			return "I like my women to not be cartoons";
+			break;
+		case 64:
+			return "Plot twist: NZP was always broken";
+			break;
+		case 65:
+			return "testing some think.";
+			break;
+		case 66:
+			return "fnaf is older than gay marriage in the us";
+			break;
+		case 67:
+			return "i want that twink Obliterated";
+			break;
+		case 68:
+			return "i think he's started the femboy transition process";
+			break;
+		case 69:
+			return "nice";
+			break;
+		case 70:
+			return "He's FUCKING annoying";
+			break;
+		case 71:
+			return "yeah pog female bikers";
+			break;
+		case 72:
+			return "This is either a stroke of genius or just a stroke";
+			break;
+		case 73:
 			return  "Play some Custom Maps!";
 			break;
     }
@@ -1166,8 +1242,7 @@ void SCR_DrawLoadScreen (void)
 			strcat(lpath, ".tga");
 
 			lscreen = Draw_CachePic(lpath);
-			//
-			//awoo = Draw_CachePic("gfx/menu/awoo");
+			//awoo = Draw_CachePic("gfx/menu/awoo.png");
 			
 			if (lscreen == NULL)
 			{
@@ -1180,14 +1255,24 @@ void SCR_DrawLoadScreen (void)
 
 		if (load_screen_exists == true)
 		{
+#ifdef VITA
 			Draw_StretchPic(0, 0, lscreen, vid.width, vid.height);
-			//Sys_Error("Fixme pls");
+#else
+			Draw_StretchPic(0, 0, lscreen, vid.width/2, vid.height/2);
+#endif // VITA
 		}
 		
+#ifdef VITA
 		Draw_FillByColor(0, 0, 480, 24, 0, 0, 0, 150); 
 		Draw_FillByColor(x - 62, 478, 480, 24, 0, 0, 0, 150);
 
-		Draw_ColoredString(2, 4, loadnamespec, 255, 255, 0, 255);
+		Draw_ColoredStringScale(4, 8, loadnamespec, 255, 255, 0, 255, 2.0f);
+#else
+		Draw_FillByColor(0, 0, 1280, 36, 0, 0, 0, 150); 
+		Draw_FillByColor(0, 324, 1280, 36, 0, 0, 0, 150);
+
+		Draw_ColoredStringScale(5, 5, loadnamespec, 255, 255, 0, 255, 3.0f);
+#endif // VITA
 		
 	}
 
@@ -1199,10 +1284,17 @@ void SCR_DrawLoadScreen (void)
 	}
 
 	if (key_dest == key_game) {
+#ifdef VITA
 		Draw_ColoredString((vid.width - loadingtextwidth*8)/2/* - loadingtextwidth/2*/, 486, lodinglinetext, 255, 255, 255, 255);
 
 		//if (strcmp(lodinglinetext, "Please help me find the meaning of   . Thanks.") == 0) {
 			//Draw_Pic(335, 255, awoo);
+#else
+		Draw_ColoredStringScale((640 - loadingtextwidth*12)/2, 340, lodinglinetext, 255, 255, 255, 255, 1.5f);
+
+		//if (strcmp(lodinglinetext, "Please help me find the meaning of   . Thanks.") == 0)
+			//Draw_StretchPic(335, 337, awoo, 17, 17);
+#endif // VITA
 	}
 
 }
