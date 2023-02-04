@@ -1238,10 +1238,12 @@ void V_CalcRefdef (void)
 	{
 		ADSOffset[0] = 0;
 		ADSOffset[1] = 0;
+		ADSOffset[2] = 0;
 	}
 	//Side offset
 	cADSOfs [0] += (ADSOffset[0] - cADSOfs[0]) * 0.25;
 	cADSOfs [1] += (ADSOffset[1] - cADSOfs[1]) * 0.25; // naievil -- removed "- cADSOfs[1]" because it caused some viewmodel errors. sB re-enabled it for now.
+	cADSOfs [2] += (ADSOffset[2] - cADSOfs[2]) * 0.25;
 
 	temp_right[0] *= cADSOfs[0];
 	temp_right[1] *= cADSOfs[0];
@@ -1251,9 +1253,13 @@ void V_CalcRefdef (void)
 	temp_up[1] *= cADSOfs[1];
 	temp_up[2] *= cADSOfs[1]; // motolegacy -- another vmodel hack: standard ADS offsets don't go up enough. sB was cADSOfs[1]
 
-	view->origin[0] +=(temp_right[0] + temp_up[0]);
-	view->origin[1] +=(temp_right[1] + temp_up[1]);
-	view->origin[2] +=(temp_right[2] + temp_up[2]);
+	temp_forward[0] *= cADSOfs[2];
+	temp_forward[1] *= cADSOfs[2];
+	temp_forward[2] *= cADSOfs[2];
+	
+	view->origin[0] +=(temp_forward[0] + temp_right[0] + temp_up[0]);
+	view->origin[1] +=(temp_forward[1] + temp_right[1] + temp_up[1]);
+	view->origin[2] +=(temp_forward[2] + temp_right[2] + temp_up[2]);
 
 	float speed = (0.2 + sqrt((cl.velocity[0] * cl.velocity[0])	+	(cl.velocity[1] * cl.velocity[1])));
 	speed = speed/190;
