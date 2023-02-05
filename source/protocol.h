@@ -95,7 +95,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //johnfitz -- PROTOCOL_FITZQUAKE -- new bits
 #define SU_EXTEND1		(1<<15) // another byte to follow
 #define SU_WEAPON2		(1<<16) // 1 byte, this is .weaponmodel & 0xFF00 (second byte)
-#define SU_ARMOR2		(1<<17) // 1 byte, this is .armorvalue & 0xFF00 (second byte)
 #define SU_AMMO2		(1<<18) // 1 byte, this is .currentammo & 0xFF00 (second byte)
 #define SU_SHELLS2		(1<<19) // 1 byte, this is .ammo_shells & 0xFF00 (second byte)
 #define SU_NAILS2		(1<<20) // 1 byte, this is .ammo_nails & 0xFF00 (second byte)

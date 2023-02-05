@@ -131,8 +131,6 @@ typedef struct
 	float		team;
 	float		max_health;
 	float		teleport_time;
-	float		armortype;
-	float		armorvalue;
 	float		waterlevel;
 	float		watertype;
 	float		ideal_yaw;
