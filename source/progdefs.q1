@@ -156,11 +156,11 @@ typedef struct
 	string_t	noise3;
 	float		x2_icon;
 	float		insta_icon;
-	string_t	Weapon_Name;
-	string_t 	Weapon_Name_Touch;
 	vec3_t 		ADS_Offset;
 	vec3_t  	Flash_Offset;
 	float   	Flash_Size;
+	string_t	Weapon_Name;
+	string_t 	Weapon_Name_Touch;
 	float   	currentmag2;
 	float   	maxspeed;
 	float 		facingenemy;
