@@ -185,6 +185,8 @@ void CL_ParseTEnt (void)
 		break;
 
 	case TE_EXPLOSION:			// rocket explosion
+	case TE_RAYSPLASHGREEN:
+	case TE_RAYSPLASHRED:
 		pos[0] = MSG_ReadCoord (cl.protocolflags);
 		pos[1] = MSG_ReadCoord (cl.protocolflags);
 		pos[2] = MSG_ReadCoord (cl.protocolflags);
