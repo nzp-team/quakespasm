@@ -1030,7 +1030,7 @@ void R_DrawTextureChains_GLSL (qmodel_t *model, entity_t *ent, texchain_t chain)
 #endif
 
 	// naievil -- experimental grayscale shader
-	GL_Uniform1fFunc (grayscale_enableLoc, sv_player->v.renderGrayscale);
+	GL_Uniform1fFunc (grayscale_enableLoc, /*sv_player->v.renderGrayscale*/0);
 
 	
 	for (i=0 ; i<model->numtextures ; i++)

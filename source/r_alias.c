@@ -365,7 +365,7 @@ void GL_DrawAliasFrame_GLSL (aliashdr_t *paliashdr, lerpdata_t lerpdata, gltextu
 	GL_Uniform1fFunc (fogDensityLoc, Fog_GetDensity() / 64.0f);
 #endif
 	// naievil -- experimental grayscale mod
-	GL_Uniform1fFunc (aliasgrayscale_enableLoc, sv_player->v.renderGrayscale);
+	GL_Uniform1fFunc (aliasgrayscale_enableLoc, /*sv_player->v.renderGrayscale*/0);
 
 
 // set textures
