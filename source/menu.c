@@ -107,6 +107,14 @@ typedef struct
 
 usermap_t custom_maps[50];
 
+#define BASE_MAP_COUNT   3
+char* base_maps [] = 
+{
+	"ndu",
+	"warehouse",
+	"christmas_special"
+};
+
 enum m_state_e m_state;
 
 int 	old_m_state;
@@ -1706,9 +1714,24 @@ void Map_Finder(void)
     {
         while ((ent = readdir(dir)))
         {
-	        if(!strcmp(COM_FileGetExtension(ent->d_name),"bsp") || !strcmp(COM_FileGetExtension(ent->d_name),"BSP")) {
+	        if(!strcmp(COM_FileGetExtension(ent->d_name),"bsp") || !strcmp(COM_FileGetExtension(ent->d_name),"BSP")) 
+			{
+				qboolean breakaway = false;
 				char ntype[32];
 				COM_StripExtension(ent->d_name, ntype, sizeof(ntype));
+
+				for (int j = 0; j < BASE_MAP_COUNT; j++)
+					{
+						if (breakaway == true)
+							return;
+
+						if(!strcmp(ntype, base_maps[j]))
+							breakaway = true;
+					}
+
+				if (breakaway == true)
+					continue;
+
 				custom_maps[user_maps_num].occupied = true;
 				custom_maps[user_maps_num].map_name = malloc(sizeof(char)*32);
 				sprintf(custom_maps[user_maps_num].map_name, "%s", ntype);
