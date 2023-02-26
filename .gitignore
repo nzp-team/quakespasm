@@ -8,3 +8,4 @@ assets/vita/eboot.bin
 *.nacl
 *.sfo
 *.bin
+*.o
