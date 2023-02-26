@@ -268,7 +268,7 @@ nzp.vpk: nzp.velf
 	mv nzp.elf build/vita/
 	mv nzp.elf.unstripped.elf build/vita/
 	mv nzp.velf build/vita/
-	#mv source/*.o build/vita/
+	mv source/*.o build/vita/
 
 %.velf: %.elf
 	cp $< $<.unstripped.elf
