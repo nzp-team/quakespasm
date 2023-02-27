@@ -312,17 +312,15 @@ static void PF_setmodel (void)
 /*
 =================
 PF_bprint
-
 broadcast print to everyone on server
-
-bprint(value)
+bprint(style, value)
 =================
 */
-static void PF_bprint (void)
+void PF_bprint (void)
 {
-	char		*s;
-
-	s = PF_VarString(0);
+	// 
+	float style = G_FLOAT(OFS_PARM0);
+	char *s = PF_VarString(1);
 	SV_BroadcastPrintf ("%s", s);
 }
 
