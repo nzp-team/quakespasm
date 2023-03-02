@@ -1699,6 +1699,7 @@ void Map_Finder(void)
 	DIR* dir;
     struct dirent* ent;
 	char map_dir[MAX_OSPATH];
+	qboolean breakaway;
 
 	for (int i = 0; i < 50; i++) {
 		custom_maps[i].occupied = false;
@@ -1716,87 +1717,96 @@ void Map_Finder(void)
         {
 	        if(!strcmp(COM_FileGetExtension(ent->d_name),"bsp") || !strcmp(COM_FileGetExtension(ent->d_name),"BSP")) 
 			{
-				qboolean breakaway = false;
+				breakaway = false;
 				char ntype[32];
 				COM_StripExtension(ent->d_name, ntype, sizeof(ntype));
 
 				for (int j = 0; j < BASE_MAP_COUNT; j++)
 					{
 						if (breakaway == true)
-							return;
+							break;
 
 						if(!strcmp(ntype, base_maps[j]))
+						{
+							//Con_Printf("ntype: %s\n base_map: %s\n", ntype, base_maps[j]);
 							breakaway = true;
+						}
 					}
 
 				if (breakaway == true)
+				{
+					//Con_Printf("Breaking away at ntype: %s\n", ntype);
 					continue;
+				}
+				else
+				{
+					//Con_Printf("Success at ntype: %s\n", ntype);
+					custom_maps[user_maps_num].occupied = true;
+					custom_maps[user_maps_num].map_name = malloc(sizeof(char)*32);
+					sprintf(custom_maps[user_maps_num].map_name, "%s", ntype);
 
-				custom_maps[user_maps_num].occupied = true;
-				custom_maps[user_maps_num].map_name = malloc(sizeof(char)*32);
-				sprintf(custom_maps[user_maps_num].map_name, "%s", ntype);
+					char* 	setting_path;
+					FILE* 	setting_file;
 
-				char* 	setting_path;
-				FILE* 	setting_file;
+					setting_path 									= malloc(sizeof(char)*64);
+					custom_maps[user_maps_num].map_thumbnail_path 	= malloc(sizeof(char)*64);
 
-				setting_path 									= malloc(sizeof(char)*64);
-				custom_maps[user_maps_num].map_thumbnail_path 	= malloc(sizeof(char)*64);
+					strcpy(setting_path, map_dir);
+					strcat(setting_path, "/");
 
-				strcpy(setting_path, map_dir);
-				strcat(setting_path, "/");
+					strcpy(custom_maps[user_maps_num].map_thumbnail_path, 	"gfx/menu/custom/");
+					strcat(setting_path, 									custom_maps[user_maps_num].map_name);
+					strcat(custom_maps[user_maps_num].map_thumbnail_path, 	custom_maps[user_maps_num].map_name);
+					strcat(custom_maps[user_maps_num].map_thumbnail_path, 	".tga");
+					strcat(setting_path, 									".txt");
 
-				strcpy(custom_maps[user_maps_num].map_thumbnail_path, 	"gfx/menu/custom/");
-				strcat(setting_path, 									custom_maps[user_maps_num].map_name);
-				strcat(custom_maps[user_maps_num].map_thumbnail_path, 	custom_maps[user_maps_num].map_name);
-				strcat(custom_maps[user_maps_num].map_thumbnail_path, 	".tga");
-				strcat(setting_path, 									".txt");
+					setting_file = fopen(setting_path, "r");
 
-				setting_file = fopen(setting_path, "r");
+					if (setting_file != NULL) {
+						int state;
+						state = 0;
+						int value;
 
-				if (setting_file != NULL) {
-					int state;
-					state = 0;
-					int value;
+						custom_maps[user_maps_num].map_name_pretty = malloc(sizeof(char)*32);
+						custom_maps[user_maps_num].map_desc_1 = malloc(sizeof(char)*40);
+						custom_maps[user_maps_num].map_desc_2 = malloc(sizeof(char)*40);
+						custom_maps[user_maps_num].map_desc_3 = malloc(sizeof(char)*40);
+						custom_maps[user_maps_num].map_desc_4 = malloc(sizeof(char)*40);
+						custom_maps[user_maps_num].map_desc_5 = malloc(sizeof(char)*40);
+						custom_maps[user_maps_num].map_desc_6 = malloc(sizeof(char)*40);
+						custom_maps[user_maps_num].map_desc_7 = malloc(sizeof(char)*40);
+						custom_maps[user_maps_num].map_desc_8 = malloc(sizeof(char)*40);
+						custom_maps[user_maps_num].map_author = malloc(sizeof(char)*40);
 
-					custom_maps[user_maps_num].map_name_pretty = malloc(sizeof(char)*32);
-					custom_maps[user_maps_num].map_desc_1 = malloc(sizeof(char)*40);
-					custom_maps[user_maps_num].map_desc_2 = malloc(sizeof(char)*40);
-					custom_maps[user_maps_num].map_desc_3 = malloc(sizeof(char)*40);
-					custom_maps[user_maps_num].map_desc_4 = malloc(sizeof(char)*40);
-					custom_maps[user_maps_num].map_desc_5 = malloc(sizeof(char)*40);
-					custom_maps[user_maps_num].map_desc_6 = malloc(sizeof(char)*40);
-					custom_maps[user_maps_num].map_desc_7 = malloc(sizeof(char)*40);
-					custom_maps[user_maps_num].map_desc_8 = malloc(sizeof(char)*40);
-					custom_maps[user_maps_num].map_author = malloc(sizeof(char)*40);
+						char buffer[64];
+						int bufferlen = sizeof(buffer);
 
-					char buffer[64];
-					int bufferlen = sizeof(buffer);
+						while(fgets(buffer, bufferlen, setting_file)) {
+							// strip newlines
+							buffer[strcspn(buffer, "\r")] = 0;
+							buffer[strcspn(buffer, "\n")] = 0;
 
-					while(fgets(buffer, bufferlen, setting_file)) {
-						// strip newlines
-						buffer[strcspn(buffer, "\r")] = 0;
-						buffer[strcspn(buffer, "\n")] = 0;
-
-						switch(state) {
-							case 0: strcpy(custom_maps[user_maps_num].map_name_pretty, buffer); break;
-							case 1: strcpy(custom_maps[user_maps_num].map_desc_1, buffer); break;
-							case 2: strcpy(custom_maps[user_maps_num].map_desc_2, buffer); break;
-							case 3: strcpy(custom_maps[user_maps_num].map_desc_3, buffer); break;
-							case 4: strcpy(custom_maps[user_maps_num].map_desc_4, buffer); break;
-							case 5: strcpy(custom_maps[user_maps_num].map_desc_5, buffer); break;
-							case 6: strcpy(custom_maps[user_maps_num].map_desc_6, buffer); break;
-							case 7: strcpy(custom_maps[user_maps_num].map_desc_7, buffer); break;
-							case 8: strcpy(custom_maps[user_maps_num].map_desc_8, buffer); break;
-							case 9: strcpy(custom_maps[user_maps_num].map_author, buffer); break;
-							case 10: value = 0; sscanf(buffer, "%d", &value); custom_maps[user_maps_num].map_use_thumbnail = value; break;
-							case 11: value = 0; sscanf(buffer, "%d", &value); custom_maps[user_maps_num].map_allow_game_settings = value; break;
-							default: break;
+							switch(state) {
+								case 0: strcpy(custom_maps[user_maps_num].map_name_pretty, buffer); break;
+								case 1: strcpy(custom_maps[user_maps_num].map_desc_1, buffer); break;
+								case 2: strcpy(custom_maps[user_maps_num].map_desc_2, buffer); break;
+								case 3: strcpy(custom_maps[user_maps_num].map_desc_3, buffer); break;
+								case 4: strcpy(custom_maps[user_maps_num].map_desc_4, buffer); break;
+								case 5: strcpy(custom_maps[user_maps_num].map_desc_5, buffer); break;
+								case 6: strcpy(custom_maps[user_maps_num].map_desc_6, buffer); break;
+								case 7: strcpy(custom_maps[user_maps_num].map_desc_7, buffer); break;
+								case 8: strcpy(custom_maps[user_maps_num].map_desc_8, buffer); break;
+								case 9: strcpy(custom_maps[user_maps_num].map_author, buffer); break;
+								case 10: value = 0; sscanf(buffer, "%d", &value); custom_maps[user_maps_num].map_use_thumbnail = value; break;
+								case 11: value = 0; sscanf(buffer, "%d", &value); custom_maps[user_maps_num].map_allow_game_settings = value; break;
+								default: break;
+							}
+							state++;
 						}
-						state++;
-					}
 					fclose(setting_file);
 				}
 				user_maps_num = user_maps_num + 1;
+				}
 			}
         }
         closedir(dir);
