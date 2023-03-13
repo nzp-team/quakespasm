@@ -1191,9 +1191,13 @@ void R_DrawAliasModel (entity_t *e)
 			glBlendFunc (GL_ONE, GL_ONE);
 			glDepthMask(GL_FALSE);
 			glColor3f(entalpha,entalpha,entalpha);
+#ifndef VITA
 			Fog_StartAdditive ();
+#endif
 			GL_DrawAliasFrame (paliashdr, lerpdata);
+#ifndef VITA
 			Fog_StopAdditive ();
+#endif
 			glDepthMask(GL_TRUE);
 			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable(GL_BLEND);
@@ -1254,9 +1258,13 @@ void R_DrawAliasModel (entity_t *e)
 				glDepthMask(GL_FALSE);
 				shading = false;
 				glColor3f(entalpha,entalpha,entalpha);
+#ifndef VITA
 				Fog_StartAdditive ();
+#endif
 				GL_DrawAliasFrame (paliashdr, lerpdata);
+#ifndef VITA
 				Fog_StopAdditive ();
+#endif
 				glDepthMask(GL_TRUE);
 				glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				glDisable(GL_BLEND);
@@ -1273,9 +1281,13 @@ void R_DrawAliasModel (entity_t *e)
 			glEnable(GL_BLEND);
 			glBlendFunc (GL_ONE, GL_ONE);
 			glDepthMask(GL_FALSE);
+#ifndef VITA
 			Fog_StartAdditive ();
+#endif
 			GL_DrawAliasFrame (paliashdr, lerpdata);
+#ifndef VITA
 			Fog_StopAdditive ();
+#endif
 			glDepthMask(GL_TRUE);
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1290,9 +1302,13 @@ void R_DrawAliasModel (entity_t *e)
 				glDepthMask(GL_FALSE);
 				shading = false;
 				glColor3f(entalpha,entalpha,entalpha);
+#ifndef VITA
 				Fog_StartAdditive ();
+#endif
 				GL_DrawAliasFrame (paliashdr, lerpdata);
+#ifndef VITA
 				Fog_StopAdditive ();
+#endif
 				glDepthMask(GL_TRUE);
 				glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				glDisable(GL_BLEND);
@@ -1331,9 +1347,13 @@ void R_DrawAliasModel (entity_t *e)
 				glDepthMask(GL_FALSE);
 				shading = false;
 				glColor3f(entalpha,entalpha,entalpha);
+#ifndef VITA
 				Fog_StartAdditive ();
+#endif
 				GL_DrawAliasFrame (paliashdr, lerpdata);
+#ifndef VITA
 				Fog_StopAdditive ();
+#endif
 				glDepthMask(GL_TRUE);
 				glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				glDisable(GL_BLEND);

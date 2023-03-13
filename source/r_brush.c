@@ -370,10 +370,14 @@ void R_DrawSequentialPoly (msurface_t *s)
 		else //case 3: texture in one pass, lightmap in second pass using 2x modulation blend func, fog in third pass
 		{
 			//first pass -- texture with no fog
+#ifndef VITA
 			Fog_DisableGFog ();
+#endif VITA
 			GL_Bind (t->gltexture);
 			DrawGLPoly (s->polys);
+#ifndef VITA
 			Fog_EnableGFog ();
+#endif
 			rs_brushpasses++;
 
 			//second pass -- lightmap with black fog, modulate blended
@@ -382,7 +386,9 @@ void R_DrawSequentialPoly (msurface_t *s)
 			glDepthMask (GL_FALSE);
 			glEnable (GL_BLEND);
 			glBlendFunc(GL_DST_COLOR, GL_SRC_COLOR); //2x modulate
+#ifndef VITA
 			Fog_StartAdditive ();
+#endif
 #ifdef VITA
 			glBegin(GL_TRIANGLE_FAN);
 #else
@@ -395,10 +401,13 @@ void R_DrawSequentialPoly (msurface_t *s)
 				glVertex3fv (v);
 			}
 			glEnd ();
+#ifndef VITA
 			Fog_StopAdditive ();
+#endif
 			rs_brushpasses++;
 
 			//third pass -- black geo with normal fog, additive blended
+#ifndef VITA
 			if (Fog_GetDensity() > 0)
 			{
 				glBlendFunc(GL_ONE, GL_ONE); //add
@@ -409,6 +418,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 				rs_brushpasses++;
 			}
+#endif
 
 			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable (GL_BLEND);
@@ -451,10 +461,14 @@ void R_DrawSequentialPoly (msurface_t *s)
 		else //case 6: texture in one pass, lightmap in a second pass, fog in third pass
 		{
 			//first pass -- texture with no fog
+#ifndef VITA
 			Fog_DisableGFog ();
+#endif
 			GL_Bind (t->gltexture);
 			DrawGLPoly (s->polys);
+#ifndef VITA
 			Fog_EnableGFog ();
+#endif
 			rs_brushpasses++;
 
 			//second pass -- lightmap with black fog, modulate blended
@@ -463,7 +477,9 @@ void R_DrawSequentialPoly (msurface_t *s)
 			glDepthMask (GL_FALSE);
 			glEnable (GL_BLEND);
 			glBlendFunc (GL_ZERO, GL_SRC_COLOR); //modulate
+#ifndef VITA
 			Fog_StartAdditive ();
+#endif
 #ifdef VITA
 			glBegin(GL_TRIANGLE_FAN);
 #else
@@ -476,9 +492,11 @@ void R_DrawSequentialPoly (msurface_t *s)
 				glVertex3fv (v);
 			}
 			glEnd ();
+#ifndef VITA
 			Fog_StopAdditive ();
+#endif
 			rs_brushpasses++;
-
+#ifndef VITA
 			//third pass -- black geo with normal fog, additive blended
 			if (Fog_GetDensity() > 0)
 			{
@@ -490,7 +508,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 				rs_brushpasses++;
 			}
-
+#endif
 			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable (GL_BLEND);
 			glDepthMask (GL_TRUE);
@@ -517,9 +535,13 @@ fullbrights:
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		glColor3f (entalpha, entalpha, entalpha);
 		GL_Bind (t->fullbright);
+#ifndef VITA
 		Fog_StartAdditive ();
+#endif
 		DrawGLPoly (s->polys);
+#ifndef VITA
 		Fog_StopAdditive ();
+#endif
 		glColor3f(1, 1, 1);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -1166,9 +1166,9 @@ R_RenderScene
 void R_RenderScene (void)
 {
 	R_SetupScene (); //johnfitz -- this does everything that should be done once per call to RenderScene
-
+#ifndef VITA
 	Fog_EnableGFog (); //johnfitz
-
+#endif
 	Sky_DrawSky (); //johnfitz
 
 	R_DrawWorld ();
@@ -1188,9 +1188,9 @@ void R_RenderScene (void)
 	R_DrawParticles ();
 
 	QMB_DrawParticles();
-
+#ifndef VITA
 	Fog_DisableGFog (); //johnfitz
-
+#endif
 	R_DrawViewModel (); //johnfitz -- moved here from R_RenderView
 
 	R_DrawView2Model ();
