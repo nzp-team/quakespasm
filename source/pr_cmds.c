@@ -2950,7 +2950,6 @@ void PF_fgets (void)
 	}
 	if (!count)	// EndOfFile
 	{
-		Sys_FileClose(h);
 		G_INT(OFS_RETURN) = OFS_NULL;	// void string
 		return;
 	}
