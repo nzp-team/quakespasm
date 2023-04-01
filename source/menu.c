@@ -926,9 +926,14 @@ void M_SinglePlayer_Draw (void)
 	switch (m_singleplayer_cursor) {
 		case 0:
 			Draw_StretchPic(x_map_info_disp + 290, y + 55, menu_ndu, 300, 170);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 235, "Lock and Load; Crashed Plane.", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 250, "Divided. Thousands of Undead.", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 265, "This is the Night of the Dead.", 1, 1, 1, 1, 1.5f);
+			Draw_ColoredStringScale(x_map_info_disp + 245, y + 235, "Desolate bunker located on a Ge-", 1, 1, 1, 1, 1.5f);
+			Draw_ColoredStringScale(x_map_info_disp + 245, y + 250, "rman airfield, stranded after a", 1, 1, 1, 1, 1.5f);
+			Draw_ColoredStringScale(x_map_info_disp + 245, y + 265, "brutal plane crash surrounded by", 1, 1, 1, 1, 1.5f);
+			Draw_ColoredStringScale(x_map_info_disp + 245, y + 280, "hordes of undead. Exploit myste-", 1, 1, 1, 1, 1.5f);
+			Draw_ColoredStringScale(x_map_info_disp + 245, y + 295, "rious forces at play and hold o-", 1, 1, 1, 1, 1.5f);
+			Draw_ColoredStringScale(x_map_info_disp + 245, y + 310, "ut against relentless waves. Der", 1, 1, 1, 1, 1.5f);
+			Draw_ColoredStringScale(x_map_info_disp + 245, y + 325, "Anstieg ist jetzt. Will you fall", 1, 1, 1, 1, 1.5f);
+			Draw_ColoredStringScale(x_map_info_disp + 245, y + 340, "to the overwhelming onslaught?", 1, 1, 1, 1, 1.5f);
 			break;
 		case 1: 
 			Draw_StretchPic(x_map_info_disp + 290, y + 55, menu_wh, 300, 170);
