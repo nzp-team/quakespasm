@@ -1529,11 +1529,19 @@ void CL_ParseServerMessage (void)
 		case svc_limbupdate:
 			CL_ParseLimbUpdate();
 			break;
-	#ifdef VITA		
 		case svc_achievement:
+		
+#ifdef VITA
+
 			HUD_Parse_Achievement (MSG_ReadByte());
+			
+#else
+
+    MSG_ReadByte(); // motolegacy -- stop breaking protocol
+
+#endif // VITA
+			
 			break;
-	#endif	
 		case svc_maxammo:
 			domaxammo = true;
 			break;
