@@ -12,6 +12,7 @@ jobs:
       - name: Install Packages and update VitaGL
         run: |
           apk add bash build-base zip git curl cmake
+          sh vitasdk-update
           vdpm vitagl
           git clone https://github.com/bythos14/SceShaccCgExt.git
           cd SceShaccCgExt
