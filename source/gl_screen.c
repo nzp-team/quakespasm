@@ -1239,14 +1239,13 @@ void SCR_DrawLoadScreen (void)
 			lpath = (char*)Z_Malloc(sizeof(char)*32);
 			strcpy(lpath, "gfx/lscreen/");
 			strcat(lpath, loadname2);
-			strcat(lpath, ".tga");
 
 			lscreen = Draw_CachePic(lpath);
 			//awoo = Draw_CachePic("gfx/menu/awoo.png");
 			
 			if (lscreen == NULL)
 			{
-				lscreen = Draw_CachePic("gfx/lscreen/lscreen.tga");
+				lscreen = Draw_CachePic("gfx/lscreen/lscreen");
 			}
 			load_screen_exists = true;
 			
