@@ -9,9 +9,12 @@ jobs:
       image: vitasdk/vitasdk:latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Packages and update VitaGL
+      - name: Install Packages and update VitaSDK
         run: |
           apk add bash build-base zip git curl cmake
+          git clone https://github.com/vitasdk/vdpm
+          cd vdpm
+          chmod +x vitasdk-update
           sh vitasdk-update
           vdpm vitagl
           git clone https://github.com/bythos14/SceShaccCgExt.git
