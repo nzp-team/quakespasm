@@ -112,6 +112,7 @@ void GL_Bind (gltexture_t *texture);
 void GL_ClearBindings (void);
 
 qpic_t *LoadTGAPic (char *path);
+qpic_t *LoadPNGPic (char *path);
 
 #endif	/* _GL_TEXMAN_H */
 
