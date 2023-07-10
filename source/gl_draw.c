@@ -311,8 +311,10 @@ qpic_t	*Draw_CachePic (const char *path)
 		if (!strcmp (path, pic->name))
 			return &pic->pic;
 	}
+
 	if (menu_numcachepics == MAX_CACHED_PICS)
 		Sys_Error ("menu_numcachepics == MAX_CACHED_PICS");
+
 	menu_numcachepics++;
 	strcpy (pic->name, path);
 
@@ -328,14 +330,23 @@ qpic_t	*Draw_CachePic (const char *path)
 		src_type = SRC_TGA;
 
 		dat = (qpic_t *)LoadTGAPic(path_noext);
-		if (!dat)
+		if (!dat) {
 			Host_Error ("Draw_CachePic: failed to load %s", path);
+		}
+	} else if (!strcmp("png", extension)) {
+		src_type = SRC_RGBA;
+
+		dat = (qpic_t *)LoadPNGPic(path_noext);
+		if (!dat) {
+			Host_Error ("Draw_CachePic: failed to load %s", path);
+		}
 	} else {
 		src_type = SRC_INDEXED;
 
 		dat = (qpic_t *)COM_LoadTempFile (path, NULL);
-		if (!dat)
+		if (!dat) {
 			Host_Error ("Draw_CachePic: failed to load %s", path);
+		}
 		SwapPic (dat);
 	}
 

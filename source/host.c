@@ -831,8 +831,8 @@ void Preload (void)
 {
 	Mod_ForName ("models/player.mdl", true);
 
-	Mod_ForName("models/ai/zb#.mdl", true);
-	Mod_ForName("models/ai/zbc#.mdl", true);
+	Mod_ForName("models/ai/zb%.mdl", true);
+	Mod_ForName("models/ai/zbc%.mdl", true);
 	Mod_ForName ("models/ai/zfull.mdl",true);
 	Mod_ForName ("models/ai/zcfull.mdl",true);
 	Mod_ForName ("models/ai/zh^.mdl",true);

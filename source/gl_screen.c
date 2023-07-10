@@ -1221,6 +1221,7 @@ char *ReturnLoadingtex (void)
     return "wut wut";
 }
 qboolean load_screen_exists;
+char lpath[MAX_QPATH];
 void SCR_DrawLoadScreen (void)
 {
 	int max_step   	= 350;
@@ -1231,29 +1232,31 @@ void SCR_DrawLoadScreen (void)
 	if (!con_forcedup)
 	    return;
 
+	load_screen_exists = false;
+
 	if (loadingScreen) {
 		if (!loadscreeninit) {
-			load_screen_exists = false;
-			
-			char* lpath;
-			lpath = (char*)Z_Malloc(sizeof(char)*32);
-			strcpy(lpath, "gfx/lscreen/");
-			strcat(lpath, loadname2);
-
+			sprintf(lpath, "gfx/lscreen/%s.png", loadname2);
 			lscreen = Draw_CachePic(lpath);
+
 			//awoo = Draw_CachePic("gfx/menu/awoo.png");
-			
-			if (lscreen == NULL)
-			{
-				lscreen = Draw_CachePic("gfx/lscreen/lscreen");
+
+			// naievil -- go to default loadingscreen 
+			if (lscreen == NULL) {
+				sprintf(lpath, "gfx/lscreen/lscreen.png", loadname2);
+				lscreen = Draw_CachePic(lpath);
 			}
-			load_screen_exists = true;
-			
-			loadscreeninit = true;
+
+			// naievil -- if that fails, we need to not load anything
+			if (lscreen == NULL) {
+				load_screen_exists = false;
+			} else {
+				load_screen_exists = true;
+				loadscreeninit = true;
+			}
 		}
 
-		if (load_screen_exists == true)
-		{
+		if (load_screen_exists == true) {
 #ifdef VITA
 			Draw_StretchPic(0, 0, lscreen, vid.width, vid.height);
 #else
@@ -1275,8 +1278,7 @@ void SCR_DrawLoadScreen (void)
 		
 	}
 
-	if (loadingtimechange < Sys_DoubleTime ())
-	{
+	if (loadingtimechange < Sys_DoubleTime ()) {
         lodinglinetext = ReturnLoadingtex();
 		loadingtextwidth = strlen(lodinglinetext); //strlen(lodinglinetext)*8
         loadingtimechange = Sys_DoubleTime () + 5;
