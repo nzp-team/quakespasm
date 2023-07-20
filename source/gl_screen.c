@@ -1552,14 +1552,8 @@ void SCR_DrawCrosshair (void)
 		Draw_CharacterRGBA ((vid.width - 8)/4/* + crosshair_x*/, (vid.height - 8)*3/4/* + crosshair_y*/, '.', 255, col, col, 0.7);
 	}
 	if (cl.stats[STAT_ZOOM] == 2) {
-	#ifdef VITA
 		GL_SetCanvas(CANVAS_DEFAULT);
-		//Draw_StretchPic (0, 0, sniper_scope, vid.width, vid.height);
-		
 		Draw_AlphaStretchPic (0, 0, vid.width, vid.height, 255, sniper_scope);
-	#else
-		Draw_AlphaStretchPic (0, 0, vid.width, vid.height, 1, sniper_scope);
-	#endif
 	}
    if (Hitmark_Time > sv.time) {
         Draw_Pic ((vid.width/2 - hitmark->width)/2,vid.height/2 + (vid.height/2 - hitmark->height)/2, hitmark);
