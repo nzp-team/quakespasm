@@ -557,7 +557,7 @@ void CL_RelinkEntities (void)
 					up_offset 		-= 2;
 
 				// now a not-so hack to ensure the muzzleflash follows our viewheight
-				up_offset 		-= (32 - cl.viewheight);
+				up_offset 		-= (36 - cl.viewheight);
 				
 				VectorMA (start, forward_offset, v_forward ,smokeorg);
 				VectorMA (smokeorg, up_offset, v_up ,smokeorg);

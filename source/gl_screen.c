@@ -109,6 +109,8 @@ cvar_t		scr_showpause = {"showpause","1",CVAR_NONE};
 cvar_t		scr_printspeed = {"scr_printspeed","8",CVAR_NONE};
 cvar_t		gl_triplebuffer = {"gl_triplebuffer", "1", CVAR_ARCHIVE};
 
+cvar_t 		cl_crosshair_debug = {"cl_crosshair_debug", "1", CVAR_NONE};
+
 extern	cvar_t	crosshair;
 
 qboolean	scr_initialized;		// ready to draw
@@ -687,6 +689,7 @@ void SCR_Init (void)
 	//johnfitz -- new cvars
 	Cvar_RegisterVariable (&scr_menuscale);
 	Cvar_RegisterVariable (&scr_sbarscale);
+	Cvar_RegisterVariable (&cl_crosshair_debug);
 	Cvar_SetCallback (&scr_sbaralpha, SCR_Callback_refdef);
 	Cvar_RegisterVariable (&scr_loadscreen); //sB loading screen
 	Cvar_RegisterVariable (&scr_sbaralpha);
@@ -1481,6 +1484,11 @@ void SCR_DrawCrosshair (void)
 {
 	if (cl.stats[STAT_HEALTH] < 20 || paused_hack == true || m_state == m_exit) {
 		return;
+	}
+
+	if (cl_crosshair_debug.value) {
+		Draw_FillByColor(vid.width/2, 0, 1, vid.height, 255, 0, 0, 255);
+		Draw_FillByColor(0, vid.height/2, vid.width, 1, 0, 255, 0, 255);
 	}
 	
 	float col;
