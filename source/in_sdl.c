@@ -693,6 +693,7 @@ IN_JoyMove
 extern float cl_backspeed;
 extern float cl_forwardspeed;
 extern float cl_sidespeed;
+extern cvar_t in_aimassist;
 qboolean croshhairmoving;
 
 float client_sprinting;
@@ -760,10 +761,14 @@ void IN_JoyMove (usercmd_t *cmd)
 	// Naievil -- share speed for the viewangle
 	speed = 1;
 	//shpuld begin
+	if ((in_aimassist.value == 1) && (sv_player->v.facingenemy == 1) && cl.stats[STAT_CURRENTMAG] > 0) {
+		speed *= 0.5;
+	}
+	// additionally, slice look speed when ADS/scopes
 	if (cl.stats[STAT_ZOOM] == 1)
-		speed = speed*0.5;
+		speed *= 0.5;
 	else if (cl.stats[STAT_ZOOM] == 2)
-		speed = speed*0.25;
+		speed *= 0.25;
 
 	speed = speed * (sensitivity.value / 11.0);
 
@@ -930,7 +935,7 @@ static inline int IN_SDL_KeysymToQuakeKey(SDLKey sym)
 	case SDLK_BREAK: return K_PAUSE;
 	case SDLK_PAUSE: return K_PAUSE;
 
-	case SDLK_WORLD_18: return '~'; // the '²' key
+	case SDLK_WORLD_18: return '~'; // the 'ï¿½' key
 
 	default: return 0;
 	}
