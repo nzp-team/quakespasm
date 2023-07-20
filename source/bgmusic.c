@@ -26,7 +26,7 @@
 #include "snd_codec.h"
 #include "bgmusic.h"
 
-#define MUSIC_DIRNAME	"music"
+#define MUSIC_DIRNAME	"tracks"
 
 qboolean	bgmloop;
 cvar_t		bgm_extmusic = {"bgm_extmusic", "1", CVAR_ARCHIVE};

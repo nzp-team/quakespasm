@@ -1005,6 +1005,8 @@ void M_SinglePlayer_Key (int key)
 			Cbuf_AddText ("maxplayers 1\n");
 			Cbuf_AddText ("deathmatch 0\n");
 			Cbuf_AddText ("coop 0\n"); 
+			Cbuf_AddText ("music_loop\n");
+			Cbuf_AddText ("music_stop\n");
 			Cbuf_AddText ("map ndu\n");
 			loadingScreen = 1;
 			loadname2 = "ndu";
@@ -1022,6 +1024,8 @@ void M_SinglePlayer_Key (int key)
 			Cbuf_AddText ("deathmatch 0\n");
 			Cbuf_AddText ("coop 0\n"); 
 			Cbuf_AddText ("map warehouse\n");
+			Cbuf_AddText ("music_loop\n");
+			Cbuf_AddText ("music_stop\n");
 			loadingScreen = 1;
 			loadname2 = "warehouse";
 			loadnamespec = "Warehouse";
@@ -1038,6 +1042,8 @@ void M_SinglePlayer_Key (int key)
 			Cbuf_AddText ("deathmatch 0\n");
 			Cbuf_AddText ("coop 0\n"); 
 			Cbuf_AddText ("map christmas_special\n");
+			Cbuf_AddText ("music_loop\n");
+			Cbuf_AddText ("music_stop\n");
 			loadingScreen = 1;
 			loadname2 = "christmas_special";
 			loadnamespec = "Christmas Special";
@@ -1678,6 +1684,8 @@ void M_Menu_Maps_Key (int key)
 			Cbuf_AddText ("maxplayers 1\n");
 			Cbuf_AddText ("deathmatch 0\n");
 			Cbuf_AddText ("coop 0\n"); 
+			Cbuf_AddText ("music_loop\n");
+			Cbuf_AddText ("music_stop\n");
 
 			char map_selection[MAX_QPATH];
 			strcpy(map_selection, custom_maps[m_maps_cursor + multiplier].map_name);
@@ -4417,11 +4425,18 @@ void M_Init (void)
 	Map_Finder();
 }
 
+qboolean music_init = false;
 
 void M_Draw (void)
 {
 	if (m_state == m_none || key_dest != key_menu)
 		return;
+
+	if (!music_init) {
+		Cbuf_AddText("music tensioned_by_the_damned\n");
+		Cbuf_AddText("music_loop\n");
+		music_init = true;
+	}
 
 	if (!m_recursiveDraw)
 	{

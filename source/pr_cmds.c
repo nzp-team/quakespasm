@@ -1255,12 +1255,11 @@ songegg(trackname)
 */
 void PF_SongEgg (void)
 {
-	char trackname;
-	
-	trackname = G_STRING(OFS_PARM0);
+	char* s;
+	s = G_STRING(OFS_PARM0);
 
-	MSG_WriteByte (&sv.reliable_datagram,   svc_songegg);
-	MSG_WriteString (&sv.reliable_datagram, trackname);
+	Cbuf_AddText ("music_loop\n");
+	Cbuf_AddText (va("music %s\n",s));
 }
 
 /*
