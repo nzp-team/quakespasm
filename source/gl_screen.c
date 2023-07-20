@@ -109,7 +109,7 @@ cvar_t		scr_showpause = {"showpause","1",CVAR_NONE};
 cvar_t		scr_printspeed = {"scr_printspeed","8",CVAR_NONE};
 cvar_t		gl_triplebuffer = {"gl_triplebuffer", "1", CVAR_ARCHIVE};
 
-cvar_t 		cl_crosshair_debug = {"cl_crosshair_debug", "1", CVAR_NONE};
+cvar_t 		cl_crosshair_debug = {"cl_crosshair_debug", "0", CVAR_NONE};
 
 extern	cvar_t	crosshair;
 
