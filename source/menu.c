@@ -567,7 +567,7 @@ void M_Main_Draw (void)
 	Draw_ColoredStringScale(10, y + 70, "Co-Op (Coming Soon!)", 0.5, 0.5, 0.5, 1, 1.5f);
 
 	// Divider
-	Draw_FillByColor(10, y + 90, 240, 3, 220, 220, 220, 0.8);
+	Draw_FillByColor(10, y + 90, 240, 3, 220, 220, 220, 255);
 
 	// Settings
 	if (m_main_cursor == 1)
@@ -589,7 +589,7 @@ void M_Main_Draw (void)
 #endif
 
 	// Divider
-	Draw_FillByColor(10, y + 135, 240, 3, 220, 220, 220, 0.8);
+	Draw_FillByColor(10, y + 135, 240, 3, 220, 220, 220, 255);
 #ifdef VITA
 	// Credits
 	if (m_main_cursor == 3)
@@ -601,7 +601,7 @@ void M_Main_Draw (void)
 		Draw_ColoredStringScale(10, y + 145, "Credits", 1, 1, 1, 1, 1.5f);
 
 	// Divider
-	Draw_FillByColor(10, y + 165, 240, 3, 220, 220, 220, 0.8);
+	Draw_FillByColor(10, y + 165, 240, 3, 220, 220, 220, 255);
 #ifdef VITA
 	// Exit
 	if (m_main_cursor == 4)
@@ -908,7 +908,7 @@ void M_SinglePlayer_Draw (void)
 		Draw_ColoredStringScale(10, y + 115, "Christmas Special", 1, 1, 1, 1, 1.5f);
 
 	// Divider
-	Draw_FillByColor(10, y + 135, 240, 3, 220, 220, 220, 0.8);
+	Draw_FillByColor(10, y + 135, 240, 3, 220, 220, 220, 255);
 
 	// Custom Maps
 	if (m_singleplayer_cursor == 3)
@@ -1722,6 +1722,11 @@ void Map_Finder(void)
         {
 	        if(!strcmp(COM_FileGetExtension(ent->d_name),"bsp") || !strcmp(COM_FileGetExtension(ent->d_name),"BSP")) 
 			{
+				// Attempt to fix operating system files (macOS, bleh)
+				// from appearing in maps menu.
+				if (ent->d_name[0] == '.' || ent->d_name[0] == '_')
+					continue;
+
 				breakaway = false;
 				char ntype[32];
 				COM_StripExtension(ent->d_name, ntype, sizeof(ntype));
@@ -2473,7 +2478,7 @@ void M_Options_Draw (void)
 		Draw_ColoredStringScale(10, y + 85, "Control Settings", 1, 1, 1, 1, 1.5f);
 
 	// Divider
-	Draw_FillByColor(10, y + 105, 240, 3, 220, 220, 220, 0.8);
+	Draw_FillByColor(10, y + 105, 240, 3, 220, 220, 220, 255);
 
 	// Console
 	if (options_cursor == 3)
