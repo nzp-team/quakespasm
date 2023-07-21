@@ -353,7 +353,7 @@ void HUD_Parse_Point_Change (int points, int negative, int x_start, int y_start)
 
 	f = HUD_itoa (points, str);
 #ifdef VITA
-	point_change[i].x = x_start - 10.0 - 4.0*f;
+	point_change[i].x = x_start + 64.0 + 4.0*f;
 #else
 	point_change[i].x = x_start - 10.0 - 8.0*f;
 #endif
@@ -427,7 +427,7 @@ void HUD_Points (void)
 		xplus = HUD_itoa (f, str);
 		
 #ifdef VITA
-		Draw_ColoredStringScale (106 - (xplus*16), 415, va("%i", current_points), 1, 1, 1, 1, 2.0f); //2x Scale/White
+		Draw_ColoredStringScale (((100 - xplus)/2)+5, 415, va("%i", current_points), 1, 1, 1, 1, 2.0f); //2x Scale/White
 #else
 		Draw_String (vid.width/2 - (xplus*8) - 16, y + 3, va("%i", current_points));
 #endif // VITA
@@ -475,7 +475,7 @@ void HUD_Point_Change (void)
 			if (point_change[i].negative)
 			{
 			#ifdef VITA
-				Draw_ColoredStringScale (point_change[i].x, point_change[i].y, va ("-%i", point_change[i].points), 1, 0, 0, 1, 1.5f);
+				Draw_ColoredStringScale (point_change[i].x, point_change[i].y, va ("-%i", point_change[i].points), 1, 0, 0, 1, 2);
 			#else
 				Draw_ColoredString (point_change[i].x, point_change[i].y, va ("-%i", point_change[i].points), 1, 0, 0, 1);
 			#endif
@@ -483,13 +483,13 @@ void HUD_Point_Change (void)
 			else
 			{
 			#ifdef VITA
-				Draw_ColoredStringScale (point_change[i].x, point_change[i].y, va ("+%i", point_change[i].points), 1, 1, 0, 1, 1.5f);
+				Draw_ColoredStringScale (point_change[i].x, point_change[i].y, va ("+%i", point_change[i].points), 1, 1, 0, 1, 2);
 			#else
 				Draw_ColoredString (point_change[i].x, point_change[i].y, va ("+%i", point_change[i].points), 1, 1, 0, 1);
 			#endif
 			}
 			point_change[i].y = point_change[i].y + point_change[i].move_y;
-			point_change[i].x = point_change[i].x - point_change[i].move_x;
+			point_change[i].x = point_change[i].x + point_change[i].move_x;
 			if (point_change[i].alive_time && point_change[i].alive_time < Sys_DoubleTime())
 			{
 				point_change[i].points = 0;
