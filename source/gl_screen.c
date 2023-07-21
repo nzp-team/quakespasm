@@ -484,15 +484,36 @@ void SCR_DrawCenterString (void) //actually do the drawing
 		for (l=0 ; l<40 ; l++)
 			if (start[l] == '\n' || !start[l])
 				break;
-		x = (320 - l*8)/2;	//johnfitz -- 320x200 coordinate system
-		for (j=0 ; j<l ; j++, x+=8)
+
+#ifndef VITA
+
+		int scale = 8;
+
+#else
+
+		int scale = 16;
+
+#endif // VITA
+
+		x = (320 - l*scale)/2;	//johnfitz -- 320x200 coordinate system
+		for (j=0 ; j<l ; j++, x+=scale)
 		{
+
+#ifndef VITA
+
 			Draw_Character (x, y, start[j]);	//johnfitz -- stretch overlays
+
+#else
+
+			Draw_CharacterScale(x, y, start[j], 2.0f);
+
+#endif // VITA
+
 			if (!remaining--)
 				return;
 		}
 
-		y += 8;
+		y += scale;
 
 		while (*start && *start != '\n')
 			start++;

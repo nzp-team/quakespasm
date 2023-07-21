@@ -564,6 +564,24 @@ void Draw_Character (int x, int y, int num)
 	glEnd ();
 }
 
+void Draw_CharacterScale (int x, int y, int num, float scale)
+{
+	if (y <= -8)
+		return;			// totally off screen
+
+	num &= 255;
+
+	if (num == 32)
+		return; //don't waste verts on spaces
+
+	GL_Bind (char_texture);
+	glBegin (GL_QUADS);
+
+	Draw_CharacterQuadScale (x, y, (char) num, scale);
+
+	glEnd ();
+}
+
 /*
 ================
 Draw_CharacterRGBA
