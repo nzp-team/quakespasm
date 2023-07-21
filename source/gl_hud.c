@@ -427,7 +427,7 @@ void HUD_Points (void)
 		xplus = HUD_itoa (f, str);
 		
 #ifdef VITA
-		Draw_ColoredStringScale (((100 - xplus)/2)+5, 415, va("%i", current_points), 1, 1, 1, 1, 2.0f); //2x Scale/White
+		Draw_ColoredStringScale (((100 - xplus)/2)-5, 415, va("%i", current_points), 1, 1, 1, 1, 2.0f); //2x Scale/White
 #else
 		Draw_String (vid.width/2 - (xplus*8) - 16, y + 3, va("%i", current_points));
 #endif // VITA

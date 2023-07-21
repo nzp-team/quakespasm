@@ -2531,7 +2531,25 @@ void Mod_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 Mod_LoadAllSkins
 ===============
 */
-extern const char* zombie_skinss[4];
+
+qboolean model_is_zombie(char name[MAX_QPATH])
+{
+	if (strcmp(name, "models/ai/zb%.mdl") == 0 ||
+	strcmp(name, "models/ai/zbc%.mdl") == 0 ||
+	strcmp(name, "models/ai/zcfull.mdl") == 0 ||
+	strcmp(name, "models/ai/zhc^.mdl") == 0 ||
+	strcmp(name, "models/ai/zalc(.mdl") == 0 ||
+	strcmp(name, "models/ai/zarc(.mdl") == 0 ||
+	strcmp(name, "models/ai/zfull.mdl") == 0 ||
+	strcmp(name, "models/ai/zh^.mdl") == 0 ||
+	strcmp(name, "models/ai/zal(.mdl") == 0 ||
+	strcmp(name, "models/ai/zar(.mdl") == 0)
+		return true;
+
+	return false;
+}
+
+extern gltexture_t* zombie_skin;
 void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 {
 	int			i, j, k, size, groupskins;
@@ -2573,12 +2591,12 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 			qboolean malloced=false;
 			enum srcformat fmt = SRC_RGBA;
 
-			/*if (model_is_zombie(loadmodel->name) == true) {
-				q_snprintf(filename, sizeof(filename), "%s", zombie_skinss[i]);
-			} else {*/
+			if (model_is_zombie(loadmodel->name)) {
+				q_snprintf (filename, sizeof(filename), "models/ai/zfull.mdl_0", loadmodel->name);
+			} else {
 				q_snprintf (filename, sizeof(filename), "%s_%i", loadmodel->name, i);
-			//}
-
+			}
+			
 			data = Image_LoadImage (filename, &fwidth, &fheight);
 
 			if (data) {
