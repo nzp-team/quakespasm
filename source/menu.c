@@ -878,7 +878,7 @@ void M_SinglePlayer_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Version String
-	Draw_ColoredString(vid.width - (strlen(game_build_date) - 8), y + 5, game_build_date, 1, 1, 1, 1);
+	Draw_ColoredString(vid.width - (strlen(game_build_date) * 8), y + 5, game_build_date, 1, 1, 1, 1);
 
 	// Header
 	Draw_ColoredStringScale(10, y + 10, "SOLO", 1, 1, 1, 1, 3.0f);
@@ -1502,7 +1502,7 @@ void M_Menu_Maps_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Version String
-	Draw_ColoredString(vid.width - (strlen(game_build_date) - 8), y + 5, game_build_date, 1, 1, 1, 1);
+	Draw_ColoredString(vid.width - (strlen(game_build_date) * 8), y + 5, game_build_date, 1, 1, 1, 1);
 
 	// Header
 	Draw_ColoredStringScale(10, y + 10, "CUSTOM MAPS", 1, 1, 1, 1, 3.0f);
@@ -2462,7 +2462,7 @@ void M_Options_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Version String
-	Draw_ColoredString(vid.width - (strlen(game_build_date) - 8), y + 5, game_build_date, 1, 1, 1, 1);
+	Draw_ColoredString(vid.width - (strlen(game_build_date) * 8), y + 5, game_build_date, 1, 1, 1, 1);
 
 	// Header
 	Draw_ColoredStringScale(10, y + 10, "SETTINGS", 1, 1, 1, 1, 3.0f);
@@ -3413,7 +3413,7 @@ void M_Credits_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Version String
-	Draw_ColoredString(vid.width - (strlen(game_build_date) - 8), y + 5, game_build_date, 1, 1, 1, 1);
+	Draw_ColoredString(vid.width - (strlen(game_build_date) * 8), y + 5, game_build_date, 1, 1, 1, 1);
 
 	// Header
 	Draw_ColoredStringScale(10, y + 10, "CREDITS", 1, 1, 1, 1, 3.0f);
