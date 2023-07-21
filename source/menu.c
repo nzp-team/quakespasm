@@ -28,8 +28,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <psp2/io/fcntl.h> 
 #endif
 
-#define NZP_VERSION "v1.0"
-
 #ifdef VITA
 #include <psp2/touch.h>
 #endif // VITA
@@ -75,6 +73,8 @@ extern char* loadnamespec;
 extern qboolean loadscreeninit;
 
 extern float cl_forwardspeed;
+
+char* game_build_date;
 
 qpic_t *menu_bk;
 qpic_t *start_bk;
@@ -551,7 +551,7 @@ void M_Main_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 1);
 
 	// Version String
-	Draw_ColoredString(vid.width - 40, y + 5, NZP_VERSION, 1, 1, 1, 1);
+	Draw_ColoredString(vid.width - (strlen(game_build_date) * 8), y + 5, game_build_date, 1, 1, 1, 1);
 
 	// Header
 	Draw_ColoredStringScale(10, y + 10, "MAIN MENU", 1, 1, 1, 1, 3.0f);
@@ -878,7 +878,7 @@ void M_SinglePlayer_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Version String
-	Draw_ColoredString(vid.width - 40, y + 5, NZP_VERSION, 1, 1, 1, 1);
+	Draw_ColoredString(vid.width - (strlen(game_build_date) - 8), y + 5, game_build_date, 1, 1, 1, 1);
 
 	// Header
 	Draw_ColoredStringScale(10, y + 10, "SOLO", 1, 1, 1, 1, 3.0f);
@@ -1502,7 +1502,7 @@ void M_Menu_Maps_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Version String
-	Draw_ColoredString(vid.width - 40, y + 5, NZP_VERSION, 1, 1, 1, 1);
+	Draw_ColoredString(vid.width - (strlen(game_build_date) - 8), y + 5, game_build_date, 1, 1, 1, 1);
 
 	// Header
 	Draw_ColoredStringScale(10, y + 10, "CUSTOM MAPS", 1, 1, 1, 1, 3.0f);
@@ -2462,7 +2462,7 @@ void M_Options_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Version String
-	Draw_ColoredString(vid.width - 40, y + 5, NZP_VERSION, 1, 1, 1, 1);
+	Draw_ColoredString(vid.width - (strlen(game_build_date) - 8), y + 5, game_build_date, 1, 1, 1, 1);
 
 	// Header
 	Draw_ColoredStringScale(10, y + 10, "SETTINGS", 1, 1, 1, 1, 3.0f);
@@ -3413,7 +3413,7 @@ void M_Credits_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Version String
-	Draw_ColoredString(vid.width - 40, y + 5, NZP_VERSION, 1, 1, 1, 1);
+	Draw_ColoredString(vid.width - (strlen(game_build_date) - 8), y + 5, game_build_date, 1, 1, 1, 1);
 
 	// Header
 	Draw_ColoredStringScale(10, y + 10, "CREDITS", 1, 1, 1, 1, 3.0f);
@@ -4421,6 +4421,28 @@ void M_Init (void)
 	Cmd_AddCommand ("loada", Load_Achivements);
 #endif
 	Cvar_RegisterVariable(&cl_enablereartouchpad);
+
+	//Sys_FileOpenRead (va("%s/maps/%s.way",com_gamedir, sv.name), &h);
+	//Sys_FileOpenRead(va("%s/version.txt", com_gamedir));
+
+	// Snag the game version
+	long length;
+	FILE* f = fopen(va("%s/version.txt", com_gamedir), "rb");
+
+	if (f)
+	{
+		fseek (f, 0, SEEK_END);
+		length = ftell (f);
+		fseek (f, 0, SEEK_SET);
+		game_build_date = malloc(length);
+
+		if (game_build_date)
+			fread (game_build_date, 1, length, f);
+
+		fclose (f);
+	} else {
+		game_build_date = "version.txt not found.";
+	}
 
 	Map_Finder();
 }
