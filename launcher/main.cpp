@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
 		start = strstr(generic_mem_buffer, "\"name\": \"") + 9;
 		start[strlen(cur_version)] = 0;
 		printf("Last version: %s\n", start);
-		if (!strcmp(cur_version, start) && 0) {
+		if (!strcmp(cur_version, start)) {
 			printf("Up to date\n");
 			goto launch_nzp;
 		} else {
