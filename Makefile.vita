@@ -256,7 +256,7 @@ OBJS :=\
 nzp.vpk: nzp.velf
 	make -f Makefile.launcher
 	mkdir -p build/vita/
-	vita-make-fself -c -s $< assets/vita/eboot.bin
+	vita-make-fself -c $< assets/vita/eboot.bin
 	vita-mksfoex -s TITLE_ID=NZZMBSPTB -d ATTRIBUTE2=12 "Nazi Zombies Portable" param.sfo
 	cp -f param.sfo assets/vita/sce_sys/param.sfo
 	vita-pack-vpk -s param.sfo -b eboot.bin \
