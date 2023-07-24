@@ -7,6 +7,7 @@
 #include <bzlib.h>
 #include <stdio.h>
 #include <string>
+#include <cstring>
 #include <taihen.h>
 #include "unzip.h"
 #include "utils.h"
@@ -143,6 +144,7 @@ download_update:
 			sceIoRemove(TEMP_DOWNLOAD_NAME);
 			printf("Extracting vpk\n");
 			extract_file("ux0:data/nzp.vpk", "ux0:app/NZZMBSPTB/");
+			sceIoRemove("ux0:data/nzp.vpk");
 		}
 	}
 	printf("%s\n", generic_mem_buffer);
