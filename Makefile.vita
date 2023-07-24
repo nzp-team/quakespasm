@@ -142,7 +142,7 @@ endif
 
 COMMON_LIBS:= -lvitaGL -lvitashark -lSceShaccCgExt -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
 	-lScePspnetAdhoc_stub -lc -lSceLibKernel_stub -lmathneon -lSDL2 -lSceAudioIn_stub -lSceKernelDmacMgr_stub \
-	-lSceNet_stub -lSceNetCtl_stub -lpng -lSceDisplay_stub -lSceGxm_stub -lSceShaccCg_stub \
+	-lSceNet_stub -lSceNetCtl_stub -lpng -lSceDisplay_stub -lSceGxm_stub -lSceShaccCg_stub -lSceIme_stub \
 	-ltaihen_stub -lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm -lSceAppMgr_stub \
 	-lSceAppUtil_stub -lScePgf_stub -ljpeg -lSceRtc_stub -lScePower_stub -lcurl -lssl -lcrypto -lz \
 	-lSceHid_stub -lSceCommonDialog_stub -lSceAudio_stub
@@ -254,11 +254,13 @@ OBJS :=\
 	source/fnmatch.o
 
 nzp.vpk: nzp.velf
+	make -f Makefile.launcher
 	mkdir -p build/vita/
 	vita-make-fself -c -s $< assets/vita/eboot.bin
 	vita-mksfoex -s TITLE_ID=NZZMBSPTB -d ATTRIBUTE2=12 "Nazi Zombies Portable" param.sfo
 	cp -f param.sfo assets/vita/sce_sys/param.sfo
-	vita-pack-vpk -s param.sfo -b assets/vita/eboot.bin \
+	vita-pack-vpk -s param.sfo -b eboot.bin \
+		--add assets/vita/eboot.bin=nzp.bin \
 		--add assets/vita/sce_sys/icon0.png=sce_sys/icon0.png \
 		--add assets/vita/sce_sys/livearea/contents/bg.png=sce_sys/livearea/contents/bg.png \
 		--add assets/vita/sce_sys/livearea/contents/startup.png=sce_sys/livearea/contents/startup.png \

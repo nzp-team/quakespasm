@@ -1,0 +1,31 @@
+SOURCES	:= launcher
+CFILES := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.c))
+CPPFILES := $(foreach dir,$(SOURCES), $(wildcard $(dir)/*.cpp))
+OBJS := $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) 
+
+LIBS:= -limgui -lvitaGL -lvitashark -lSceShaccCgExt -lvorbisfile -lvorbis -logg  -lspeexdsp -lmpg123 \
+	-lScePspnetAdhoc_stub -lc -lSceLibKernel_stub -lmathneon -lSDL2 -lSceAudioIn_stub -lSceKernelDmacMgr_stub \
+	-lSceNet_stub -lSceNetCtl_stub -lpng -lSceDisplay_stub -lSceGxm_stub -lSceShaccCg_stub -lSceIme_stub \
+	-ltaihen_stub -lSceSysmodule_stub -lSceCtrl_stub -lSceTouch_stub -lSceMotion_stub -lm -lSceAppMgr_stub \
+	-lSceAppUtil_stub -lScePgf_stub -ljpeg -lSceRtc_stub -lScePower_stub -lcurl -lssl -lcrypto -lz \
+	-lSceHid_stub -lSceCommonDialog_stub -lSceAudio_stub -lstdc++
+	
+PREFIX  = arm-vita-eabi
+CC      = $(PREFIX)-gcc
+CXX      = $(PREFIX)-g++
+CFLAGS  = -fno-lto -g -Wl,-q -O3 -D_GNU_SOURCE
+CXXFLAGS = -fno-lto -g -Wl,-q -O3 -fpermissive -std=c++11 -D_GNU_SOURCE
+
+eboot.bin: eboot.velf
+	vita-make-fself -c -s $< eboot.bin
+
+%.velf: %.elf
+	cp $< $<.unstripped.elf
+	$(PREFIX)-strip -g $<
+	vita-elf-create $< $@
+	
+eboot.elf: $(OBJS)
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) $(LIBS) $(SDL_LIBS) -o $@
+
+clean:
+	@rm -rf eboot.bin $(OBJS)
