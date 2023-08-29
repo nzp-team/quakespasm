@@ -383,7 +383,7 @@ void PR_ExecuteProgram (func_t fnum)
     {
 	st++;	/* next statement */
 
-	if (++profile > 100000)
+	if (++profile > 200000)
 	{
 		pr_xstatement = st - pr_statements;
 		PR_RunError("runaway loop error");
