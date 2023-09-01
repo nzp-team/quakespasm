@@ -30,9 +30,9 @@ include $(DEVKITPRO)/libnx/switch_rules
 #     - icon.jpg
 #     - <libnx folder>/default_icon.jpg
 #---------------------------------------------------------------------------------
-APP_TITLE	:=	NaziZombiesPortableNX
+APP_TITLE	:=	Nazi Zombies Portable
 APP_AUTHOR	:=	NZP Team
-APP_VERSION	:=	1.0.0
+APP_VERSION	:=	2.0.0
 ICON        :=  assets/nx/icon.jpg
 
 TARGET		:=	nzportable

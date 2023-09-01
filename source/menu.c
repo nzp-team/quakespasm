@@ -79,6 +79,7 @@ char* game_build_date;
 qpic_t *menu_bk;
 qpic_t *start_bk;
 qpic_t *pause_bk;
+qpic_t *social_badges;
 
 void (*vid_menucmdfn)(void); //johnfitz
 void (*vid_menudrawfn)(void);
@@ -200,6 +201,93 @@ char		m_return_reason [32];
 #define LINE_COLOR 			14
 
 void M_ConfigureNetSubsystem(void);
+
+//
+// Macros to make menu design for NX & VITA easier
+//
+int menu_offset_y;
+
+#ifdef VITA
+
+#define OFFSET_SPACING						19
+
+#define MENU_INITVARS()						int y = 0; menu_offset_y = y + 70;
+#define DRAW_HEADER(title) 					Draw_ColoredStringScale(10, y + 10, title, 1, 1, 1, 1, 4.0f);
+#define DRAW_VERSIONSTRING()				Draw_ColoredStringScale(vid.width - (strlen(game_build_date) * 16), y + 5, game_build_date, 1, 1, 1, 1, 2.0f);
+#define DRAW_MENUOPTION(id, txt, cursor, divider) { \
+	menu_offset_y += OFFSET_SPACING; \
+	if (cursor == id) \
+		Draw_ColoredStringScale(10, menu_offset_y, txt, 1, 0, 0, 1, 2.0f); \
+	else \
+		Draw_ColoredStringScale(10, menu_offset_y, txt, 1, 1, 1, 1, 2.0f); \
+	if (divider == true)  { \
+		menu_offset_y += OFFSET_SPACING + 4; \
+		Draw_FillByColor(10, menu_offset_y, 325, 4, 220, 220, 220, 255); \
+		menu_offset_y -= OFFSET_SPACING/3; \
+	} \
+}
+#define DRAW_BLANKOPTION(txt, divider) 	{ \
+	menu_offset_y += OFFSET_SPACING; \
+	Draw_ColoredStringScale(10, menu_offset_y, txt, 0.5, 0.5, 0.5, 1, 2.0f); \
+	if (divider == true)  { \
+		menu_offset_y += OFFSET_SPACING + 4; \
+		Draw_FillByColor(10, menu_offset_y, 325, 4, 220, 220, 220, 255); \
+		menu_offset_y -= OFFSET_SPACING/3; \
+	} \
+}
+#define DRAW_DESCRIPTION(txt) Draw_ColoredStringScale(10, y + 475, txt, 1, 1, 1, 1, 2.0f);
+#define DRAW_BACKBUTTON(id, cursor) { \
+	if (cursor == id) \
+		Draw_ColoredStringScale(10, 500, "Back", 1, 0, 0, 1, 2.0f); \
+	else \
+		Draw_ColoredStringScale(10, 500, "Back", 1, 1, 1, 1, 2.0f); \
+}
+#define DRAW_MAPTHUMB(img) Draw_StretchPic(x_map_info_disp + 252, y + 68, img, 450, 255);
+#define DRAW_MAPDESC(id, txt) Draw_ColoredStringScale(x_map_info_disp + 217, y + 329 + (18 * id), txt, 1, 1, 1, 1, 2.0f);
+#define DRAW_MAPAUTHOR(id, txt) Draw_ColoredStringScale(x_map_info_disp + 217, y + 329 + (18 * id), txt, 1, 1, 0, 1, 2.0f);
+#define DRAW_CREDITLINE(id, txt) Draw_ColoredStringScale(10, menu_offset_y + (OFFSET_SPACING * id), txt, 1, 1, 1, 1, 2.0f);
+
+#else
+
+#define OFFSET_SPACING						15
+
+#define MENU_INITVARS()						int y = vid.height * 0.5; menu_offset_y = y + 55;
+#define DRAW_HEADER(title) 					Draw_ColoredStringScale(10, y + 10, title, 1, 1, 1, 1, 3.0f);
+#define DRAW_VERSIONSTRING()				Draw_ColoredString(635 - (strlen(game_build_date) * 8), y + 10, game_build_date, 1, 1, 1, 1);
+#define DRAW_MENUOPTION(id, txt, cursor, divider) { \
+	menu_offset_y += OFFSET_SPACING; \
+	if (cursor == id) \
+		Draw_ColoredStringScale(10, menu_offset_y, txt, 1, 0, 0, 1, 1.5f); \
+	else \
+		Draw_ColoredStringScale(10, menu_offset_y, txt, 1, 1, 1, 1, 1.5f); \
+	if (divider == true)  { \
+		menu_offset_y += OFFSET_SPACING + 4; \
+		Draw_FillByColor(10, menu_offset_y, 240, 3, 220, 220, 220, 255); \
+		menu_offset_y -= OFFSET_SPACING/3; \
+	} \
+}
+#define DRAW_BLANKOPTION(txt, divider) 	{ \
+	menu_offset_y += OFFSET_SPACING; \
+	Draw_ColoredStringScale(10, menu_offset_y, txt, 0.5, 0.5, 0.5, 1, 1.5f); \
+	if (divider == true)  { \
+		menu_offset_y += OFFSET_SPACING + 4; \
+		Draw_FillByColor(10, menu_offset_y, 240, 3, 220, 220, 220, 255); \
+		menu_offset_y -= OFFSET_SPACING/3; \
+	} \
+}
+#define DRAW_DESCRIPTION(txt) Draw_ColoredStringScale(10, y + 305, txt, 1, 1, 1, 1, 1.5f);
+#define DRAW_BACKBUTTON(id, cursor) { \
+	if (cursor == id) \
+		Draw_ColoredStringScale(10, y + 335, "Back", 1, 0, 0, 1, 1.5f); \
+	else \
+		Draw_ColoredStringScale(10, y + 335, "Back", 1, 1, 1, 1, 1.5f); \
+}
+#define DRAW_MAPTHUMB(img) Draw_StretchPic(x_map_info_disp + 290, y + 45, img, 300, 170);
+#define DRAW_MAPDESC(id, txt) Draw_ColoredStringScale(x_map_info_disp + 280, y + 218 + (15 * id), txt, 1, 1, 1, 1, 1.25f);
+#define DRAW_MAPAUTHOR(id, txt) Draw_ColoredStringScale(x_map_info_disp + 280, y + 218 + (15 * id), txt, 1, 1, 0, 1, 1.25f);
+#define DRAW_CREDITLINE(id, txt) Draw_ColoredStringScale(10, menu_offset_y + ((OFFSET_SPACING - 2) * id), txt, 1, 1, 1, 1, 1.25f);
+
+#endif // VITA
 
 /*
 ================
@@ -537,11 +625,10 @@ void M_Menu_Main_f (void)
 
 void M_Main_Draw (void)
 {
-#ifdef VITA
-	int y = 0;
-#else
-	int y = vid.height * 0.5;
-#endif
+	MENU_INITVARS();
+
+	// Social Badges
+	social_badges = Draw_CachePic("gfx/menu/social.tga");
 
 	// Menu Background
 	menu_bk = Draw_CachePic("gfx/menu/menu_background.tga");
@@ -551,92 +638,73 @@ void M_Main_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 1);
 
 	// Version String
-	Draw_ColoredString(vid.width - (strlen(game_build_date) * 8), y + 5, game_build_date, 1, 1, 1, 1);
+	DRAW_VERSIONSTRING();
 
 	// Header
-	Draw_ColoredStringScale(10, y + 10, "MAIN MENU", 1, 1, 1, 1, 3.0f);
-	
-	// Solo
-	if (m_main_cursor == 0)
- 		Draw_ColoredStringScale(10, y + 55, "Solo", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 55, "Solo", 1, 1, 1, 1, 1.5f);
+	DRAW_HEADER("MAIN MENU");
 
+	DRAW_MENUOPTION(0, "Solo", m_main_cursor, false);
+	DRAW_BLANKOPTION("Co-Op (Coming Soon!)", true);
+	DRAW_MENUOPTION(1, "Settings", m_main_cursor, false);
 
-	// Co-Op (Unfinished, so non-selectable)
-	Draw_ColoredStringScale(10, y + 70, "Co-Op (Coming Soon!)", 0.5, 0.5, 0.5, 1, 1.5f);
-
-	// Divider
-	Draw_FillByColor(10, y + 90, 240, 3, 220, 220, 220, 255);
-
-	// Settings
-	if (m_main_cursor == 1)
-		Draw_ColoredStringScale(10, y + 100, "Settings", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 100, "Settings", 1, 1, 1, 1, 1.5f);
-
-	// Achievements (Unavailable, so non-selectable)
-	//Draw_ColoredStringScale(10, y + 115, "Achievements", 0.5, 0.5, 0.5, 1, 1.5f);
-	
 #ifdef VITA
-	if (m_main_cursor == 2)
-		Draw_ColoredStringScale(10, y + 122, "Achievements", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 122, "Achievements", 1, 1, 1, 1, 1.5f);
-#else
-	// Achievements (Unavailable, so non-selectable)
-	Draw_ColoredStringScale(10, y + 115, "Achievements", 0.5, 0.5, 0.5, 1, 1.5f);
-#endif
 
-	// Divider
-	Draw_FillByColor(10, y + 135, 240, 3, 220, 220, 220, 255);
+	DRAW_MENUOPTION(2, "Achievements", m_main_cursor, true);
+	DRAW_MENUOPTION(3, "Credits", m_main_cursor, true);
+	DRAW_MENUOPTION(4, "Exit", m_main_cursor, false);
+
+#else
+
+	DRAW_BLANKOPTION("Achievements", true);
+	DRAW_MENUOPTION(2, "Credits", m_main_cursor, true);
+	DRAW_MENUOPTION(3, "Exit", m_main_cursor, false);
+
+#endif // VITA
+
+	switch(m_main_cursor) {
+		case 0: DRAW_DESCRIPTION("Take on the Hordes by yourself."); break;
+		case 1: DRAW_DESCRIPTION("Adjust Control or Graphic Settings."); break;
+
 #ifdef VITA
-	// Credits
-	if (m_main_cursor == 3)
+
+		case 2: DRAW_DESCRIPTION("View Locked/Unlocked Achievements."); break;
+		case 3: DRAW_DESCRIPTION("View Credits for NZ:P."); break;
+		case 4: DRAW_DESCRIPTION("Return to LiveArea."); break;
+
 #else
-	if (m_main_cursor == 2)
-#endif
-		Draw_ColoredStringScale(10, y + 145, "Credits", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 145, "Credits", 1, 1, 1, 1, 1.5f);
 
-	// Divider
-	Draw_FillByColor(10, y + 165, 240, 3, 220, 220, 220, 255);
-#ifdef VITA
-	// Exit
-	if (m_main_cursor == 4)
-#else
-	if (m_main_cursor == 3)
-#endif
-		Draw_ColoredStringScale(10, y + 175, "Exit", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 175, "Exit", 1, 1, 1, 1, 1.5f);
+		case 2: DRAW_DESCRIPTION("View Credits for NZ:P."); break;
+		case 3: DRAW_DESCRIPTION("Return to Horizon."); break;
 
+#endif // VITA
 
-		// future note: 335 = back
-
-
-	switch (m_main_cursor) {
-	#ifdef VITA
-		case 0: Draw_ColoredStringScale(10, y + 305, "Take on the Hordes by yourself.", 1, 1, 1, 1, 1.5f); break;
-		case 1: Draw_ColoredStringScale(10, y + 305, "Adjust your Settings to Optimize your Experience.", 1, 1, 1, 1, 1.5f); break;
-		case 2: Draw_ColoredStringScale(10, y + 305, "View locked or unlocked Achievements.", 1, 1, 1, 1, 1.5f); break;
-		case 3: Draw_ColoredStringScale(10, y + 305, "See who made NZ:P possible.", 1, 1, 1, 1, 1.5f); break;
-		case 4: 
-		Draw_ColoredStringScale(10, y + 305, "Return to Vita Homescreen.", 1, 1, 1, 1, 1.5f);
-		break;
 		default: break;
-	#else
-		case 0: Draw_ColoredStringScale(10, y + 305, "Take on the Hordes by yourself.", 1, 1, 1, 1, 1.5f); break;
-		case 1: Draw_ColoredStringScale(10, y + 305, "Adjust your Settings to Optimize your Experience.", 1, 1, 1, 1, 1.5f); break;
-		//case 2: Draw_ColoredStringScale(10, y + 305, "View locked or unlocked Achievements.", 1, 1, 1, 1, 1.5f); break;
-		case 2: Draw_ColoredStringScale(10, y + 305, "See who made NZ:P possible.", 1, 1, 1, 1, 1.5f); break;
-		case 3: 
-		Draw_ColoredStringScale(10, y + 305, "Return to Horizon (SwitchOS).", 1, 1, 1, 1, 1.5f);
-		break;
-		default: break;
-	#endif
 	}
+
+#ifdef VITA
+
+	Draw_SubPic(915, 510, 26, 26, 32, 0, 64, 32, social_badges); // YouTube
+	Draw_ColoredStringScale(840, 510 + 6, "@nzpteam", 1, 1, 0, 1, 1.0f);
+
+	Draw_SubPic(915, 510 - 26 - 5, 26, 26, 0, 32, 32, 64, social_badges); // Twitter
+	Draw_ColoredStringScale(840, 510 - 25, "/NZPTeam", 1, 1, 0, 1, 1.0f);
+
+	Draw_SubPic(915, 510 - 52 - 10, 26, 26, 32, 32, 64, 64, social_badges); // Patreon
+	Draw_ColoredStringScale(792, 510 - 52 - 3, "/cypressimplex", 1, 1, 0, 1, 1.0f);
+
+#else
+
+	Draw_SubPic(610, y + 330, 22, 22, 32, 0, 64, 32, social_badges); // YouTube
+	Draw_ColoredStringScale(542, y + 337, "@nzpteam", 1, 1, 0, 1, 1.0f);
+
+	Draw_SubPic(610, y + 302, 22, 22, 0, 32, 32, 64, social_badges); // Twitter
+	Draw_ColoredStringScale(542, y + 309, "/NZPTeam", 1, 1, 0, 1, 1.0f);
+
+	Draw_SubPic(610, y + 274, 22, 22, 32, 32, 64, 64, social_badges); // Patreon
+	Draw_ColoredStringScale(494, y + 280, "/cypressimplex", 1, 1, 0, 1, 1.0f);
+
+#endif // VITA
+
 }
 
 
@@ -864,11 +932,7 @@ void M_SinglePlayer_Draw (void)
 	qpic_t* menu_ch 	= Draw_CachePic("gfx/menu/christmas_special.tga");
 	qpic_t* menu_custom = Draw_CachePic("gfx/menu/custom.tga");
 
-#ifdef VITA
-	int y = 0;
-#else
-	int y = vid.height * 0.5;
-#endif
+	MENU_INITVARS();
 	paused_hack = false;
 
 	// Menu Background
@@ -878,80 +942,49 @@ void M_SinglePlayer_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Version String
-	Draw_ColoredString(vid.width - (strlen(game_build_date) * 8), y + 5, game_build_date, 1, 1, 1, 1);
+	DRAW_VERSIONSTRING();
 
 	// Header
-	Draw_ColoredStringScale(10, y + 10, "SOLO", 1, 1, 1, 1, 3.0f);
+	DRAW_HEADER("SOLO");
 
-	// Nacht der Untoten
-	if (m_singleplayer_cursor == 0)
- 		Draw_ColoredStringScale(10, y + 55, "Nacht der Untoten", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 55, "Nacht der Untoten", 1, 1, 1, 1, 1.5f);
-
-	// Kino der Toten
-	Draw_ColoredStringScale(10, y + 70, "Kino der Toten", 0.5, 0.5, 0.5, 1, 1.5f);
-
-	// Warehouse
-	if (m_singleplayer_cursor == 1)
- 		Draw_ColoredStringScale(10, y + 85, "Warehouse", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 85, "Warehouse", 1, 1, 1, 1, 1.5f);
-
-	// Wahnsinn
-	Draw_ColoredStringScale(10, y + 100, "Wahnsinn", 0.5, 0.5, 0.5, 1, 1.5f);
-
-	// Christmas Special
-	if (m_singleplayer_cursor == 2)
- 		Draw_ColoredStringScale(10, y + 115, "Christmas Special", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 115, "Christmas Special", 1, 1, 1, 1, 1.5f);
-
-	// Divider
-	Draw_FillByColor(10, y + 135, 240, 3, 220, 220, 220, 255);
-
-	// Custom Maps
-	if (m_singleplayer_cursor == 3)
- 		Draw_ColoredStringScale(10, y + 145, "Custom Maps", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 145, "Custom Maps", 1, 1, 1, 1, 1.5f);
-
-	// Back
-	if (m_singleplayer_cursor == 4)
- 		Draw_ColoredStringScale(10, y + 335, "Back", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 335, "Back", 1, 1, 1, 1, 1.5f);
+	DRAW_MENUOPTION(0, "Nacht der Untoten", m_singleplayer_cursor, false);
+	DRAW_BLANKOPTION("Kino der Toten", false);
+	DRAW_MENUOPTION(1, "Warehouse", m_singleplayer_cursor, false);
+	DRAW_BLANKOPTION("Wahnsinn", false);
+	DRAW_MENUOPTION(2, "Christmas Special", m_singleplayer_cursor, true);
+	DRAW_MENUOPTION(3, "Custom Maps", m_singleplayer_cursor, false);
+	DRAW_BACKBUTTON(4, m_singleplayer_cursor);
 
 	// Map description & pic
 	switch (m_singleplayer_cursor) {
 		case 0:
-			Draw_StretchPic(x_map_info_disp + 290, y + 55, menu_ndu, 300, 170);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 235, "Desolate bunker located on a Ge-", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 250, "rman airfield, stranded after a", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 265, "brutal plane crash surrounded by", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 280, "hordes of undead. Exploit myste-", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 295, "rious forces at play and hold o-", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 310, "ut against relentless waves. Der", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 325, "Anstieg ist jetzt. Will you fall", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 340, "to the overwhelming onslaught?", 1, 1, 1, 1, 1.5f);
+			DRAW_MAPTHUMB(menu_ndu);
+			DRAW_MAPDESC(0, "Desolate bunker located on a Ge-");
+			DRAW_MAPDESC(1, "rman airfield, stranded after a");
+			DRAW_MAPDESC(2, "brutal plane crash surrounded by");
+			DRAW_MAPDESC(3, "hordes of undead. Exploit myste-");
+			DRAW_MAPDESC(4, "rious forces at play and hold o-");
+			DRAW_MAPDESC(5, "ut against relentless waves. Der");
+			DRAW_MAPDESC(6, "Anstieg ist jetzt. Will you fall");
+			DRAW_MAPDESC(7, "to the overwhelming onslaught?");
 			break;
 		case 1: 
-			Draw_StretchPic(x_map_info_disp + 290, y + 55, menu_wh, 300, 170);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 235, "Old Warehouse full of Zombies!", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 250, "Fight your way to the Power", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 265, "Switch through the Hordes!", 1, 1, 1, 1, 1.5f);
+			DRAW_MAPTHUMB(menu_wh);
+			DRAW_MAPDESC(0, "Old Warehouse full of Zombies!");
+			DRAW_MAPDESC(1, "Fight your way to the Power");
+			DRAW_MAPDESC(2, "Switch through the Hordes!");
 			break;
 		case 2: 
-			Draw_StretchPic(x_map_info_disp + 290, y + 55, menu_ch, 300, 170);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 235, "No Santa this year. Though we're", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 250, "sure you will get presents from", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 265, "the undead! Will you accept them?", 1, 1, 1, 1, 1.5f);
+			DRAW_MAPTHUMB(menu_ch);
+			DRAW_MAPDESC(0, "No Santa this year. Though we're");
+			DRAW_MAPDESC(1, "sure you will get presents from");
+			DRAW_MAPDESC(2, "the undead! Will you accept them?");
 			break;
 		case 3: 
-			Draw_StretchPic(x_map_info_disp + 290, y + 55, menu_custom, 300, 170);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 235, "Custom Maps made by Community", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 250, "Members on the Fourm and on", 1, 1, 1, 1, 1.5f);
-			Draw_ColoredStringScale(x_map_info_disp + 245, y + 265, "Discord!", 1, 1, 1, 1, 1.5f);
+			DRAW_MAPTHUMB(menu_custom);
+			DRAW_MAPDESC(0, "Custom Maps made by Community");
+			DRAW_MAPDESC(1, "Members on GitHub and the NZ:P");
+			DRAW_MAPDESC(2, "Forum!");
 			break;
 		default: break;
 	}
@@ -1330,7 +1363,7 @@ void M_Achievement_Draw (void)
 	Draw_FillByColor(0, 0, 960, 544, 0, 0, 0, 1);
 
 	// Version String
-	Draw_ColoredStringScale(vid.width - 40, 5, "v1.0", 255, 255, 255, 1, 1.0f);
+	//DRAW_VERSIONSTRING();
 
     if (!m_achievement_selected)
     {
@@ -1488,12 +1521,9 @@ void M_Menu_Maps_f (void)
 extern vrect_t scr_vrect;
 void M_Menu_Maps_Draw (void)
 {
-#ifdef VITA
-	int y = scr_vrect.y * 0.5;
-#else
-	int y = vid.height * 0.5;
-#endif
 	qpic_t* menu_cuthum;
+
+	MENU_INITVARS();
 
 	// Menu Background
 	Draw_BgMenu();
@@ -1502,10 +1532,10 @@ void M_Menu_Maps_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Version String
-	Draw_ColoredString(vid.width - (strlen(game_build_date) * 8), y + 5, game_build_date, 1, 1, 1, 1);
+	DRAW_VERSIONSTRING();
 
 	// Header
-	Draw_ColoredStringScale(10, y + 10, "CUSTOM MAPS", 1, 1, 1, 1, 3.0f);
+	DRAW_HEADER("CUSTOM MAPS");
 
 	int line_increment;
 	line_increment = 0;
@@ -1519,103 +1549,99 @@ void M_Menu_Maps_Draw (void)
 		if (custom_maps[i + multiplier].occupied == false)
 			continue;
 
+		if (custom_maps[i + multiplier].map_name_pretty != 0) {
+			DRAW_MENUOPTION(i, custom_maps[i + multiplier].map_name_pretty, m_maps_cursor, false);
+		} else {
+			DRAW_MENUOPTION(i, custom_maps[i + multiplier].map_name, m_maps_cursor, false);
+		}
+
 		if (m_maps_cursor == i) {
 			if (custom_maps[i + multiplier].map_use_thumbnail == 1) {
 				menu_cuthum = Draw_CachePic(custom_maps[i + multiplier].map_thumbnail_path);
-				if (menu_cuthum != NULL)
-				{
-					Draw_StretchPic(x_map_info_disp + 290, y + 55, menu_cuthum, 300, 170);
-				}
-			}
 
-			if (custom_maps[i + multiplier].map_name_pretty != 0)
-				Draw_ColoredStringScale(10, y + (55 + (15 * i)), custom_maps[i + multiplier].map_name_pretty, 1, 0, 0, 1, 1.5f);
-			else
-				Draw_ColoredStringScale(10, y + (55 + (15 * i)), custom_maps[i + multiplier].map_name, 1, 0, 0, 1, 1.5f);
+				if (menu_cuthum != NULL)
+					DRAW_MAPTHUMB(menu_cuthum);
+			}
 
 			if (custom_maps[i + multiplier].map_desc_1 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_1, " ") != 0) {
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 235, custom_maps[i + multiplier].map_desc_1, 1, 1, 1, 1, 1.5f);
+					DRAW_MAPDESC(0, custom_maps[i + multiplier].map_desc_1);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_2 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_2, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 250, custom_maps[i + multiplier].map_desc_2, 1, 1, 1, 1, 1.5f);
+					DRAW_MAPDESC(1, custom_maps[i + multiplier].map_desc_2);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_3 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_3, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 265, custom_maps[i + multiplier].map_desc_3, 1, 1, 1, 1, 1.5f);
+					DRAW_MAPDESC(2, custom_maps[i + multiplier].map_desc_3);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_4 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_4, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 280, custom_maps[i + multiplier].map_desc_4, 1, 1, 1, 1, 1.5f);
+					DRAW_MAPDESC(3, custom_maps[i + multiplier].map_desc_4);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_5 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_5, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 295, custom_maps[i + multiplier].map_desc_5, 1, 1, 1, 1, 1.5f);
+					DRAW_MAPDESC(4, custom_maps[i + multiplier].map_desc_5);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_6 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_6, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 310, custom_maps[i + multiplier].map_desc_6, 1, 1, 1, 1, 1.5f);
+					DRAW_MAPDESC(5, custom_maps[i + multiplier].map_desc_6);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_7 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_7, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 325, custom_maps[i + multiplier].map_desc_7, 1, 1, 1, 1, 1.5f);
+					DRAW_MAPDESC(6, custom_maps[i + multiplier].map_desc_7);
 				}
 			}
 			if (custom_maps[i + multiplier].map_desc_8 != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_desc_8, " ") != 0) {
 					line_increment++;
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + 340, custom_maps[i + multiplier].map_desc_8, 1, 1, 1, 1, 1.5f);
+					DRAW_MAPDESC(7, custom_maps[i + multiplier].map_desc_8);
 				}
 			}
 			if (custom_maps[i + multiplier].map_author != 0) {
 				if (strcmp(custom_maps[i + multiplier].map_author, " ") != 0) {
-					int author_offset = 250 + (15 * line_increment);
-					Draw_ColoredStringScale(x_map_info_disp + 245, y + author_offset, custom_maps[i + multiplier].map_author, 1, 1, 0, 1, 1.5f);
+					line_increment++;
+					DRAW_MAPAUTHOR(line_increment, custom_maps[i + multiplier].map_author);
 				}
 			}
-		} else {
-			if (custom_maps[i + multiplier].map_name_pretty != 0)
-				Draw_ColoredStringScale(10, y + (55 + (15 * i)), custom_maps[i + multiplier].map_name_pretty, 1, 1, 1, 1, 1.5f);
-			else
-				Draw_ColoredStringScale(10, y + (55 + (15 * i)), custom_maps[i + multiplier].map_name, 1, 1, 1, 1, 1.5f);
 		}
 	}
 
+#ifdef VITA
+
+	menu_offset_y += 136;
+
+#else
+
+	menu_offset_y += 20;
+
+#endif // VITA
+
 	if (current_custom_map_page != custom_map_pages) {
-		if (m_maps_cursor == 15)
-			Draw_ColoredStringScale(10, y + 305, "Next Page", 1, 0, 0, 1, 1.5f);
-		else
-			Draw_ColoredStringScale(10, y + 305, "Next Page", 1, 1, 1, 1, 1.5f);
+		DRAW_MENUOPTION(15, "Next Page", m_maps_cursor, false);
 	} else {
-		Draw_ColoredStringScale(10, y + 305, "Next Page", 0.5, 0.5, 0.5, 1, 1.5f);
+		DRAW_BLANKOPTION("Next Page", false);
 	}
 
 	if (current_custom_map_page != 1) {
-		if (m_maps_cursor == 16)
-			Draw_ColoredStringScale(10, y + 320, "Previous Page", 1, 0, 0, 1, 1.5f);
-		else
-			Draw_ColoredStringScale(10, y + 320, "Previous Page", 1, 1, 1, 1, 1.5f);
+		DRAW_MENUOPTION(16, "Previous Page", m_maps_cursor, false);
 	} else {
-		Draw_ColoredStringScale(10, y + 320, "Previous Page", 0.5, 0.5, 0.5, 1, 1.5f);
+		DRAW_BLANKOPTION("Previous Page", false);
 	}
 
-	if (m_maps_cursor == 17)
-		Draw_ColoredStringScale(10, y + 335, "Back", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 335, "Back", 1, 1, 1, 1, 1.5f);
+	DRAW_BACKBUTTON(17, m_maps_cursor);
 }
 
 
@@ -2448,11 +2474,7 @@ void M_DrawCheckbox (int x, int y, int on)
 
 void M_Options_Draw (void)
 {
-#ifdef VITA
-	int y = 0;
-#else
-	int y = vid.height * 0.5;
-#endif
+	MENU_INITVARS();
 
 	// Menu Background
 	if (paused_hack == false)
@@ -2462,50 +2484,24 @@ void M_Options_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Version String
-	Draw_ColoredString(vid.width - (strlen(game_build_date) * 8), y + 5, game_build_date, 1, 1, 1, 1);
+	DRAW_VERSIONSTRING();
 
 	// Header
-	Draw_ColoredStringScale(10, y + 10, "SETTINGS", 1, 1, 1, 1, 3.0f);
-	
-	// Graphics Settings
-	if (options_cursor == 0)
- 		Draw_ColoredStringScale(10, y + 55, "Graphics Settings", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 55, "Graphics Settings", 1, 1, 1, 1, 1.5f);
+	DRAW_HEADER("SETTINGS");
 
-	// Controls
-	if (options_cursor == 1)
- 		Draw_ColoredStringScale(10, y + 70, "Controls", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 70, "Controls", 1, 1, 1, 1, 1.5f);
+	DRAW_MENUOPTION(0, "Graphics Settings", options_cursor, false);
+	DRAW_MENUOPTION(1, "Controls", options_cursor, false);
+	DRAW_MENUOPTION(2, "Control Settings", options_cursor, true);
+	DRAW_MENUOPTION(3, "Console", options_cursor, false);
 
-	// Control Settings
-	if (options_cursor == 2)
- 		Draw_ColoredStringScale(10, y + 85, "Control Settings", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 85, "Control Settings", 1, 1, 1, 1, 1.5f);
-
-	// Divider
-	Draw_FillByColor(10, y + 105, 240, 3, 220, 220, 220, 255);
-
-	// Console
-	if (options_cursor == 3)
- 		Draw_ColoredStringScale(10, y + 115, "Console", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 115, "Console", 1, 1, 1, 1, 1.5f);
-
-	// Back
-	if (options_cursor == 4)
- 		Draw_ColoredStringScale(10, y + 335, "Back", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 335, "Back", 1, 1, 1, 1, 1.5f);
+	DRAW_BACKBUTTON(4, options_cursor);
 
 	// Descriptions
 	switch(options_cursor) {
-		case 0: Draw_ColoredStringScale(10, y + 305, "Adjust settings relating to Graphical Fidelity.", 1, 1, 1, 1, 1.5f); break;
-		case 1: Draw_ColoredStringScale(10, y + 305, "Customize your Control Scheme.", 1, 1, 1, 1, 1.5f); break;
-		case 2: Draw_ColoredStringScale(10, y + 305, "Adjust settings in relation to how NZ:P Controls.", 1, 1, 1, 1, 1.5f); break;
-		case 3: Draw_ColoredStringScale(10, y + 305, "Open the Console to input Commands.", 1, 1, 1, 1, 1.5f); break;
+		case 0: DRAW_DESCRIPTION("Adjust settings relating to Graphical Fidelity."); break;
+		case 1: DRAW_DESCRIPTION("Customize your Control Scheme."); break;
+		case 2: DRAW_DESCRIPTION("Adjust settings in relation to how NZ:P Controls."); break;
+		case 3: DRAW_DESCRIPTION("Option the Console to input Commands."); break;
 		default: break;
 	}
 }
@@ -2608,7 +2604,7 @@ void M_Graphics_Settings_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Header
-	Draw_ColoredStringScale(10, y + 10, "GRAPHICS SETTINGS", 1, 1, 1, 1, 3.0f);
+	DRAW_HEADER("GRAPHICS SETTINGS");
 
 	// Show FPS
 	if (gsettings_cursor == 0)
@@ -2827,7 +2823,7 @@ void M_Control_Settings_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Header
-	Draw_ColoredStringScale(10, y + 10, "CONTROL SETTINGS", 1, 1, 1, 1, 3.0f);
+	DRAW_HEADER("CONTROL SETTINGS");
 
 	// Draw Crosshair
 	if (csettings_cursor == 0)
@@ -3150,7 +3146,7 @@ void M_Keys_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Header
-	Draw_ColoredStringScale(10, y + 10, "CONTROLS", 1, 1, 1, 1, 3.0f);
+	DRAW_HEADER("CONTROLS");
 
 	if (bind_grab) {
 		Draw_ColoredStringScale(86, y + 305, "Press a key or button for this action", 1, 1, 1, 1, 1.5f);
@@ -3400,11 +3396,7 @@ void M_Menu_Credits_f (void)
 
 void M_Credits_Draw (void)
 {
-#ifdef VITA
-	int y = 0;
-#else
-	int y = vid.height * 0.5;
-#endif
+	MENU_INITVARS();
 
 	// Menu Background
 	Draw_BgMenu();
@@ -3413,32 +3405,34 @@ void M_Credits_Draw (void)
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Version String
-	Draw_ColoredString(vid.width - (strlen(game_build_date) * 8), y + 5, game_build_date, 1, 1, 1, 1);
+	DRAW_VERSIONSTRING();
 
 	// Header
-	Draw_ColoredStringScale(10, y + 10, "CREDITS", 1, 1, 1, 1, 3.0f);
+	DRAW_HEADER("CREDITS");
+
+	DRAW_CREDITLINE(0, "Programming:");
+	DRAW_CREDITLINE(1, "Blubswillrule, Jukki, DR_Mabuse1981, Naievil, MotoLegacy");
+	DRAW_CREDITLINE(2, "ScatterBox");
+	DRAW_CREDITLINE(3, "");
+	DRAW_CREDITLINE(4, "Models:");
+	DRAW_CREDITLINE(5, "Blubswillrule, Ju[s]tice, Derped_Crusader");
+	DRAW_CREDITLINE(6, "");
+	DRAW_CREDITLINE(7, "GFX:");
+	DRAW_CREDITLINE(8, "Blubswillrule, Ju[s]tice, MotoLegacy, Derped_Crusader");
+	DRAW_CREDITLINE(9, "");
+	DRAW_CREDITLINE(10, "Sounds/Music:");
+	DRAW_CREDITLINE(11, "Blubswillrule, Biodude, MotoLegacy, Marty P.");
+	DRAW_CREDITLINE(12, "");
+	DRAW_CREDITLINE(13, "Special Thanks:");
+	DRAW_CREDITLINE(14, "- Spike, Eukara:     FTEQW");
+	DRAW_CREDITLINE(15, "- Shpuld:            CleanQC4FTE");
+	DRAW_CREDITLINE(16, "- Crow_Bar, st1x51:  dQuake(plus)");
+	DRAW_CREDITLINE(17, "- fgsfdsfgs:         Quakespasm-NX");
+	DRAW_CREDITLINE(18, "- Rinnegatamante:    Initial VITA Port, VITA Auto-Updater");
+	DRAW_CREDITLINE(19, "- Azenn:             GFX Help");
+	DRAW_CREDITLINE(20, "- BCDeshiG:          Extensive Testing");
 	
- 	Draw_ColoredStringScale(10, y + 55, "Blubswillrule:   Coding, Models, GFX, Sounds, Music", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 70, "Ju[s]tice:       Maps, Models, GFX", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 85, "Jukki:           Coding", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 100, "Biodude:         Sounds", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 115, "DR_Mabuse1981:   Coding", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 130, "Naievil:         Coding, NX Maintaining", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 145, "MotoLegacy:      Coding, GFX, Music, NX Maintaining", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 160, "Derped_Crusader: Models, GFX", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 175, "Rinnegatamante:  Vita Maintaining", 1, 1, 1, 1, 1.5f);
-
-	Draw_ColoredStringScale(10, y + 205, "Special Thanks:", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 220, "- Spike:     FTEQW", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 235, "- Shpuld:    CleanQC4FTE", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 250, "- Crow_Bar:  DQuake", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 265, "- st1x51:    DQuakePlus", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 280, "- fgsfdsfgs: Quakespasm-NX", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 295, "- Azenn:     GFX help", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 310, "- tavo:      Music help", 1, 1, 1, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 325, "- BCDeshiG:  Heavy bug testing", 1, 1, 1, 1, 1.5f);
-
-	Draw_ColoredStringScale(10, y + 350, "Back", 1, 0, 0, 1, 1.5f);
+	DRAW_BACKBUTTON(0, 0);
 }
 
 

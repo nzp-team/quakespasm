@@ -890,6 +890,45 @@ Draw_Pic -- johnfitz -- modified
 =============
 */
 
+void Draw_SubPic(int x, int y, int width, int height, int start_x, int start_y, int end_x, int end_y, qpic_t *pic)
+{
+	glpic_t			*gl;
+
+	if (scrap_dirty)
+		Scrap_Upload ();
+	gl = (glpic_t *)pic->data;
+	GL_Bind (gl->gltexture);
+	glBegin (GL_QUADS);
+
+#ifdef VITA
+
+	// Calculate texture coordinates for the subsection
+    float subTexLeft = (start_x / (float)pic->width);
+    float subTexRight = (end_x / (float)pic->width);
+    float subTexTop = (start_y / (float)pic->height);
+    float subTexBottom = (end_y / (float)pic->height);
+
+#else
+
+	// Calculate texture coordinates for the subsection
+    float subTexLeft = gl->sl + (start_x / (float)pic->width);
+    float subTexRight = gl->sl + (end_x / (float)pic->width);
+    float subTexTop = gl->tl + (start_y / (float)pic->height);
+    float subTexBottom = gl->tl + (end_y / (float)pic->height);
+
+#endif // VITA
+
+    glTexCoord2f(subTexLeft, subTexTop);
+    glVertex2f(x, y);
+    glTexCoord2f(subTexRight, subTexTop);
+    glVertex2f(x + width, y);
+    glTexCoord2f(subTexRight, subTexBottom);
+    glVertex2f(x + width, y + height);
+    glTexCoord2f(subTexLeft, subTexBottom);
+    glVertex2f(x, y + height);
+	glEnd ();
+}
+
 // motolegacy -- ultimate draw function!! probably annihilates gl calls so use wisely lol
 // TODO: color shifting?
 void Draw_AlphaStretchPic (int x, int y, int width, int height, float alpha, qpic_t *pic)
@@ -1022,10 +1061,22 @@ void Draw_LoadingFill(void)
     if(!loading_num_step)
 		return;
 
+#ifdef VITA
+
+	int size       	= 16;
+	int max_step   	= 500;
+    int x          	= (vid.width  / 2) - (max_step / 2);
+    int y          	= vid.height - (size/ 2) - 40;
+
+#else
+
 	int size       	= 8;
 	int max_step   	= 350;
-    int x          	= (vid.width  / 2) - (max_step / 2);
-    int y          	= vid.height - (size/ 2) - 25;
+    int x          	= (640  / 2) - (max_step / 2);
+    int y          	= 360 - (size/ 2) - 29;
+
+#endif // VITA
+
 	int l;
 	char str[64];
 	char* text;
@@ -1047,13 +1098,22 @@ void Draw_LoadingFill(void)
 	switch(loading_step) {
 		case 1: text = "Loading Models.."; break;
 		case 2: text = "Loading World.."; break;
-		case 3: text = "Running Test Frame.."; break;
+		case 3: text = "Executing Spawn Functions.."; break;
 		case 4: text = "Loading Sounds.."; break;
 		default: text = "Initializing.."; break;
 	}
 
 	l = strlen (text);
-	Draw_String((vid.width - l*8)/2, y, text);
+
+#ifdef VITA
+
+	Draw_ColoredStringScale((vid.width - l*16)/2, y, text, 1, 1, 1, 1, 2.0f);
+
+#else
+
+	Draw_String((640 - l*8)/2, y, text);
+
+#endif // VITA
 
 	loading_cur_step_bk = loading_cur_step;
 }
