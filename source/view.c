@@ -851,8 +851,8 @@ void V_BoundOffsets (void)
 		r_refdef.vieworg[1] = ent->origin[1] + 14;
 	if (r_refdef.vieworg[2] < ent->origin[2] - 22)
 		r_refdef.vieworg[2] = ent->origin[2] - 22;
-	else if (r_refdef.vieworg[2] > ent->origin[2] + 30)
-		r_refdef.vieworg[2] = ent->origin[2] + 30;
+	else if (r_refdef.vieworg[2] > ent->origin[2] + 32)
+		r_refdef.vieworg[2] = ent->origin[2] + 32;
 }
 
 /*
@@ -955,174 +955,6 @@ vec3_t lastPunchAngle;
 
 void V_CalcRefdef (void)
 {
-	/*
-	entity_t	*ent, *view;
-	int			i;
-	vec3_t		forward, right, up;
-	vec3_t		angles;
-	float		bob;
-	static float oldz = 0;
-	static vec3_t punch = {0,0,0}; //johnfitz -- v_gunkick
-	float delta; //johnfitz -- v_gunkick
-
-	V_DriftPitch ();
-
-// ent is the player model (visible when out of body)
-	ent = &cl_entities[cl.viewentity];
-// view is the weapon model (only visible from inside body)
-	view = &cl.viewent;
-
-
-// transform the view offset by the model's matrix to get the offset from
-// model origin for the view
-	ent->angles[YAW] = cl.viewangles[YAW];	// the model should face the view dir
-	ent->angles[PITCH] = -cl.viewangles[PITCH];	// the model should face the view dir
-
-	float speed = (0.2 + sqrt((cl.velocity[0] * cl.velocity[0])	+	(cl.velocity[1] * cl.velocity[1])));
-	float bobside = 0;
-
-	speed = speed/190;
-	if (cl_sidebobbing.value) {
-		bobside = V_CalcBob(speed, 1);
-	}
-
-	bob = V_CalcBob (speed, 0);
-
-	//============================ Weapon Bobbing Code Block=================================
-	for (i=0 ; i<3 ; i++)
-	{
-		if (cl_sidebobbing.value)
-		{
-			view->origin[i] += right[i]*bobside*0.4;
-			view->origin[i] += up[i]*bob*0.5;
-//			view2->origin[i] += right[i]*bobside*0.2;
-//			view2->origin[i] += up[i]*bob*0.2;
-//			mz->origin[i] += right[i]*bobside*0.2;
-//			mz->origin[i] += up[i]*bob*0.2;
-		}
-		else
-		{
-			view->origin[i] += forward[i]*bob*0.4;
-//			view2->origin[i] += forward[i]*bob*0.4;
-//			mz->origin[i] += forward[i]*bob*0.4;
-		}
-	}
-
-// refresh position
-	VectorCopy (ent->origin, r_refdef.vieworg);
-	r_refdef.vieworg[2] += cl.viewheight + bob;
-
-	vec3_t vbob;
-	vbob[0] = V_CalcVBob(speed,0) * cl_bob.value * 50;//cl_bob * 50 undo each other, but we want to give some control to people to limit view bobbing
-	vbob[1] = V_CalcVBob(speed,1) * cl_bob.value * 50;
-	vbob[2] = V_CalcVBob(speed,2) * cl_bob.value * 50;
-
-	r_refdef.viewangles[YAW] = angledelta(r_refdef.viewangles[YAW] + (vbob[0] * 0.1));
-	r_refdef.viewangles[PITCH] = angledelta(r_refdef.viewangles[PITCH] + (vbob[1] * 0.1));
-	r_refdef.viewangles[ROLL] = anglemod(r_refdef.viewangles[ROLL] + (vbob[2] * 0.05));
-
-
-// never let it sit exactly on a node line, because a water plane can
-// dissapear when viewed with the eye exactly on it.
-// the server protocol only specifies to 1/16 pixel, so add 1/32 in each axis
-	r_refdef.vieworg[0] += 1.0/32;
-	r_refdef.vieworg[1] += 1.0/32;
-	r_refdef.vieworg[2] += 1.0/32;
-
-	VectorCopy (cl.viewangles, r_refdef.viewangles);
-	V_CalcViewRoll ();
-	V_AddIdle ();
-
-// offsets
-	angles[PITCH] = -ent->angles[PITCH]; // because entity pitches are actually backward
-	angles[YAW] = ent->angles[YAW];
-	angles[ROLL] = ent->angles[ROLL];
-
-	AngleVectors (angles, forward, right, up);
-
-	if (cl.maxclients <= 1) //johnfitz -- moved cheat-protection here from V_RenderView
-		for (i=0 ; i<3 ; i++)
-			r_refdef.vieworg[i] += scr_ofsx.value*forward[i] + scr_ofsy.value*right[i] + scr_ofsz.value*up[i];
-
-	V_BoundOffsets ();
-
-// set up gun position
-	VectorCopy (cl.viewangles, view->angles);
-
-	CalcGunAngle ();
-
-	VectorCopy (ent->origin, view->origin);
-	view->origin[2] += cl.viewheight;
-
-	for (i=0 ; i<3 ; i++)
-		view->origin[i] += forward[i]*bob*0.4;
-	view->origin[2] += bob;
-
-	//johnfitz -- removed all gun position fudging code (was used to keep gun from getting covered by sbar)
-	//MarkV -- restored this with r_viewmodel_quake cvar
-	if (r_viewmodel_quake.value)
-	{
-		if (scr_viewsize.value == 110)
-			view->origin[2] += 1;
-		else if (scr_viewsize.value == 100)
-			view->origin[2] += 2;
-		else if (scr_viewsize.value == 90)
-			view->origin[2] += 1;
-		else if (scr_viewsize.value == 80)
-			view->origin[2] += 0.5;
-	}
-
-	view->model = cl.model_precache[cl.stats[STAT_WEAPON]];
-	view->frame = cl.stats[STAT_WEAPONFRAME];
-	view->colormap = vid.colormap;
-
-//johnfitz -- v_gunkick
-	if (v_gunkick.value == 1) //original quake kick
-		VectorAdd (r_refdef.viewangles, cl.punchangle, r_refdef.viewangles);
-	if (v_gunkick.value == 2) //lerped kick
-	{
-		for (i=0; i<3; i++)
-			if (punch[i] != v_punchangles[0][i])
-			{
-				//speed determined by how far we need to lerp in 1/10th of a second
-				delta = (v_punchangles[0][i]-v_punchangles[1][i]) * host_frametime * 10;
-
-				if (delta > 0)
-					punch[i] = q_min(punch[i]+delta, v_punchangles[0][i]);
-				else if (delta < 0)
-					punch[i] = q_max(punch[i]+delta, v_punchangles[0][i]);
-			}
-
-		VectorAdd (r_refdef.viewangles, punch, r_refdef.viewangles);
-	}
-//johnfitz
-
-// smooth out stair step ups
-	if (!noclip_anglehack && cl.onground && ent->origin[2] - oldz > 0) //johnfitz -- added exception for noclip
-	//FIXME: noclip_anglehack is set on the server, so in a nonlocal game this won't work.
-	{
-		float steptime;
-
-		steptime = cl.time - cl.oldtime;
-		if (steptime < 0)
-			//FIXME	I_Error ("steptime < 0");
-			steptime = 0;
-
-		oldz += steptime * 80;
-		if (oldz > ent->origin[2])
-			oldz = ent->origin[2];
-		if (ent->origin[2] - oldz > 12)
-			oldz = ent->origin[2] - 12;
-		r_refdef.vieworg[2] += oldz - ent->origin[2];
-		view->origin[2] += oldz - ent->origin[2];
-	}
-	else
-		oldz = ent->origin[2];
-
-	if (chase_active.value)
-		Chase_UpdateForDrawing (); //johnfitz
-	*/
-
 	entity_t	*ent, *view, *view2;
 	int			i;
 	vec3_t		forward, right, up;
@@ -1179,11 +1011,6 @@ void V_CalcRefdef (void)
 	view->angles[YAW] = view->angles[YAW] + cl.gun_kick[YAW];
 	VectorCopy (ent->origin, view->origin);
 	view->origin[2] += cl.viewheight;
-
-	// motolegacy -- z axis offset increases (somewhere???) when viewheight is >= 32.. just
-	// hack it back down to where it needs to be.
-	if (cl.viewheight >= 32)
-		view->origin[2] -= 2;
 
 	//Storing base location, later to calculate total offset
 	CWeaponOffset[0]= view->origin[0] * -1;

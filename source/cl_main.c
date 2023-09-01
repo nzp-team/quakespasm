@@ -552,11 +552,6 @@ void CL_RelinkEntities (void)
 				up_offset		= up_offset/1000;
 				forward_offset  = forward_offset/1000;
 
-				// motolegacy -- vmodel hack part 3: electric boogaloo
-				if (cl.viewheight == 32)
-					up_offset 		-= 2;
-
-				// now a not-so hack to ensure the muzzleflash follows our viewheight
 				up_offset 		-= (36 - cl.viewheight);
 				
 				VectorMA (start, forward_offset, v_forward ,smokeorg);

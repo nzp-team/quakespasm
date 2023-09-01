@@ -1323,7 +1323,7 @@ void SCR_DrawLoadScreen (void)
 		
 #ifdef VITA
 		Draw_FillByColor(0, 0, 960, 48, 0, 0, 0, 150); 
-		Draw_FillByColor(0, 1000 - 48, 960, 48, 0, 0, 0, 150);
+		Draw_FillByColor(0, 496, 960, 48, 0, 0, 0, 150);
 
 		Draw_ColoredStringScale(4, 8, loadnamespec, 255, 255, 0, 255, 4.0f);
 #else
