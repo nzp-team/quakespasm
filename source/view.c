@@ -173,8 +173,6 @@ float PlayStepSound(void)
 	return sound;
 }
 
-float speed_reduce (int weapontype);
-
 #define VBOB_VAL 5.2
 
 float V_CalcVBob(float speed, float which)
@@ -187,7 +185,7 @@ float V_CalcVBob(float speed, float which)
 	float sprint = 1;
 
 	if(cl.stats[STAT_ZOOM] == 3)
-	 	sprint = 1.8 * speed_reduce (cl.stats[STAT_ACTIVEWEAPON]);
+	 	sprint = 1.8;
 
 	if(cl.stats[STAT_ZOOM] == 2)
 		return 0;
@@ -227,15 +225,13 @@ float V_CalcVBob(float speed, float which)
 }
 
 // Blub's new V_CalcBob code, both side and pitch are in one, dictated by the (which) parameter
- float speed_reduce (int weapontype);
-
 float V_CalcBob (float speed,float which)//0 = regular, 1 = side bobbing
 {
 	float bob = 0;
 	float sprint = 1;
 	
 	if(cl.stats[STAT_ZOOM] == 3)
-		sprint = 1.8 * speed_reduce (cl.stats[STAT_ACTIVEWEAPON]);//this gets sprinting speed in comparison to walk speed per weapon
+		sprint = 1.8; //this gets sprinting speed in comparison to walk speed per weapon
 	if(cl.stats[STAT_ZOOM] == 2)
 		return 0;
 	//12.048 -> 4.3 = 100 -> 36ish, so replace 100 with 36
