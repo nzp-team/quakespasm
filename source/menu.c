@@ -753,6 +753,19 @@ void M_Main_Key (int key)
 
 qboolean	wasInMenus;
 
+#ifdef VITA
+
+char *restartMessage [] =
+{
+
+  " Are you sure you want",
+  "  to restart this game? ",  //msg:0
+  "                               ",
+  "   X :Yes    O : No       "
+};
+
+#else
+
 char *restartMessage [] =
 {
 
@@ -761,6 +774,8 @@ char *restartMessage [] =
   "                               ",
   "   A :Yes    B : No       "
 };
+
+#endif // VITA
 
 
 void M_Menu_Restart_f (void)
