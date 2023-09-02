@@ -1574,13 +1574,12 @@ void SCR_DrawCrosshair (void)
 		}
     }
 
-	if (cl.stats[STAT_ACTIVEWEAPON] == W_M2)
+	if (cl.stats[STAT_ACTIVEWEAPON] == W_M2 || cl.stats[STAT_ACTIVEWEAPON] == W_TESLA || cl.stats[STAT_ACTIVEWEAPON] == W_FIW || cl.stats[STAT_ACTIVEWEAPON] == W_DG3)
 	{
-
 		Draw_CharacterRGBA ((vid.width)/4-4, (vid.height)*3/4, 'O', 255, col, col, 0.7);
 
 	}
-	else if (crosshair.value == 1 && cl.stats[STAT_ZOOM] != 1 && cl.stats[STAT_ZOOM] != 2 && cl.stats[STAT_ACTIVEWEAPON] != W_PANZER)
+	else if (crosshair.value == 1 && cl.stats[STAT_ZOOM] != 1 && cl.stats[STAT_ZOOM] != 2 && cl.stats[STAT_ACTIVEWEAPON] != W_PANZER && cl.stats[STAT_ACTIVEWEAPON] != W_LONGINUS)
     {
         int x_value, y_value;
         int crosshair_offset = CrossHairWeapon() + cur_spread;
