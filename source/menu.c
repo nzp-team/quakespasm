@@ -473,41 +473,18 @@ int M_Paused_Cusor;
 
 void M_Paused_Menu_Draw (void) {
 	paused_hack = true;
-#ifdef VITA
-	int y = 0;
-#else
-	int y = vid.height * 0.5;
-#endif
+	MENU_INITVARS();
 
 	// Fill black to make everything easier to see
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
 	// Header
-	Draw_ColoredStringScale(10, y + 10, "PAUSED", 1, 1, 1, 1, 3.0f);
+	DRAW_HEADER("PAUSED");
 
-	// Resume
-	if (M_Paused_Cusor == 0)
- 		Draw_ColoredStringScale(10, y + 190, "Resume", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 190, "Resume", 1, 1, 1, 1, 1.5f);
-
-	// Restart
-	if (M_Paused_Cusor == 1)
- 		Draw_ColoredStringScale(10, y + 205, "Restart", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 205, "Restart", 1, 1, 1, 1, 1.5f);
-
-	// Settings
-	if (M_Paused_Cusor == 2)
- 		Draw_ColoredStringScale(10, y + 220, "Settings", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 220, "Settings", 1, 1, 1, 1, 1.5f);
-
-	// Main Menu
-	if (M_Paused_Cusor == 3)
- 		Draw_ColoredStringScale(10, y + 235, "Main Menu", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 235, "Main Menu", 1, 1, 1, 1, 1.5f);
+	DRAW_MENUOPTION(0, "Resume Carnage", M_Paused_Cusor, false);
+	DRAW_MENUOPTION(1, "Restart", M_Paused_Cusor, false);
+	DRAW_MENUOPTION(2, "Settings", M_Paused_Cusor, false);
+	DRAW_MENUOPTION(3, "End Game", M_Paused_Cusor, false);
 }
 
 void M_Paused_Menu_Key (int key)
