@@ -572,7 +572,7 @@ void CL_SendMove (const usercmd_t *cmd)
 	int		bits;
 	sizebuf_t	buf;
 	byte	data[128];
-
+	vec3_t tempv;
 	buf.maxsize = 128;
 	buf.cursize = 0;
 	buf.data = data;
@@ -628,12 +628,13 @@ void CL_SendMove (const usercmd_t *cmd)
 
 	MSG_WriteFloat (&buf, cl.mtime[0]);	// so server can get ping times
 
+	VectorAdd(cl.gun_kick, cl.viewangles, tempv);
 	for (i=0 ; i<3 ; i++)
 		//johnfitz -- 16-bit angles for PROTOCOL_FITZQUAKE
 		if (cl.protocol == PROTOCOL_NETQUAKE)
-			MSG_WriteAngle (&buf, cl.viewangles[i], cl.protocolflags);
+			MSG_WriteAngle (&buf, tempv[i], cl.protocolflags);
 		else
-			MSG_WriteAngle16 (&buf, cl.viewangles[i], cl.protocolflags);
+			MSG_WriteAngle16 (&buf, tempv[i], cl.protocolflags);
 		//johnfitz
 
 	MSG_WriteShort (&buf, cmd->forwardmove);

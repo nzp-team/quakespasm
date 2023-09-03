@@ -1180,9 +1180,9 @@ void CL_ParseWeaponFire (void)
 	return_time = (double)6/MSG_ReadLong ();
 	crosshair_spread_time = return_time + sv.time;
 
-	kick[0] = MSG_ReadCoord (cl.protocolflags)/5;
-	kick[1] = MSG_ReadCoord (cl.protocolflags)/5;
-	kick[2] = MSG_ReadCoord (cl.protocolflags)/5;
+	kick[0] = (float)(MSG_ReadCoord (cl.protocolflags)/3.75f);
+	kick[1] = (float)(MSG_ReadCoord (cl.protocolflags)/3.75f);
+	kick[2] = (float)(MSG_ReadCoord (cl.protocolflags)/3.75f);
 	
 	cl.gun_kick[0] += kick[0];
 	cl.gun_kick[1] += kick[1];

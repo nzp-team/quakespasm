@@ -933,7 +933,7 @@ void DropRecoilKick (void)
 	len = VectorNormalize (cl.gun_kick);
 
 	//Con_Printf ("len = %f\n",len);
-	len = len - 5*host_frametime;
+	len = len - 3.5f*host_frametime;
 	if (len < 0)
 		len = 0;
 	VectorScale (cl.gun_kick, len, cl.gun_kick);
