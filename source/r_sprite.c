@@ -150,7 +150,9 @@ void R_DrawSpriteModel (entity_t *e)
 
 	GL_Bind(frame->gltexture);
 
-	glEnable (GL_ALPHA_TEST);
+	glDisable (GL_ALPHA_TEST);
+	glEnable (GL_BLEND);
+	glDepthMask(GL_FALSE);
 	glBegin (GL_TRIANGLE_FAN); //was GL_QUADS, but changed to support r_showtris
 
 	glTexCoord2f (0, frame->tmax);
@@ -174,7 +176,8 @@ void R_DrawSpriteModel (entity_t *e)
 	glVertex3fv (point);
 
 	glEnd ();
-	glDisable (GL_ALPHA_TEST);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
 
 	//johnfitz: offset decals
 	if (psprite->type == SPR_ORIENTED)
