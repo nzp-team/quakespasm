@@ -299,11 +299,8 @@ float *Fog_GetColor (void)
 	for (i=0;i<3;i++)
 		c[i] = (float)(Q_rint(c[i] * 255)) / 255.0f;
 
-	// Dumb descrepancy with NX/VITA gl wrappings.
-#ifndef VITA
 	for (i = 0; i < 3; i++)
 		c[i] /= 64.0;
-#endif // VITA
 
 	return c;
 }

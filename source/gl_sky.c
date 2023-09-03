@@ -1026,7 +1026,7 @@ void Sky_DrawSky (void)
 		glDepthMask(1);
 		glDepthFunc(GL_LEQUAL);
 	}
-#ifndef VITA
+
 	Fog_EnableGFog ();
-#endif
+
 }

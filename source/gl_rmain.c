@@ -759,7 +759,9 @@ void R_DrawEntitiesOnList (qboolean alphapass) //johnfitz -- added parameter
 		{
 		case mod_sprite:
 		{
+			Fog_DisableGFog();
 			R_DrawSpriteModel (currententity);
+			Fog_EnableGFog();
 			break;
 		}
 		case mod_alias:
@@ -1166,9 +1168,9 @@ R_RenderScene
 void R_RenderScene (void)
 {
 	R_SetupScene (); //johnfitz -- this does everything that should be done once per call to RenderScene
-#ifndef VITA
+
 	Fog_EnableGFog (); //johnfitz
-#endif
+
 	Sky_DrawSky (); //johnfitz
 
 	R_DrawWorld ();
@@ -1185,12 +1187,12 @@ void R_RenderScene (void)
 
 	R_RenderDlights (); //triangle fan dlights -- johnfitz -- moved after water
 
+	Fog_DisableGFog (); //johnfitz
+
 	R_DrawParticles ();
 
 	QMB_DrawParticles();
-#ifndef VITA
-	Fog_DisableGFog (); //johnfitz
-#endif
+
 	R_DrawViewModel (); //johnfitz -- moved here from R_RenderView
 
 	R_DrawView2Model ();

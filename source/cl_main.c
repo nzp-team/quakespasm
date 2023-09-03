@@ -552,7 +552,8 @@ void CL_RelinkEntities (void)
 				up_offset		= up_offset/1000;
 				forward_offset  = forward_offset/1000;
 
-				up_offset 		-= (36 - cl.viewheight);
+				up_offset 		-= (34 - cl.viewheight);
+				right_offset 	-= 4;
 				
 				VectorMA (start, forward_offset, v_forward ,smokeorg);
 				VectorMA (smokeorg, up_offset, v_up ,smokeorg);

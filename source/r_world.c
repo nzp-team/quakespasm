@@ -28,6 +28,10 @@ extern cvar_t gl_fullbrights, r_drawflat, gl_overbright, r_oldwater, r_oldskylea
 
 extern glpoly_t	*lightmap_polys[MAX_LIGHTMAPS];
 
+extern float 		fog_red;
+extern float 		fog_green;
+extern float 		fog_blue;
+
 byte *SV_FatPVS (vec3_t org, qmodel_t *worldmodel);
 
 int vis_changed; //if true, force pvs to be refreshed
@@ -818,6 +822,9 @@ static GLuint alphaLoc;
 static GLuint grayscale_enableLoc;
 #ifdef VITA
 static GLuint fogDensityLoc;
+static GLuint fogRedLoc;
+static GLuint fogGreenLoc;
+static GLuint fogBlueLoc;
 #endif
 
 #define vertAttrIndex 0
@@ -863,6 +870,9 @@ void GLWorld_CreateShaders (void)
 		"uniform float Alpha;\n"
 		"uniform int gs_mod;\n"
 		"uniform float fog_density;\n"
+		"uniform float fog_red;\n"
+		"uniform float fog_green;\n"
+		"uniform float fog_blue;\n"
 		"\n"
 		"float4 main(\n"
 		"	float4 coords : WPOS,\n"
@@ -881,7 +891,7 @@ void GLWorld_CreateShaders (void)
 		"	float FogFragCoord = coords.z / coords.w;\n"
 		"	float fog = exp(-fog_density * fog_density * FogFragCoord * FogFragCoord);\n"
 		"	fog = clamp(fog, 0.0, 1.0);\n"
-		"	result = lerp(float4(0.3, 0.3, 0.3, 1.0), result, fog);\n"
+		"	result = lerp(float4(fog_red, fog_green, fog_blue, 1.0), result, fog);\n"
 		"	result.a = Alpha;\n" // FIXME: This will make almost transparent things cut holes though heavy fog
 		"   if (gs_mod) {\n"
 		"       float value = clamp((result.r * 0.33) + (result.g * 0.55) + (result.b * 0.11), 0.0, 1.0);\n"
@@ -968,6 +978,9 @@ void GLWorld_CreateShaders (void)
 		grayscale_enableLoc = GL_GetUniformLocation (&r_world_program, "gs_mod");
 #ifdef VITA
 		fogDensityLoc = GL_GetUniformLocation(&r_world_program, "fog_density");
+		fogRedLoc = GL_GetUniformLocation(&r_world_program, "fog_red");
+		fogGreenLoc = GL_GetUniformLocation(&r_world_program, "fog_green");
+		fogBlueLoc = GL_GetUniformLocation(&r_world_program, "fog_blue");
 #endif
 	}
 }
@@ -1027,6 +1040,9 @@ void R_DrawTextureChains_GLSL (qmodel_t *model, entity_t *ent, texchain_t chain)
 	GL_Uniform1fFunc (alphaLoc, entalpha);
 #ifdef VITA
 	GL_Uniform1fFunc (fogDensityLoc, Fog_GetDensity() / 64.0f);
+	GL_Uniform1fFunc (fogRedLoc, fog_red / 64.0f);
+	GL_Uniform1fFunc (fogGreenLoc, fog_green / 64.0f);
+	GL_Uniform1fFunc (fogBlueLoc, fog_blue / 64.0f);
 #endif
 
 	// naievil -- experimental grayscale shader
@@ -1197,21 +1213,14 @@ void R_DrawTextureChains (qmodel_t *model, entity_t *ent, texchain_t chain)
 			//to make fog work with multipass lightmapping, need to do one pass
 			//with no fog, one modulate pass with black fog, and one additive
 			//pass with black geometry and normal fog
-#ifndef VITA
 			Fog_DisableGFog ();
-#endif
 			R_DrawTextureChains_TextureOnly (model, ent, chain);
-#ifndef VITA
 			Fog_EnableGFog ();
-#endif
 			glDepthMask (GL_FALSE);
 			glEnable (GL_BLEND);
 			glBlendFunc (GL_DST_COLOR, GL_SRC_COLOR); //2x modulate
-#ifndef VITA
 			Fog_StartAdditive ();
-#endif
 			R_DrawLightmapChains ();
-#ifndef VITA
 			Fog_StopAdditive ();
 			if (Fog_GetDensity() > 0)
 			{
@@ -1222,7 +1231,6 @@ void R_DrawTextureChains (qmodel_t *model, entity_t *ent, texchain_t chain)
 				glColor3f(1,1,1);
 				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 			}
-#endif
 			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable (GL_BLEND);
 			glDepthMask (GL_TRUE);
@@ -1247,21 +1255,14 @@ void R_DrawTextureChains (qmodel_t *model, entity_t *ent, texchain_t chain)
 			//to make fog work with multipass lightmapping, need to do one pass
 			//with no fog, one modulate pass with black fog, and one additive
 			//pass with black geometry and normal fog
-#ifndef VITA
 			Fog_DisableGFog ();
-#endif
 			R_DrawTextureChains_TextureOnly (model, ent, chain);
-#ifndef VITA
 			Fog_EnableGFog ();
-#endif
 			glDepthMask (GL_FALSE);
 			glEnable (GL_BLEND);
 			glBlendFunc(GL_ZERO, GL_SRC_COLOR); //modulate
-#ifndef VITA
 			Fog_StartAdditive ();
-#endif
 			R_DrawLightmapChains ();
-#ifndef VITA
 			Fog_StopAdditive ();
 			if (Fog_GetDensity() > 0)
 			{
@@ -1272,7 +1273,6 @@ void R_DrawTextureChains (qmodel_t *model, entity_t *ent, texchain_t chain)
 				glColor3f(1,1,1);
 				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 			}
-#endif
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable (GL_BLEND);
 			glDepthMask (GL_TRUE);
@@ -1289,13 +1289,9 @@ fullbrights:
 		glBlendFunc (GL_ONE, GL_ONE);
 		glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		glColor3f (entalpha, entalpha, entalpha);
-#ifndef VITA
 		Fog_StartAdditive ();
-#endif
 		R_DrawTextureChains_Glow (model, ent, chain);
-#ifndef VITA
 		Fog_StopAdditive ();
-#endif
 		glColor3f (1, 1, 1);
 		glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

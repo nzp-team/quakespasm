@@ -28,6 +28,10 @@ extern cvar_t r_drawflat, gl_overbright_models, gl_fullbrights, r_lerpmodels, r_
 extern cvar_t scr_fov_viewmodel; //sB porting seperate viewmodel FOV
 extern cvar_t scr_fov;
 
+extern float 		fog_red;
+extern float 		fog_green;
+extern float 		fog_blue;
+
 #include "mathlib.h"
 
 //up to 16 color translated skins
@@ -88,6 +92,9 @@ static GLuint useAlphaTestLoc;
 static GLuint aliasgrayscale_enableLoc;
 #ifdef VITA
 static GLuint fogDensityLoc;
+static GLuint fogRedLoc;
+static GLuint fogGreenLoc;
+static GLuint fogBlueLoc;
 #endif
 
 #define pose1VertexAttrIndex 0
@@ -180,6 +187,9 @@ void GLAlias_CreateShaders (void)
 		"uniform int UseAlphaTest;\n"
 		"uniform int gs_mod;\n"
 		"uniform float fog_density;\n"
+		"uniform float fog_red;\n"
+		"uniform float fog_green;\n"
+		"uniform float fog_blue;\n"
 		"\n"
 		"float4 main(\n"
 		"	float4 coords : WPOS,\n"
@@ -198,7 +208,7 @@ void GLAlias_CreateShaders (void)
 		"	float FogFragCoord = coords.z / coords.w;\n"
 		"	float fog = exp(-fog_density * fog_density * FogFragCoord * FogFragCoord);\n"
 		"	fog = clamp(fog, 0.0, 1.0);\n"
-		"	result = lerp(float4(0.3, 0.3, 0.3, 1.0), result, fog);\n"
+		"	result = lerp(float4(fog_red, fog_green, fog_blue, 1.0), result, fog);\n"
 		"	result.a = gl_Color.a;\n" // FIXME: This will make almost transparent things cut holes though heavy fog
 		"   if (gs_mod) {\n"
 		"       float value = clamp((result.r * 0.33) + (result.g * 0.55) + (result.b * 0.11), 0.0, 1.0);\n"
@@ -301,6 +311,9 @@ void GLAlias_CreateShaders (void)
 		aliasgrayscale_enableLoc = GL_GetUniformLocation (&r_alias_program, "gs_mod");
 #ifdef VITA
 		fogDensityLoc = GL_GetUniformLocation(&r_alias_program, "fog_density");
+		fogRedLoc = GL_GetUniformLocation(&r_alias_program, "fog_red");
+		fogGreenLoc = GL_GetUniformLocation(&r_alias_program, "fog_green");
+		fogBlueLoc = GL_GetUniformLocation(&r_alias_program, "fog_blue");
 #endif
 	}
 }
@@ -363,6 +376,9 @@ void GL_DrawAliasFrame_GLSL (aliashdr_t *paliashdr, lerpdata_t lerpdata, gltextu
 	GL_Uniform1iFunc (useAlphaTestLoc, (currententity->model->flags & MF_HOLEY) ? 1 : 0);
 #ifdef VITA
 	GL_Uniform1fFunc (fogDensityLoc, Fog_GetDensity() / 64.0f);
+	GL_Uniform1fFunc (fogRedLoc, fog_red / 64.0f);
+	GL_Uniform1fFunc (fogGreenLoc, fog_green / 64.0f);
+	GL_Uniform1fFunc (fogBlueLoc, fog_blue / 64.0f);
 #endif
 	// naievil -- experimental grayscale mod
 	GL_Uniform1fFunc (aliasgrayscale_enableLoc, /*sv_player->v.renderGrayscale*/0);
@@ -1191,13 +1207,9 @@ void R_DrawAliasModel (entity_t *e)
 			glBlendFunc (GL_ONE, GL_ONE);
 			glDepthMask(GL_FALSE);
 			glColor3f(entalpha,entalpha,entalpha);
-#ifndef VITA
 			Fog_StartAdditive ();
-#endif
 			GL_DrawAliasFrame (paliashdr, lerpdata);
-#ifndef VITA
 			Fog_StopAdditive ();
-#endif
 			glDepthMask(GL_TRUE);
 			glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable(GL_BLEND);
@@ -1258,13 +1270,9 @@ void R_DrawAliasModel (entity_t *e)
 				glDepthMask(GL_FALSE);
 				shading = false;
 				glColor3f(entalpha,entalpha,entalpha);
-#ifndef VITA
 				Fog_StartAdditive ();
-#endif
 				GL_DrawAliasFrame (paliashdr, lerpdata);
-#ifndef VITA
 				Fog_StopAdditive ();
-#endif
 				glDepthMask(GL_TRUE);
 				glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				glDisable(GL_BLEND);
@@ -1281,13 +1289,9 @@ void R_DrawAliasModel (entity_t *e)
 			glEnable(GL_BLEND);
 			glBlendFunc (GL_ONE, GL_ONE);
 			glDepthMask(GL_FALSE);
-#ifndef VITA
 			Fog_StartAdditive ();
-#endif
 			GL_DrawAliasFrame (paliashdr, lerpdata);
-#ifndef VITA
 			Fog_StopAdditive ();
-#endif
 			glDepthMask(GL_TRUE);
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1302,13 +1306,9 @@ void R_DrawAliasModel (entity_t *e)
 				glDepthMask(GL_FALSE);
 				shading = false;
 				glColor3f(entalpha,entalpha,entalpha);
-#ifndef VITA
 				Fog_StartAdditive ();
-#endif
 				GL_DrawAliasFrame (paliashdr, lerpdata);
-#ifndef VITA
 				Fog_StopAdditive ();
-#endif
 				glDepthMask(GL_TRUE);
 				glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				glDisable(GL_BLEND);
@@ -1347,13 +1347,9 @@ void R_DrawAliasModel (entity_t *e)
 				glDepthMask(GL_FALSE);
 				shading = false;
 				glColor3f(entalpha,entalpha,entalpha);
-#ifndef VITA
 				Fog_StartAdditive ();
-#endif
 				GL_DrawAliasFrame (paliashdr, lerpdata);
-#ifndef VITA
 				Fog_StopAdditive ();
-#endif
 				glDepthMask(GL_TRUE);
 				glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				glDisable(GL_BLEND);
