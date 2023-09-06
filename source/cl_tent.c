@@ -112,6 +112,7 @@ void CL_ParseBeam (qmodel_t *m)
 CL_ParseTEnt
 =================
 */
+extern gltexture_t *decal_mark;
 void CL_ParseTEnt (void)
 {
 	int		type;
@@ -181,24 +182,56 @@ void CL_ParseTEnt (void)
 		pos[0] = MSG_ReadCoord (cl.protocolflags);
 		pos[1] = MSG_ReadCoord (cl.protocolflags);
 		pos[2] = MSG_ReadCoord (cl.protocolflags);
-		RunParticleEffect (pos, vec3_origin, 0, 20);
+		R_RunParticleEffect (pos, vec3_origin, 0, 20);
+
+		//R00k--start
+		R_SpawnDecalStatic(pos, decal_mark, 8);
+		//R00k--end
 		break;
 
 	case TE_EXPLOSION:			// rocket explosion
-	case TE_RAYSPLASHGREEN:
-	case TE_RAYSPLASHRED:
 		pos[0] = MSG_ReadCoord (cl.protocolflags);
 		pos[1] = MSG_ReadCoord (cl.protocolflags);
 		pos[2] = MSG_ReadCoord (cl.protocolflags);
 		R_ParticleExplosion (pos);
+		//R_SpawnDecalStatic(pos, decal_burn, 200); // NZP TODO: Decals
 		dl = CL_AllocDlight (0);
 		VectorCopy (pos, dl->origin);
 		dl->radius = 350;
 		dl->die = cl.time + 0.5;
 		dl->decay = 300;
-		S_StartSound (-1, 0, cl_sfx_r_exp3, pos, 1, 1);
+		S_StartSound (-1, 0, cl_sfx_r_exp3, pos, 1, 0.5);
 		break;
-
+	case TE_RAYSPLASHGREEN:
+		pos[0] = MSG_ReadCoord (cl.protocolflags);
+		pos[1] = MSG_ReadCoord (cl.protocolflags);
+		pos[2] = MSG_ReadCoord (cl.protocolflags);
+		dl = CL_AllocDlight (0);
+		VectorCopy (pos, dl->origin);
+		dl->radius = 65;
+		dl->die = cl.time + 0.3;
+		dl->decay = 300;
+		dl->color[0] = 0;
+		dl->color[1] = 255;
+		dl->color[2] = 0; 
+		R_RunParticleEffect (pos, vec3_origin, 0, 256);
+		//S_StartSound (-1, 0, cl_sfx_r_exp3, pos, 1, 0.5); // NZPFIXME - add raygun hum
+		break;
+	case TE_RAYSPLASHRED:
+		pos[0] = MSG_ReadCoord (cl.protocolflags);
+		pos[1] = MSG_ReadCoord (cl.protocolflags);
+		pos[2] = MSG_ReadCoord (cl.protocolflags);
+		dl = CL_AllocDlight (0);
+		VectorCopy (pos, dl->origin);
+		dl->radius = 65;
+		dl->die = cl.time + 0.3;
+		dl->decay = 300;
+		dl->color[0] = 255;
+		dl->color[1] = 0;
+		dl->color[2] = 0; 
+		R_RunParticleEffect (pos, vec3_origin, 0, 512);
+		//S_StartSound (-1, 0, cl_sfx_r_exp3, pos, 1, 0.5); // NZPFIXME - add raygun hum
+		break;
 	case TE_TAREXPLOSION:			// tarbaby explosion
 		pos[0] = MSG_ReadCoord (cl.protocolflags);
 		pos[1] = MSG_ReadCoord (cl.protocolflags);

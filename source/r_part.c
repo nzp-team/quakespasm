@@ -356,44 +356,10 @@ void R_ParseParticleEffect (void)
 R_ParticleExplosion
 ===============
 */
+extern void QMB_ParticleExplosion(vec3_t org);
 void R_ParticleExplosion (vec3_t org)
 {
-	int			i, j;
-	particle_t	*p;
-
-	for (i=0 ; i<1024 ; i++)
-	{
-		if (!free_particles)
-			return;
-		p = free_particles;
-		free_particles = p->next;
-		p->next = active_particles;
-		active_particles = p;
-
-		p->die = cl.time + 5;
-		for (int i = 0; i < 3; i++) {
-			p->color[i] = ramp1[0];
-		}
-		p->ramp = rand()&3;
-		if (i & 1)
-		{
-			p->type = pt_explode;
-			for (j=0 ; j<3 ; j++)
-			{
-				p->org[j] = org[j] + ((rand()%32)-16);
-				p->vel[j] = (rand()%512)-256;
-			}
-		}
-		else
-		{
-			p->type = pt_explode2;
-			for (j=0 ; j<3 ; j++)
-			{
-				p->org[j] = org[j] + ((rand()%32)-16);
-				p->vel[j] = (rand()%512)-256;
-			}
-		}
-	}
+	QMB_ParticleExplosion(org);
 }
 
 /*
@@ -486,57 +452,21 @@ R_RunParticleEffect
 */
 void R_RunParticleEffect (vec3_t org, vec3_t dir, int color, int count)
 {
-	int			i, j;
-	particle_t	*p;
-
-	for (i=0 ; i<count ; i++)
+	if (color == 73 || color == 225)
 	{
-		if (!free_particles)
-			return;
-		p = free_particles;
-		free_particles = p->next;
-		p->next = active_particles;
-		active_particles = p;
+		RunParticleEffect(org, dir, color, count);
+		return;
+	}
 
-		if (count == 1024)
-		{	// rocket explosion
-			p->die = cl.time + 5;
-			for (int i = 0; i < 3; i++) {
-				p->color[i] = ramp1[0];
-			}
-			p->ramp = rand()&3;
-			if (i & 1)
-			{
-				p->type = pt_explode;
-				for (j=0 ; j<3 ; j++)
-				{
-					p->org[j] = org[j] + ((rand()%32)-16);
-					p->vel[j] = (rand()%512)-256;
-				}
-			}
-			else
-			{
-				p->type = pt_explode2;
-				for (j=0 ; j<3 ; j++)
-				{
-					p->org[j] = org[j] + ((rand()%32)-16);
-					p->vel[j] = (rand()%512)-256;
-				}
-			}
-		}
-		else
-		{
-			p->die = cl.time + 0.1*(rand()%5);
-			for (int i = 0; i < 3; i++) {
-				p->color[i] = (color&~7) + (rand()&7);
-			}
-			p->type = pt_slowgrav;
-			for (j=0 ; j<3 ; j++)
-			{
-				p->org[j] = org[j] + ((rand()&15)-8);
-				p->vel[j] = dir[j]*15;// + (rand()%300)-150;
-			}
-		}
+	switch (count)
+	{
+		case 10:
+		case 20:
+		case 30:
+			RunParticleEffect(org, dir, color, count);
+			break;
+		default:
+			RunParticleEffect(org, dir, color, count);
 	}
 }
 
@@ -640,6 +570,11 @@ void R_RocketTrail (vec3_t start, vec3_t end, int type)
 	particle_t	*p;
 	int			dec;
 	static int	tracercount;
+
+	// Don't draw broken trails with the Ray Gun
+	// TODO: QMB Trails
+	if (type == 12 || type == 13)
+		return;
 
 	VectorSubtract (end, start, vec);
 	len = VectorNormalize (vec);
