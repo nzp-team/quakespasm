@@ -1613,7 +1613,7 @@ void M_Menu_Maps_Draw (void)
 
 #ifdef VITA
 
-	menu_offset_y += 136;
+	menu_offset_y = 441;
 
 #else
 
