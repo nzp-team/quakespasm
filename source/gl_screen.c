@@ -1286,6 +1286,7 @@ char *ReturnLoadingtex (void)
 }
 
 char lpath[MAX_QPATH];
+extern int textstate;
 void SCR_DrawLoadScreen (void)
 {
 	int max_step   	= 350;
@@ -1297,6 +1298,7 @@ void SCR_DrawLoadScreen (void)
 	    return;
 
 	if (loadingScreen) {
+		textstate = 0; // Reset HUD Round intro
 		if (!loadscreeninit) {
 			lscreen = Draw_CachePic(va("gfx/lscreen/%s.png", loadname2));
 

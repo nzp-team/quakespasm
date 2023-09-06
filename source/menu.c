@@ -786,7 +786,7 @@ void M_Menu_Restart_f (void)
 	m_entersound = true;
 }
 
-
+extern int textstate;
 void M_Restart_Key (int key)
 {
 	switch (key)
@@ -803,6 +803,7 @@ void M_Restart_Key (int key)
 		m_state = m_none;
 		paused_hack = false;
 		//Cbuf_AddText ("restart\n");
+		textstate = 0;
 		PR_ExecuteProgram (pr_global_struct->Soft_Restart);
 		break;
 	default:
@@ -1617,7 +1618,7 @@ void M_Menu_Maps_Draw (void)
 
 #else
 
-	menu_offset_y += 20;
+	menu_offset_y = y + 285;
 
 #endif // VITA
 

@@ -66,6 +66,7 @@ float round_center_y;
 
 extern qboolean paused_hack;
 qboolean domaxammo;
+qboolean has_chaptertitle;
 
 double HUD_Change_time;//hide hud when not chagned
 
@@ -86,6 +87,8 @@ point_change_t point_change[10];
 
 void HUD_Init (void) {
 	int		i;
+
+	has_chaptertitle = false;
 
 	for (i=0 ; i<5 ; i++)
 	{
@@ -564,6 +567,94 @@ void HUD_MaxAmmo(void)
 
 /*
 ===============
+HUD_WorldText
+===============
+*/
+
+// modified from scatter's worldspawn parser
+void HUD_WorldText(float alpha)
+{
+	// for parser
+	char key[128], value[4096];
+	char *data;
+
+	// first, parse worldspawn
+	data = COM_Parse(cl.worldmodel->entities);
+
+	if (!data)
+		return; // err
+	if (com_token[0] != '{')
+		return; // err
+
+	while(1) {
+		data = COM_Parse(data);
+
+		if (!data)
+			return; // err
+		if (com_token[0] == '}')
+			break; // end of worldspawn
+		
+		if (com_token[0] == '_')
+			strcpy(key, com_token + 1);
+		else
+			strcpy(key, com_token);
+		
+		while (key[strlen(key)-1] == ' ') // remove trailing spaces
+			key[strlen(key)-1] = 0;
+		
+		data = COM_Parse(data);
+		if (!data)
+			return; // err
+
+		strcpy(value, com_token);
+
+#ifdef VITA
+
+		if (!strcmp("chaptertitle", key)) // search for chaptertitle key
+		{
+			has_chaptertitle = true;
+			Draw_ColoredStringScale(12, 407 - (19 * 5), value, 1, 1, 1, alpha/255, 2.0f);
+		}
+		if (!strcmp("location", key)) // search for location key
+		{
+			Draw_ColoredStringScale(12, 407 - (19 * 4), value, 1, 1, 1, alpha/255, 2.0f);
+		}
+		if (!strcmp("date", key)) // search for date key
+		{
+			Draw_ColoredStringScale(12, 407 - (19 * 3), value, 1, 1, 1, alpha/255, 2.0f);
+		}
+		if (!strcmp("person", key)) // search for person key
+		{
+			Draw_ColoredStringScale(12, 407 - (19 * 2), value, 1, 1, 1, alpha/255, 2.0f);
+		}
+
+#else
+
+		if (!strcmp("chaptertitle", key)) // search for chaptertitle key
+		{
+			has_chaptertitle = true;
+			Draw_ColoredStringScale(12, 629 - (15 * 5), value, 1, 1, 1, alpha/255, 1.5f);
+		}
+		if (!strcmp("location", key)) // search for location key
+		{
+			Draw_ColoredStringScale(12, 629 - (15 * 4), value, 1, 1, 1, alpha/255, 1.5f);
+		}
+		if (!strcmp("date", key)) // search for date key
+		{
+			Draw_ColoredStringScale(12, 629 - (15 * 3), value, 1, 1, 1, alpha/255, 1.5f);
+		}
+		if (!strcmp("person", key)) // search for person key
+		{
+			Draw_ColoredStringScale(12, 629 - (15 * 2), value, 1, 1, 1, alpha/255, 1.5f);
+		}
+
+#endif // VITA
+
+	}
+}
+
+/*
+===============
 HUD_Rounds
 ===============
 */
@@ -573,12 +664,128 @@ float 	color_shift_end[3];
 float 	color_shift_steps[3];
 int		color_shift_init;
 float 	blinking;
+int 	textstate;
+float 	value, value2;
+
 void HUD_Rounds (void)
 {
 	int i, x_offset, icon_num, savex;
 	int num[3];
 	x_offset = 0;
 	savex = 0;
+
+	// Round and Title text - moto
+	// extra creds to scatterbox for some x/y vals
+	// ------------------
+	// First, fade from white to red, ~3s duration
+	if (!textstate) {
+		if (!value)
+			value = 255;
+
+#ifdef VITA
+
+		Draw_ColoredStringScale(vid.width/2 - strlen("Round")*32, 160, "Round", 1, value/255, value/255, 1, 4.0f);
+
+#else
+
+		Draw_ColoredStringScale(vid.width/4 - strlen("Round")*8, vid.height*3/4 - sb_round[0]->height - 10, "Round", 1, value/255, value/255, 1, 2.0f);
+
+#endif // VITA
+		
+		value -= cl.time * 0.4;
+
+		// prep values for next stage
+		if (value <= 0) {
+			value = 255;
+			value2 = 0;
+			textstate = 1;
+		}
+	} 
+	// Now, fade out, and start fading worldtext in
+	// ~3s for fade out, 
+	else if (textstate == 1) {
+
+#ifdef VITA
+
+		Draw_ColoredStringScale(vid.width/2 - strlen("Round")*32, 160, "Round", 1, 0, 0, value/255, 4.0f);
+
+#else
+
+		Draw_ColoredStringScale(vid.width/4 - strlen("Round")*8, vid.height*3/4 - sb_round[0]->height - 10, "Round", 1, 0, 0, value/255, 2.0f);
+
+#endif // VITA		
+
+		HUD_WorldText(value2);
+
+		if (has_chaptertitle == false) {
+#ifdef VITA
+
+			Draw_ColoredStringScale(12, 407 - 19, "'Nazi Zombies'", 1, 1, 1, value2/255, 2.0f);
+
+#else
+
+			Draw_ColoredStringScale(6, 629 - 15, "'Nazi Zombies'", 1, 1, 1, value2/255, 1.5f);
+
+#endif // VITA
+		}
+		
+		value -= cl.time * 0.4;
+		value2 += cl.time * 0.4;
+
+		// prep values for next stage
+		if (value <= 0) {
+			value2 = 0;
+			textstate = 2;
+		}
+	}
+	// Hold world text for a few seconds
+	else if (textstate == 2) {
+		HUD_WorldText(255);
+		
+		if (has_chaptertitle == false) {
+#ifdef VITA
+
+			Draw_ColoredStringScale(12, 407 - 19, "'Nazi Zombies'", 1, 1, 1, 1, 2.0f);
+
+#else
+
+			Draw_ColoredStringScale(6, 629 - 15, "'Nazi Zombies'", 1, 1, 1, 1, 1.5f);
+
+#endif // VITA
+		}
+
+		value2 += cl.time * 0.4;
+
+		if (value2 >= 255) {
+			value2 = 255;
+			textstate = 3;
+		}
+	}
+	// Fade worldtext out, finally.
+	else if (textstate == 3) {
+		HUD_WorldText(value2);
+		
+		if (has_chaptertitle == false) {
+#ifdef VITA
+
+			Draw_ColoredStringScale(12, 407 - 19, "'Nazi Zombies'", 1, 1, 1, value2/255, 2.0f);
+
+#else
+
+			Draw_ColoredStringScale(6, 629 - 15, "'Nazi Zombies'", 1, 1, 1, value2/255, 1.5f);
+
+#endif // VITA
+		}
+
+		value2 -= cl.time * 0.4;
+
+		// prep values for next stage
+		if (value2 <= 0) {
+			textstate = -1;
+		}
+	}
+	// ------------------
+	// End Round and Title text - moto
 
 	int x_offset2 = 2; //Extra offset for all round images to keep things uniform (may not be neccesary?) -- SPECIFIC TO WHOLE ROUNDS
 	int y_offset = 50; //y_offset -- SPECIFIC TO WHOLE ROUNDS
