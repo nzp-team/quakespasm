@@ -940,6 +940,10 @@ void Draw_AlphaStretchPic (int x, int y, int width, int height, float alpha, qpi
 		glColor4f (1,1,1,alpha);
 		glDisable (GL_ALPHA_TEST);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	} else {
+		glDisable (GL_ALPHA_TEST);
+		glEnable (GL_BLEND);
+		glDepthMask(GL_FALSE);
 	}
 
 	if (scrap_dirty)
@@ -976,6 +980,9 @@ void Draw_AlphaStretchPic (int x, int y, int width, int height, float alpha, qpi
 		glEnable(GL_ALPHA_TEST);
 		glDisable (GL_BLEND);
 		glColor4f (1,1,1,1);
+	} else {
+		glDepthMask(GL_TRUE);
+		glDisable(GL_BLEND);
 	}
 }
 
