@@ -1068,7 +1068,7 @@ void V_CalcRefdef (void)
 
 	temp_up[0] *= cADSOfs[1];
 	temp_up[1] *= cADSOfs[1];
-	temp_up[2] *= cADSOfs[1]; // motolegacy -- another vmodel hack: standard ADS offsets don't go up enough. sB was cADSOfs[1]
+	temp_up[2] *= cADSOfs[1]; // cypress -- another vmodel hack: standard ADS offsets don't go up enough. sB was cADSOfs[1]
 
 	temp_forward[0] *= cADSOfs[2];
 	temp_forward[1] *= cADSOfs[2];

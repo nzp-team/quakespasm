@@ -714,7 +714,7 @@ void HUD_Rounds (void)
 	x_offset = 0;
 	savex = 0;
 
-	// Round and Title text - moto
+	// Round and Title text - cypress
 	// extra creds to scatterbox for some x/y vals
 	// ------------------
 	// First, fade from white to red, ~3s duration
@@ -825,7 +825,7 @@ void HUD_Rounds (void)
 		}
 	}
 	// ------------------
-	// End Round and Title text - moto
+	// End Round and Title text - cypress
 
 	int x_offset2 = 2; //Extra offset for all round images to keep things uniform (may not be neccesary?) -- SPECIFIC TO WHOLE ROUNDS
 	int y_offset = 50; //y_offset -- SPECIFIC TO WHOLE ROUNDS

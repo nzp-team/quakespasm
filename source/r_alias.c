@@ -706,7 +706,7 @@ void R_SetupAliasLighting (entity_t	*e)
 			lightcolor[2] = 256.0f;
 		}
 
-	// motolegacy -- re-te EF_FULLBRIGHT support
+	// cypress -- re-te EF_FULLBRIGHT support
 	// TODO: potentially just block dlights from colorizing
 	if (e->effects & EF_FULLBRIGHT) {
 		lightcolor[0] = 400.0f;

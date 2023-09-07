@@ -1196,14 +1196,14 @@ void SV_CreateBaseline (void)
 			svent->baseline.colormap = entnum;
 			svent->baseline.modelindex = SV_ModelIndex("models/player.mdl");
 			svent->baseline.alpha = ENTALPHA_DEFAULT; //johnfitz -- alpha support
-			svent->baseline.light_lev = 0; // motolegacy -- light level support
+			svent->baseline.light_lev = 0; // cypress -- light level support
 		}
 		else
 		{
 			svent->baseline.colormap = 0;
 			svent->baseline.modelindex = SV_ModelIndex(PR_GetString(svent->v.model));
 			svent->baseline.alpha = svent->alpha; //johnfitz -- alpha support
-			svent->baseline.light_lev = 0; // motolegacy -- light level support
+			svent->baseline.light_lev = 0; // cypress -- light level support
 		}
 
 		//johnfitz -- PROTOCOL_FITZQUAKE

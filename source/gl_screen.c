@@ -670,7 +670,7 @@ static void SCR_CalcRefdef (void)
 	r_refdef.vrect.y = (glheight - r_refdef.vrect.height)/2;
 	//johnfitz
 
-	// motolegacy -- hack to enable more standard fov values in quakespasm
+	// cypress -- hack to enable more standard fov values in quakespasm
 	r_refdef.fov_x = AdaptFovx(scr_fov.value - 15, vid.width, vid.height);
 	r_refdef.fov_y = CalcFovy (r_refdef.fov_x, r_refdef.vrect.width, r_refdef.vrect.height);
 
@@ -1161,7 +1161,7 @@ char *ReturnLoadingtex (void)
 #endif // VITA
             break;
         case 35:
-            return 	"MotoLegacy, or \"Ivy\", is from the USA.";
+            return 	"CypressImplex, or \"Ivy\", is from the USA.";
             break;
         case 36:
             return  "Zombies don't like bullets.";

@@ -587,7 +587,7 @@ void Draw_CharacterScale (int x, int y, int num, float scale)
 Draw_CharacterRGBA
 
 This is the same as Draw_Character, but with RGBA color codes.
-- MotoLegacy and ported to Quakespasm by sB :)
+- cypress and ported to Quakespasm by sB :)
 ================
 */
 void Draw_CharacterRGBA(int x, int y, int num, float r, float g, float b, float a)
@@ -929,7 +929,7 @@ void Draw_SubPic(int x, int y, int width, int height, int start_x, int start_y, 
 	glEnd ();
 }
 
-// motolegacy -- ultimate draw function!! probably annihilates gl calls so use wisely lol
+// cypress -- ultimate draw function!! probably annihilates gl calls so use wisely lol
 // TODO: color shifting?
 void Draw_AlphaStretchPic (int x, int y, int width, int height, float alpha, qpic_t *pic)
 {

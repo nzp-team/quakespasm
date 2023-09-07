@@ -390,7 +390,7 @@ void CL_BaseMove (usercmd_t *cmd)
 
 	Q_memset (cmd, 0, sizeof(*cmd));
 
-	// Moto - we handle movespeed in QC now.
+	// cypress - we handle movespeed in QC now.
 	cl_backspeed = cl_forwardspeed = cl_sidespeed = sv_player->v.maxspeed*0.71;
 
 	// Throttle side and back speeds

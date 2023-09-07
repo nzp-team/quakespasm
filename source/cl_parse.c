@@ -1537,7 +1537,7 @@ void CL_ParseServerMessage (void)
 			
 #else
 
-    MSG_ReadByte(); // motolegacy -- stop breaking protocol
+    MSG_ReadByte(); // cypress -- stop breaking protocol
 
 #endif // VITA
 			

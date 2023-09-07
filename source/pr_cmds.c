@@ -2533,7 +2533,7 @@ Close_Waypoint
 
 void Close_Waypoint (string, string, string, string, string, string, string, string)
 
-moto - basically a carbon copy of open_waypoint lol
+cypress - basically a carbon copy of open_waypoint lol
 =================
 */
 void Close_Waypoint (void)

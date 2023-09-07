@@ -3404,17 +3404,17 @@ void M_Credits_Draw (void)
 	DRAW_HEADER("CREDITS");
 
 	DRAW_CREDITLINE(0, "Programming:");
-	DRAW_CREDITLINE(1, "Blubswillrule, Jukki, DR_Mabuse1981, Naievil, MotoLegacy");
+	DRAW_CREDITLINE(1, "Blubswillrule, Jukki, DR_Mabuse1981, Naievil, Cypress");
 	DRAW_CREDITLINE(2, "ScatterBox");
 	DRAW_CREDITLINE(3, "");
 	DRAW_CREDITLINE(4, "Models:");
 	DRAW_CREDITLINE(5, "Blubswillrule, Ju[s]tice, Derped_Crusader");
 	DRAW_CREDITLINE(6, "");
 	DRAW_CREDITLINE(7, "GFX:");
-	DRAW_CREDITLINE(8, "Blubswillrule, Ju[s]tice, MotoLegacy, Derped_Crusader");
+	DRAW_CREDITLINE(8, "Blubswillrule, Ju[s]tice, Cypress, Derped_Crusader");
 	DRAW_CREDITLINE(9, "");
 	DRAW_CREDITLINE(10, "Sounds/Music:");
-	DRAW_CREDITLINE(11, "Blubswillrule, Biodude, MotoLegacy, Marty P.");
+	DRAW_CREDITLINE(11, "Blubswillrule, Biodude, Cypress, Marty P.");
 	DRAW_CREDITLINE(12, "");
 	DRAW_CREDITLINE(13, "Special Thanks:");
 	DRAW_CREDITLINE(14, "- Spike, Eukara:     FTEQW");
