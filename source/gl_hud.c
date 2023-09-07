@@ -684,7 +684,7 @@ void HUD_Rounds (void)
 
 #ifdef VITA
 
-		Draw_ColoredStringScale(vid.width/2 - strlen("Round")*32, 160, "Round", 1, value/255, value/255, 1, 4.0f);
+		Draw_ColoredStringScale(vid.width/2 - strlen("Round")*16, 160, "Round", 1, value/255, value/255, 1, 4.0f);
 
 #else
 
@@ -707,7 +707,7 @@ void HUD_Rounds (void)
 
 #ifdef VITA
 
-		Draw_ColoredStringScale(vid.width/2 - strlen("Round")*32, 160, "Round", 1, 0, 0, value/255, 4.0f);
+		Draw_ColoredStringScale(vid.width/2 - strlen("Round")*16, 160, "Round", 1, 0, 0, value/255, 4.0f);
 
 #else
 
