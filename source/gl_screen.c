@@ -2145,6 +2145,11 @@ void SCR_UpdateScreen (void)
 	}
 	else if (cl.stats[STAT_ZOOM] == 2)
 	{
+		if (!original_fov)
+		{
+			original_fov = scr_fov.value;
+			original_view_fov = scr_fov_viewmodel.value;
+		}
 		Cvar_SetValue ("fov", 30);
 		Cvar_SetValue ("r_viewmodel_fov", 30);
 		zoomin_time = 0;
