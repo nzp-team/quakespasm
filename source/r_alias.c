@@ -679,37 +679,23 @@ void R_SetupAliasLighting (entity_t	*e)
 		}
 	}
 
-	// minimum light value on gun (24)
-	if (e == &cl.viewent)
+	// cypress -- limit light value on all ents, not
+	// just viewmodel.
+	add = 72.0f - (lightcolor[0] + lightcolor[1] + lightcolor[2]);
+	if (add > 0.0f)
 	{
-		add = 72.0f - (lightcolor[0] + lightcolor[1] + lightcolor[2]);
-		if (add > 0.0f)
-		{
-			lightcolor[0] += add / 3.0f;
-			lightcolor[1] += add / 3.0f;
-			lightcolor[2] += add / 3.0f;
-		}
-	}
-
-	// minimum light value on players (8)
-	if (currententity > cl_entities && currententity <= cl_entities + cl.maxclients)
-	{
-		add = 24.0f - (lightcolor[0] + lightcolor[1] + lightcolor[2]);
-		if (add > 0.0f)
-		{
-			lightcolor[0] += add / 3.0f;
-			lightcolor[1] += add / 3.0f;
-			lightcolor[2] += add / 3.0f;
-		}
+		lightcolor[0] += add / 3.0f;
+		lightcolor[1] += add / 3.0f;
+		lightcolor[2] += add / 3.0f;
 	}
 
 	// clamp lighting so it doesn't overbright as much (96)
-	if (overbright)
-	{
-		add = 288.0f / (lightcolor[0] + lightcolor[1] + lightcolor[2]);
-		if (add < 1.0f)
-			VectorScale(lightcolor, add, lightcolor);
-	}
+	// if (overbright)
+	// {
+	// 	add = 288.0f / (lightcolor[0] + lightcolor[1] + lightcolor[2]);
+	// 	if (add < 1.0f)
+	// 		VectorScale(lightcolor, add, lightcolor);
+	// }
 
 	//hack up the brightness when fullbrights but no overbrights (256)
 	if (gl_fullbrights.value && !gl_overbright_models.value)
@@ -723,9 +709,9 @@ void R_SetupAliasLighting (entity_t	*e)
 	// motolegacy -- re-te EF_FULLBRIGHT support
 	// TODO: potentially just block dlights from colorizing
 	if (e->effects & EF_FULLBRIGHT) {
-		lightcolor[0] = 96.0f;
-		lightcolor[1] = 96.0f;
-		lightcolor[2] = 96.0f;
+		lightcolor[0] = 400.0f;
+		lightcolor[1] = 400.0f;
+		lightcolor[2] = 400.0f;
 	}
 
 	quantizedangle = ((int)(e->angles[1] * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1);
