@@ -2571,6 +2571,28 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 	if (loadmodel->flags & MF_HOLEY)
 		texflags |= TEXPREF_ALPHA;
 
+	// Force-fill 4 Zombie Skins
+	if (model_is_zombie(loadmodel->name)) {
+		Mod_FloodFillSkin( skin, pheader->skinwidth, pheader->skinheight );
+
+		byte* zomb_data;
+		int zwidth = 0, zheight = 0;
+		
+		for(int j = 0; j < 4; j++) {
+			char filename[MAX_QPATH];
+			q_snprintf(filename, sizeof(filename), "models/ai/zfull.mdl_%i", j);
+			zomb_data = Image_LoadImage(filename, &zwidth, &zheight);
+			pheader->gltextures[j][0] = TexMgr_LoadImage(loadmodel, filename, zwidth, zheight,
+				SRC_RGBA, zomb_data, filename, 0, TEXPREF_ALPHA|texflags|TEXPREF_MIPMAP);
+			pheader->fbtextures[j][0] = NULL;
+			pheader->gltextures[j][3] = pheader->gltextures[j][2] = pheader->gltextures[j][1] = pheader->gltextures[j][0];
+			pheader->fbtextures[j][3] = pheader->fbtextures[j][2] = pheader->fbtextures[j][1] = pheader->fbtextures[j][0];
+		}
+		
+		pskintype = (daliasskintype_t *)((byte *)(pskintype+1) + size);
+		return (void *)pskintype;
+	}
+
 	for (i=0 ; i<numskins ; i++)
 	{
 		if (pskintype->type == ALIAS_SKIN_SINGLE)
@@ -2591,12 +2613,7 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 			qboolean malloced=false;
 			enum srcformat fmt = SRC_RGBA;
 
-			if (model_is_zombie(loadmodel->name)) {
-				q_snprintf (filename, sizeof(filename), "models/ai/zfull.mdl_0", loadmodel->name);
-			} else {
-				q_snprintf (filename, sizeof(filename), "%s_%i", loadmodel->name, i);
-			}
-			
+			q_snprintf (filename, sizeof(filename), "%s_%i", loadmodel->name, i);
 			data = Image_LoadImage (filename, &fwidth, &fheight);
 
 			if (data) {

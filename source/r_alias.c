@@ -1053,7 +1053,7 @@ R_DrawAliasModel -- johnfitz -- almost completely rewritten
 */
 
 //extern int doZHack;
-
+extern qboolean model_is_zombie(char name[MAX_QPATH]);
 void R_DrawAliasModel (entity_t *e)
 {
 	aliashdr_t	*paliashdr;
@@ -1165,7 +1165,7 @@ void R_DrawAliasModel (entity_t *e)
 	
 	anim = (int)(cl.time*10) & 3;
 	skinnum = e->skinnum;
-	if ((skinnum >= paliashdr->numskins) || (skinnum < 0))
+	if (((skinnum >= paliashdr->numskins) || (skinnum < 0)) && !model_is_zombie(e->model->name))
 	{
 		Con_DPrintf ("R_DrawAliasModel: no such skin # %d for '%s'\n", skinnum, e->model->name);
 		// ericw -- display skin 0 for winquake compatibility
