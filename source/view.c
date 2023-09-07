@@ -886,12 +886,6 @@ void V_CalcViewRoll (void)
 		r_refdef.viewangles[PITCH] += v_dmg_time/v_kicktime.value*v_dmg_pitch;
 		v_dmg_time -= host_frametime;
 	}
-
-	if (cl.stats[STAT_HEALTH] <= 0)
-	{
-		r_refdef.viewangles[ROLL] = 80;	// dead view angle
-		return;
-	}
 }
 
 /*

@@ -286,45 +286,85 @@ void HUD_EndScreen (void)
 	char			str[80];
 	int				i, k, l;
 	int				y, x, d;
-	
+
 	//sB hack in to stop showing HUD during boot
-	if(cl.stats[STAT_ROUNDS] >= 1)
-	{
-		HUD_Sortpoints ();
-
-		l = scoreboardlines;
-
-		Draw_String ((vid.width/2 - 9*8)/2, vid.height/2 + (vid.height)*40/272, "GAME OVER");
-
-		sprintf (str,"You survived %3i rounds", cl.stats[STAT_ROUNDS]);
-		Draw_String ((vid.width/2 - strlen (str)*8)/2, vid.height/2 + (vid.height)*48/272, str);
-
-		sprintf (str,"Name           Kills     Points");
-		x = (vid.width/2 - strlen (str)*8)/2;
-
-		Draw_String (x, vid.height/2 + vid.height*68/272, str);
-		y = 0;
-		for (i=0; i<l ; i++)
-		{
-			k = pointsort[i];
-			s = &cl.scores[k];
-			if (!s->name[0])
-				continue;
-
-			Draw_String (x, vid.height/2 + vid.height*78/272 + y, s->name);
-
-			d = strlen (va("%i",s->kills));
-			Draw_String (x + (20 - d)*8, vid.height/2 + (vid.height)*78/272 + y, va("%i",s->kills));
-
-			d = strlen (va("%i",s->points));
-			Draw_String (x + (31 - d)*8, vid.height/2 + (vid.height)*78/272 + y, va("%i",s->points));
-			y += 20;
-		}
-	}
-	else
-	{
+	if (cl.stats[STAT_ROUNDS] <= 0)
 		return;
+
+	HUD_Sortpoints ();
+	l = scoreboardlines;
+
+	// "You Survived" text
+	if (cl.stats[STAT_ROUNDS] == 1)
+		sprintf(str, "You Survived %d Round", cl.stats[STAT_ROUNDS]);
+	else
+		sprintf(str, "You Survived %d Rounds", cl.stats[STAT_ROUNDS]);
+
+#ifdef VITA
+
+	Draw_ColoredStringScale(vid.width/2 - strlen("GAME OVER")*16, 110, "GAME OVER", 1, 1, 1, 1, 4.0f);
+	Draw_ColoredStringScale(vid.width/2 - strlen(str)*8, 150, str, 1, 1, 1, 1, 2.0f);
+
+	Draw_ColoredStringScale(vid.width/2 + 40, 185, "Points", 1, 1, 1, 1, 2.0f);
+	Draw_ColoredStringScale(vid.width/2 + 240, 185, "Kills", 1, 1, 1, 1, 2.0f);
+
+	// Individual Player Scores
+	y = 0;
+	for (i = 0; i < l; i++) {
+		k = pointsort[i];
+		s = &cl.scores[k];
+
+		if (!s->name[0])
+			continue;
+
+		// Draw a bunch of score background graphics to form a nice line.
+		for (int j = 0; j < 7; j++) {
+			Draw_StretchPic(90 + (108 * j), 205 + y, sb_moneyback, 128, 32);
+		}
+
+		Draw_ColoredStringScale(100, 212 + y, s->name, 1, 1, 1, 1, 2.0f);
+
+		int xplus = HUD_itoa (s->points, str)*16;
+		Draw_ColoredStringScale (((1145 - xplus)/2)-5, 212 + y, va("%i", s->points), 1, 1, 1, 1, 2.0f);
+		xplus = HUD_itoa (s->kills, str)*16;
+		Draw_ColoredStringScale (((1535 - xplus)/2)-5, 212 + y, va("%i", s->kills), 1, 1, 1, 1, 2.0f);
+
+		y += 45;
 	}
+
+#else
+
+	Draw_ColoredStringScale(vid.width/4 - strlen("GAME OVER")*8, vid.height*3/4 - 98, "GAME OVER", 1, 1, 1, 1, 2.0f);
+	Draw_ColoredStringScale(vid.width/4 - strlen(str)*6, vid.height*3/4 - 70, str, 1, 1, 1, 1, 1.5f);
+
+	Draw_ColoredStringScale(vid.width/4 + 35, vid.height*3/4 - 40, "Points", 1, 1, 1, 1, 1.25f);
+	Draw_ColoredStringScale(vid.width/4 + 130, vid.height*3/4 - 40, "Kills", 1, 1, 1, 1, 1.25f);
+
+	// Individual Player Scores
+	y = 0;
+	for (i = 0; i < l; i++) {
+		k = pointsort[i];
+		s = &cl.scores[k];
+
+		if (!s->name[0])
+			continue;
+
+		// Draw a bunch of score background graphics to form a nice line.
+		for (int j = 0; j < 6; j++) {
+			Draw_StretchPic(85 + (74 * j), vid.height*3/4 - 20 + y, sb_moneyback, 86, 21);
+		}
+
+		Draw_ColoredStringScale(100, vid.height*3/4 - 16 + y, s->name, 1, 1, 1, 1, 1.25f);
+
+		int xplus = HUD_itoa (s->points, str)*10;
+		Draw_ColoredStringScale (((775 - xplus)/2)-5, vid.height*3/4 - 16 + y, va("%i", s->points), 1, 1, 1, 1, 1.25f);
+		xplus = HUD_itoa (s->kills, str)*10;
+		Draw_ColoredStringScale (((975 - xplus)/2)-5, vid.height*3/4 - 16 + y, va("%i", s->kills), 1, 1, 1, 1, 1.25f);
+
+		y += 30;
+	}
+
+#endif // VITA
 
 }
 
@@ -1909,8 +1949,7 @@ void HUD_Draw (void) {
 		return;
 	}
 
-	if (cl.stats[STAT_HEALTH] <= 0) 
-	{
+	if (cl.stats[STAT_HEALTH] <= 0) {
 		HUD_EndScreen ();
 		return;
 	}
