@@ -396,7 +396,7 @@ void HUD_Parse_Point_Change (int points, int negative, int x_start, int y_start)
 
 	f = HUD_itoa (points, str);
 #ifdef VITA
-	point_change[i].x = x_start + 64.0 + 4.0*f;
+	point_change[i].x = x_start + 120.0 + 4.0*f;
 #else
 	point_change[i].x = x_start - 10.0 - 8.0*f;
 #endif
@@ -1790,7 +1790,7 @@ void HUD_Grenades (void)
 	#ifdef VITA
 		Draw_StretchPic (x_value + fragpic->width + 15, y_value, bettypic, 64, 64);
 		if (cl.stats[STAT_SECGRENADES] <= 0) {
-			Draw_ColoredStringScale (x_value + 46, y_value + 44, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 0, 0, 1, 2.0f);
+			Draw_ColoredStringScale (x_value + fragpic->width + 46, y_value + 44, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 0, 0, 1, 2.0f);
 		} else {
 			Draw_ColoredStringScale (x_value + fragpic->width + 46, y_value + 44, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 1, 1, 1, 2.0f);
 		}
