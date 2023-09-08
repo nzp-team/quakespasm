@@ -870,6 +870,8 @@ void M_Exit_Key (int key)
 	case K_ABUTTON:
 		Cbuf_AddText("disconnect\n");
 		paused_hack = false;
+		Cbuf_AddText("music tensioned_by_the_damned\n");
+		Cbuf_AddText("music_loop 1\n");
 		M_Menu_Main_f();
 		break;
 
@@ -1031,7 +1033,7 @@ void M_SinglePlayer_Key (int key)
 			Cbuf_AddText ("maxplayers 1\n");
 			Cbuf_AddText ("deathmatch 0\n");
 			Cbuf_AddText ("coop 0\n"); 
-			Cbuf_AddText ("music_loop\n");
+			Cbuf_AddText ("music_loop 0\n");
 			Cbuf_AddText ("music_stop\n");
 			Cbuf_AddText ("map ndu\n");
 			loadingScreen = 1;
@@ -1050,7 +1052,7 @@ void M_SinglePlayer_Key (int key)
 			Cbuf_AddText ("deathmatch 0\n");
 			Cbuf_AddText ("coop 0\n"); 
 			Cbuf_AddText ("map warehouse\n");
-			Cbuf_AddText ("music_loop\n");
+			Cbuf_AddText ("music_loop 0\n");
 			Cbuf_AddText ("music_stop\n");
 			loadingScreen = 1;
 			loadname2 = "warehouse";
@@ -1068,7 +1070,7 @@ void M_SinglePlayer_Key (int key)
 			Cbuf_AddText ("deathmatch 0\n");
 			Cbuf_AddText ("coop 0\n"); 
 			Cbuf_AddText ("map christmas_special\n");
-			Cbuf_AddText ("music_loop\n");
+			Cbuf_AddText ("music_loop 0\n");
 			Cbuf_AddText ("music_stop\n");
 			loadingScreen = 1;
 			loadname2 = "christmas_special";
@@ -1703,7 +1705,7 @@ void M_Menu_Maps_Key (int key)
 			Cbuf_AddText ("maxplayers 1\n");
 			Cbuf_AddText ("deathmatch 0\n");
 			Cbuf_AddText ("coop 0\n"); 
-			Cbuf_AddText ("music_loop\n");
+			Cbuf_AddText ("music_loop 0\n");
 			Cbuf_AddText ("music_stop\n");
 
 			char map_selection[MAX_QPATH];
@@ -4443,7 +4445,7 @@ void M_Draw (void)
 
 	if (!music_init) {
 		Cbuf_AddText("music tensioned_by_the_damned\n");
-		Cbuf_AddText("music_loop\n");
+		Cbuf_AddText("music_loop 1\n");
 		music_init = true;
 	}
 
