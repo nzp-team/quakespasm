@@ -591,14 +591,34 @@ HUD_MaxAmmo
 ===============
 */
 int maxammoy;
-int maxammoopac;
+float maxammoopac;
 
 void HUD_MaxAmmo(void)
 {
 	maxammoy -= cl.time * 0.003;
-	maxammoopac -= 5;
+	maxammoopac -= cl.time * 0.2;
 
-	Draw_ColoredStringScale(vid.width/2 - strlen("MAX AMMO!")*16 + 55, maxammoy, "MAX AMMO!", 255, 255, 255, maxammoopac, 2.0f);
+/*
+#ifdef VITA
+
+		Draw_ColoredStringScale(vid.width/2 - strlen("Round")*16, 160, "Round", 1, value/255, value/255, 1, 4.0f);
+
+#else
+
+		Draw_ColoredStringScale(vid.width/4 - strlen("Round")*8, vid.height*3/4 - sb_round[0]->height - 10, "Round", 1, value/255, value/255, 1, 2.0f);
+
+#endif // VITA
+*/
+
+#ifdef VITA
+
+	Draw_ColoredStringScale(vid.width/2 - strlen("MAX AMMO!")*16, maxammoy, "MAX AMMO!", 255, 255, 255, maxammoopac/255, 4.0f);
+
+#else
+
+	Draw_ColoredStringScale(vid.width/4 - strlen("MAX AMMO!")*8, maxammoy, "MAX AMMO!", 255, 255, 255, maxammoopac/255, 2.0f);
+
+#endif // VITA
 
 	if (maxammoopac <= 0) {
 		domaxammo = false;
@@ -1500,8 +1520,8 @@ void HUD_Powerups (void)
 	// both are avail draw fixed order
 	if (count == 2) {
 #ifdef VITA
-		Draw_StretchPic(422, 480, x2pic, 64, 64);
-		Draw_StretchPic(480, 480, instapic, 64, 64);
+		Draw_StretchPic(418, 480, x2pic, 64, 64);
+		Draw_StretchPic(484, 480, instapic, 64, 64);
 #else
 		Draw_StretchPic(277, 678, x2pic, 32, 32);
 		Draw_StretchPic(317, 678, instapic, 32, 32);
@@ -1708,19 +1728,19 @@ void HUD_AmmoString (void)
 		#ifdef VITA
 			Draw_ColoredStringScale ((vid.width)/2 - 43, (vid.height)/2 + 34, "Reload", 1, 1, 1, 1, 2.0f);
 		#else
-			Draw_String ((vid.width)/4, (vid.height)*3/4 + 40, "Reload");
+			Draw_ColoredStringScale(vid.width/4 - strlen("Reload")*6, (vid.height)*3/4 + 40, "Reload", 1, 1, 1, 1, 1.5f);
 		#endif
 		} else if (0 < cl.stats[STAT_CURRENTMAG]) {
 		#ifdef VITA
 			Draw_ColoredStringScale ((vid.width)/2 - 73, (vid.height)/2 + 34, "LOW AMMO", 1, 1, 0, 1, 2.5f);
 		#else
-			Draw_ColoredString ((vid.width/2 - len*8)/2, (vid.height)*3/4 + 40, "LOW AMMO", 1, 1, 0, 1);
+			Draw_ColoredStringScale(vid.width/4 - strlen("LOW AMMO")*6, (vid.height)*3/4 + 40, "LOW AMMO", 1, 1, 0, 1, 1.5f);
 		#endif
 		} else {
 		#ifdef VITA
 			Draw_ColoredStringScale ((vid.width)/2 - 66, (vid.height)/2 + 34, "NO AMMO", 1, 0, 0, 1, 2.5f);
 		#else
-			Draw_ColoredString ((vid.width/2 - len*8)/2, (vid.height)*3/4 + 40, "NO AMMO", 1, 0, 0, 1);
+			Draw_ColoredStringScale(vid.width/4 - strlen("NO AMMO")*6, (vid.height)*3/4 + 40, "NO AMMO", 1, 0, 0, 1, 1.5f);
 		#endif
 		}
 	}
@@ -1978,7 +1998,11 @@ void HUD_Draw (void) {
 	if (domaxammo == true) {
 		if (maxammoopac <= 0) {
 			maxammoopac = 255;
+#ifdef VITA
 			maxammoy = 150;
+#else
+			maxammoy = vid.height*3/4 - sb_round[0]->height - 10;
+#endif // VITA
 		}
 		HUD_MaxAmmo();
 	}
