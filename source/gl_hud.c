@@ -596,7 +596,7 @@ float maxammoopac;
 void HUD_MaxAmmo(void)
 {
 	maxammoy -= cl.time * 0.003;
-	maxammoopac -= cl.time * 0.2;
+	maxammoopac -= cl.time * 0.05;
 
 /*
 #ifdef VITA
@@ -612,7 +612,7 @@ void HUD_MaxAmmo(void)
 
 #ifdef VITA
 
-	Draw_ColoredStringScale(vid.width/2 - strlen("MAX AMMO!")*16, maxammoy, "MAX AMMO!", 255, 255, 255, maxammoopac/255, 4.0f);
+	Draw_ColoredStringScale(vid.width/2 - strlen("MAX AMMO!")*8, maxammoy, "MAX AMMO!", 255, 255, 255, maxammoopac/255, 2.0f);
 
 #else
 
