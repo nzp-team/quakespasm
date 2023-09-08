@@ -2435,3 +2435,130 @@ void R_SpawnDecalStatic (vec3_t org, int tex, int size)
 	if (bestfrac < 1)
 		R_SpawnDecal (bestorg, bestnormal, tangent, tex, size, 0);
 }
+
+/*
+void R_DrawDecals(void)
+{
+	int			i;
+	float		dcolor;
+	vec3_t		decaldist;
+	decal_t		*p, *kill;
+	float *point_tex, *point_xyz;
+
+	if (!qmb_initialized)
+		return;
+
+	glEnable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+
+	for ( ; ; )
+	{
+		kill = active_decals;
+
+		if (kill && (kill->die < cl.time) && (!kill->bspdecal))
+		{
+			active_decals = kill->next;
+			kill->next = free_decals;
+			free_decals = kill;
+			continue;
+		}
+		break;
+	}
+
+	for (p = active_decals ; p ; p = p->next)
+	{
+
+		for ( ; ; )
+		{
+			kill = p->next;
+
+			if (kill && (kill->die < cl.time) && (!kill->bspdecal))
+			{
+				p->next = kill->next;
+				kill->next = free_decals;
+				free_decals = kill;
+				continue;
+			}
+			break;
+		}
+		VectorSubtract (r_refdef.vieworg, p->origin, decaldist);
+
+		if (VectorLength(decaldist) > r_decal_viewdistance.value)
+			continue;
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		GL_Bind (p->texture);
+		glBegin(GL_QUADS);
+
+		dcolor = 1;
+		if (((p->die - cl.time) < 0.5) && (!p->bspdecal))
+		{
+			float scale = 2 * (p->die - cl.time);
+			sceGuColor(GU_COLOR(dcolor * scale, dcolor * scale, dcolor * scale, scale));
+		}
+		else
+		{
+			dcolor = (1 - (VectorLength(decaldist) / r_decal_viewdistance.value));
+			sceGuColor(GU_COLOR(dcolor, dcolor, dcolor, dcolor));
+		}
+
+		for (i = 0 ; i < p->triangleCount ; i++)
+		{
+		    // Allocate memory for this polygon.
+		    const int		unclipped_vertex_count	= 3;
+		    glvert_t* const	unclipped_vertices		= static_cast<glvert_t*>(sceGuGetMemory(sizeof(glvert_t) * unclipped_vertex_count));
+			for(int v = 0; v < unclipped_vertex_count ; v++)
+			{
+				point_tex = &p->texcoordArray[p->triangleArray[i][v]][0];
+	 			point_xyz = &p->vertexArray  [p->triangleArray[i][v]][0];
+				unclipped_vertices[v].st[0] = point_tex[0];
+				unclipped_vertices[v].st[1] = point_tex[1];
+				unclipped_vertices[v].xyz[0] = point_xyz[0];
+				unclipped_vertices[v].xyz[1] = point_xyz[1];
+				unclipped_vertices[v].xyz[2] = point_xyz[2];
+            }
+
+			if (clipping::is_clipping_required(
+            unclipped_vertices,
+            unclipped_vertex_count))
+            {
+	            // Clip the polygon.
+	            const glvert_t*	clipped_vertices;
+	            std::size_t		clipped_vertex_count;
+	            clipping::clip(
+	                unclipped_vertices,
+	                unclipped_vertex_count,
+	                &clipped_vertices,
+	                &clipped_vertex_count);
+
+	            // Did we have any vertices left?
+	            if (clipped_vertex_count)
+	            {
+	                // Copy the vertices to the display list.
+	                const std::size_t buffer_size = clipped_vertex_count * sizeof(glvert_t);
+	                glvert_t* const display_list_vertices = static_cast<glvert_t*>(sceGuGetMemory(buffer_size));
+	                memcpy(display_list_vertices, clipped_vertices, buffer_size);
+
+	                // Draw the clipped vertices.
+	                sceGuDrawArray(
+	                    GU_TRIANGLE_FAN,
+	                    GU_TEXTURE_32BITF | GU_VERTEX_32BITF,
+	                    clipped_vertex_count, 0, display_list_vertices);
+                }
+	        }
+	        else
+	        {
+	            // Draw the poly directly.
+	            sceGuDrawArray(
+	                GU_TRIANGLE_FAN,
+	                GU_TEXTURE_32BITF | GU_VERTEX_32BITF,
+	                unclipped_vertex_count, 0, unclipped_vertices);
+	        }
+		}
+	}
+
+	glDisable(GL_BLEND);
+	glDepthMask(GL_FALSE);
+	glColor4f(1, 1, 1, 1);
+}*/
