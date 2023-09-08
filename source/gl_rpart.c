@@ -862,8 +862,7 @@ void AddParticle (part_type_t type, vec3_t org, int count, float size, double ti
 		case p_muzzleflash3:
 			VectorCopy (org, p->org);
 			p->rotspeed = (rand() & 45) - 90;
-			//p->size = size * (rand() % 6) / 4;//r00k
-			p->size = size * (0.85 +((0.05 * (rand() % 16)) * 0.35));//naievil: resultant size range: [size * 0.85, size * 1.1125)
+			p->size = size * (0.75 +((0.05 * (rand() % 20)) * 0.5));//blubs: resultant size range: [size * 0.75, size * 1.25)
 			break;
 
 		case p_flare:
@@ -1717,53 +1716,54 @@ inline static void QMB_UpdateParticles(void)
 
 // naievil -- hacky particle drawing...NOT OPTIMIZED
 void DRAW_PARTICLE_BILLBOARD(particle_texture_t *ptex, particle_t *p, vec3_t *coord) {
+    float            scale;
+    vec3_t            up, right, p_downleft, p_upleft, p_downright, p_upright;
+    GLubyte            color[4], *c;
 
-	float			scale;
-	vec3_t			up, right, p_up, p_right, p_upright;
-	GLubyte			color[4], *c;
+    VectorScale (vup, 1.5, up);
+    VectorScale (vright, 1.5, right);
 
-	VectorScale (vup, 1.5, up);
-	VectorScale (vright, 1.5, right);
+    glEnable (GL_BLEND);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glDepthMask (GL_FALSE);
+    glBegin (GL_QUADS);
 
-	glEnable (GL_BLEND);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glDepthMask (GL_FALSE);
-	glBegin (GL_QUADS);
+    scale = p->size;
+    color[0] = p->color[0];
+    color[1] = p->color[1];
+    color[2] = p->color[2];
+    color[3] = p->color[3];
+    glColor4ubv(color);
 
-	scale = p->size;
-	color[0] = p->color[0];
-	color[1] = p->color[1];
-	color[2] = p->color[2];
-	color[3] = p->color[3];
-	glColor4ubv(color);
+    float subTexLeft = ptex->coords[p->texindex][0];
+    float subTexTop = ptex->coords[p->texindex][1];
+    float subTexRight = ptex->coords[p->texindex][2];
+    float subTexBottom = ptex->coords[p->texindex][3];
 
-	float subTexLeft = ptex->coords[p->texindex][0];
-	float subTexTop = ptex->coords[p->texindex][1];
-	float subTexRight = ptex->coords[p->texindex][2];
-	float subTexBottom = ptex->coords[p->texindex][3];
+    glTexCoord2f(subTexLeft, subTexTop);
+    VectorMA(p->org, -scale * 0.5, up, p_downleft);
+    VectorMA(p_downleft, -scale * 0.5, right, p_downleft);
+    glVertex3fv (p_downleft);
 
-	glTexCoord2f(subTexLeft, subTexTop);
-	glVertex3fv (p->org);
+    glTexCoord2f(subTexRight, subTexTop);
+    VectorMA (p_downleft, scale, up, p_upleft);
+    glVertex3fv (p_upleft);
 
-	glTexCoord2f(subTexRight, subTexTop);
-	VectorMA (p->org, scale, up, p_up);
-	glVertex3fv (p_up);
+    glTexCoord2f(subTexRight, subTexBottom);
+    VectorMA (p_upleft, scale, right, p_upright);
+    glVertex3fv (p_upright);
 
-	glTexCoord2f(subTexRight, subTexBottom);
-	VectorMA (p_up, scale, right, p_upright);
-	glVertex3fv (p_upright);
+    glTexCoord2f(subTexLeft, subTexBottom);
+    VectorMA (p_downleft, scale, right, p_downright);
+    glVertex3fv (p_downright);
 
-	glTexCoord2f(subTexLeft, subTexBottom);
-	VectorMA (p->org, scale, right, p_right);
-	glVertex3fv (p_right);
-
-	glEnd ();
+    glEnd ();
 
 
-	glDepthMask (GL_TRUE);
-	glDisable (GL_BLEND);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-	glColor3f(1,1,1);
+    glDepthMask (GL_TRUE);
+    glDisable (GL_BLEND);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glColor3f(1,1,1);
 }
 
                           

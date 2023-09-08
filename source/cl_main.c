@@ -541,7 +541,7 @@ void CL_RelinkEntities (void)
 
 				AngleVectors (tempangles, v_forward, v_right, v_up);
 				VectorCopy (cl_entities[cl.viewentity].origin, smokeorg);
-				smokeorg[2] += 32;
+				smokeorg[2] += cl.viewheight;
 				VectorCopy(smokeorg,start);
 
 				right_offset	 = sv_player->v.Flash_Offset[0];
@@ -551,9 +551,6 @@ void CL_RelinkEntities (void)
 				right_offset	= right_offset/1000;
 				up_offset		= up_offset/1000;
 				forward_offset  = forward_offset/1000;
-
-				up_offset 		-= (34 - cl.viewheight);
-				right_offset 	-= 4;
 				
 				VectorMA (start, forward_offset, v_forward ,smokeorg);
 				VectorMA (smokeorg, up_offset, v_up ,smokeorg);
