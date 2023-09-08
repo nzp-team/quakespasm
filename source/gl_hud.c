@@ -1484,7 +1484,10 @@ HUD_Powerups
 */
 void HUD_Powerups (void)
 {
-	int count;
+	int count = 0;
+
+	if (!cl.stats[STAT_X2] && !cl.stats[STAT_INSTA])
+		return;
 
 	// horrible way to offset check :)))))))))))))))))) :DDDDDDDD XOXO
 
