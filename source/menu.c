@@ -246,6 +246,8 @@ int menu_offset_y;
 #define DRAW_MAPDESC(id, txt) Draw_ColoredStringScale(x_map_info_disp + 217, y + 329 + (18 * id), txt, 1, 1, 1, 1, 2.0f);
 #define DRAW_MAPAUTHOR(id, txt) Draw_ColoredStringScale(x_map_info_disp + 217, y + 329 + (18 * id), txt, 1, 1, 0, 1, 2.0f);
 #define DRAW_CREDITLINE(id, txt) Draw_ColoredStringScale(10, menu_offset_y + (OFFSET_SPACING * id), txt, 1, 1, 1, 1, 2.0f);
+#define DRAW_SETTINGSVALUE(id, txt) Draw_ColoredStringScale(400, y + 70 + (OFFSET_SPACING * (id + 1)), txt, 1, 1, 1, 1, 2.0f);
+#define DRAW_SLIDER(id, r) M_DrawSlider(408, y + 70 + (OFFSET_SPACING * (id + 1)), r, 2.0f);
 
 #else
 
@@ -286,6 +288,8 @@ int menu_offset_y;
 #define DRAW_MAPDESC(id, txt) Draw_ColoredStringScale(x_map_info_disp + 280, y + 218 + (15 * id), txt, 1, 1, 1, 1, 1.25f);
 #define DRAW_MAPAUTHOR(id, txt) Draw_ColoredStringScale(x_map_info_disp + 280, y + 218 + (15 * id), txt, 1, 1, 0, 1, 1.25f);
 #define DRAW_CREDITLINE(id, txt) Draw_ColoredStringScale(10, menu_offset_y + ((OFFSET_SPACING - 2) * id), txt, 1, 1, 1, 1, 1.25f);
+#define DRAW_SETTINGSVALUE(id, txt) Draw_ColoredStringScale(300, y + 55 + (OFFSET_SPACING * (id + 1)), txt, 1, 1, 1, 1, 1.5f);
+#define DRAW_SLIDER(id, r) M_DrawSlider(308, y + 55 + (OFFSET_SPACING * (id + 1)), r, 1.0f);
 
 #endif // VITA
 
@@ -2435,8 +2439,7 @@ void M_AdjustSliders (int dir)
 	}
 }
 
-
-void M_DrawSlider (int x, int y, float range)
+void M_DrawSlider (int x, int y, float range, float scale)
 {
 	int	i;
 
@@ -2444,11 +2447,11 @@ void M_DrawSlider (int x, int y, float range)
 		range = 0;
 	if (range > 1)
 		range = 1;
-	M_DrawCharacter (x-8, y, 128);
+	Draw_CharacterScale(x - 8*scale, y, 128, scale);
 	for (i = 0; i < SLIDER_RANGE; i++)
-		M_DrawCharacter (x + i*8, y, 129);
-	M_DrawCharacter (x+i*8, y, 130);
-	M_DrawCharacter (x + (SLIDER_RANGE-1)*8 * range, y, 131);
+		Draw_CharacterScale(x + i*8*scale, y, 129, scale);
+	Draw_CharacterScale(x + i * 8 * scale, y, 130, scale);
+	Draw_CharacterScale(x + (SLIDER_RANGE-1) * 8 * range * scale, y, 131, scale);
 }
 
 void M_DrawCheckbox (int x, int y, int on)
@@ -2580,15 +2583,11 @@ void M_Graphics_Settings_f (void)
 
 static int gsettings_cursor;
 
-#define GSETTINGS_ITEMS 		8
+#define GSETTINGS_ITEMS 		6
 
 void M_Graphics_Settings_Draw (void)
 {
-#ifdef VITA
-	int y = 0;
-#else
-	int y = vid.height * 0.5;
-#endif
+	MENU_INITVARS();
 	float r;
 
 	// Menu Background
@@ -2601,109 +2600,56 @@ void M_Graphics_Settings_Draw (void)
 	// Header
 	DRAW_HEADER("GRAPHICS SETTINGS");
 
-	// Show FPS
-	if (gsettings_cursor == 0)
-		Draw_ColoredStringScale(10, y + 55, "Show FPS", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 55, "Show FPS", 1, 1, 1, 1, 1.5f);
+	DRAW_MENUOPTION(0, "Show FPS", gsettings_cursor, false);
+	DRAW_MENUOPTION(1, "Max FPS", gsettings_cursor, false);
+	DRAW_MENUOPTION(2, "Field of View", gsettings_cursor, false);
+	DRAW_MENUOPTION(3, "Brightness", gsettings_cursor, false);
+	DRAW_MENUOPTION(4, "Fullbright", gsettings_cursor, false);
+	DRAW_MENUOPTION(5, "Retro", gsettings_cursor, false);
 
-	if (scr_showfps.value == 0)
-		Draw_ColoredStringScale(300, y + 55, "Disabled", 1, 1, 1, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(300, y + 55, "Enabled", 1, 1, 1, 1, 1.5f);
+	DRAW_BACKBUTTON(6, gsettings_cursor);
+
+	// Show FPS
+	if (scr_showfps.value == 0) {
+		DRAW_SETTINGSVALUE(0, "Disabled");
+	} else {
+		DRAW_SETTINGSVALUE(0, "Enabled");
+	}
 
 	// Max FPS
-	if (gsettings_cursor == 1)
-		Draw_ColoredStringScale(10, y + 70, "Max FPS", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 70, "Max FPS", 1, 1, 1, 1, 1.5f);
-
 	r = (host_maxfps.value - 30.0)*(1.0/35.0);
-	M_DrawSlider (308, y + 70, r);
-
-	// Field of View
-	if (gsettings_cursor == 2)
-		Draw_ColoredStringScale(10, y + 85, "Field of View", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 85, "Field of View", 1, 1, 1, 1, 1.5f);
+	DRAW_SLIDER(1, r);
 	
+	// Field of View
 	r = (scr_fov.value - 50.0)*(1.0/70.0);
-	M_DrawSlider (308, y + 85, r);
+	DRAW_SLIDER(2, r);
 
 	// Brightness
-	if (gsettings_cursor == 3)
-		Draw_ColoredStringScale(10, y + 100, "Brightness", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 100, "Brightness", 1, 1, 1, 1, 1.5f);
-
 	r = (1.0 - vid_gamma.value) / 0.5;
-	M_DrawSlider (308, y + 100, r);
-
-	// TODO
-	Draw_ColoredStringScale(10, y + 115, "Decals", 0.5, 0.5, 0.5, 1, 1.5f);
-	Draw_ColoredStringScale(10, y + 130, "Particles", 0.5, 0.5, 0.5, 1, 1.5f);
-/*
-	// Decals
-	if (gsettings_cursor == 4)
-		Draw_ColoredStringScale(10, y + 115, "Decals", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 115, "Decals", 1, 1, 1, 1, 1.5f);
-
-	// Particles
-	if (gsettings_cursor == 5)
-		Draw_ColoredStringScale(10, y + 130, "Particles", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 130, "Particles", 1, 1, 1, 1, 1.5f);
-*/
+	DRAW_SLIDER(3, r);
 
 	// Fullbright
-	if (gsettings_cursor == 6)
-		Draw_ColoredStringScale(10, y + 145, "Fullbright", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 145, "Fullbright", 1, 1, 1, 1, 1.5f);
-
-	if (r_fullbright.value == 0)
-		Draw_ColoredStringScale(300, y + 145, "Disabled", 1, 1, 1, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(300, y + 145, "Enabled", 1, 1, 1, 1, 1.5f);
+	if (r_fullbright.value == 0) {
+		DRAW_SETTINGSVALUE(4, "Disabled");
+	} else {
+		DRAW_SETTINGSVALUE(4, "Enabled");
+	}
 
 	// Retro
-	if (gsettings_cursor == 7)
-		Draw_ColoredStringScale(10, y + 160, "Retro", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 160, "Retro", 1, 1, 1, 1, 1.5f);
+	if (!strcmp(gl_texturemode.string, "GL_LINEAR")) {
+		DRAW_SETTINGSVALUE(5, "Disabled");
+	} else {
+		DRAW_SETTINGSVALUE(5, "Enabled");
+	}
 
-	if (!strcmp(gl_texturemode.string, "GL_LINEAR"))
-		Draw_ColoredStringScale(300, y + 160, "Disabled", 1, 1, 1, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(300, y + 160, "Enabled", 1, 1, 1, 1, 1.5f);
-	
-	// Toggle Dynamic FOV
-	if (gsettings_cursor == 8)
-		Draw_ColoredStringScale(10, y + 175, "Dynamic FOV", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 175, "Dynamic FOV", 1, 1, 1, 1, 1.5f);
-
-	if (scr_dynamic_fov.value == 0)
-		Draw_ColoredStringScale(300, y + 175, "Disabled", 1, 1, 1, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(300, y + 175, "Enabled", 1, 1, 1, 1, 1.5f);
-
-	// Back
-	if (gsettings_cursor == 9)
-		Draw_ColoredStringScale(10, y + 335, "Back", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 335, "Back", 1, 1, 1, 1, 1.5f);
-	
 	// Descriptions
 	switch(gsettings_cursor) {
-		case 0: Draw_ColoredStringScale(10, y + 305, "Toggle Framerate Overlay.", 1, 1, 1, 1, 1.5f); break;
-		case 1: Draw_ColoredStringScale(10, y + 305, "Increase or Decrease Max Frames per Second.", 1, 1, 1, 1, 1.5f); break;
-		case 2: Draw_ColoredStringScale(10, y + 305, "Adjust Game Field of View.", 1, 1, 1, 1, 1.5f); break;
-		case 3: Draw_ColoredStringScale(10, y + 305, "Increase or Decrease Game Brightness.", 1, 1, 1, 1, 1.5f); break;
-		case 6: Draw_ColoredStringScale(10, y + 305, "Toggle all non-realtime lights.", 1, 1, 1, 1, 1.5f); break;
-		case 7: Draw_ColoredStringScale(10, y + 305, "Toggle texture filtering.", 1, 1, 1, 1, 1.5f); break;
-		case 8: Draw_ColoredStringScale(10, y + 305, "Toggle Dynamic FOV.", 1, 1, 1, 1, 1.5f); break;
+		case 0: DRAW_DESCRIPTION("Toggle Framerate Overlay."); break;
+		case 1: DRAW_DESCRIPTION("Increase or Decrease Max Frames per Second."); break;
+		case 2: DRAW_DESCRIPTION("Adjust Game Field of View."); break;
+		case 3: DRAW_DESCRIPTION("Increase or Decrease Game Brightness."); break;
+		case 4: DRAW_DESCRIPTION("Toggle all non-realtime lights."); break;
+		case 5: DRAW_DESCRIPTION("Toggle gl_nearest texture filtering."); break;
 		default: break;
 	}
 }
@@ -2715,10 +2661,9 @@ void M_Graphics_Settings_Key (int key)
 			S_LocalSound ("sounds/menu/enter.wav");
 			switch(gsettings_cursor) {
 				case 0: Cvar_SetValue("scr_showfps", scr_showfps.value ? 0 : 1); break;
-				case 6: Cvar_SetValue("r_fullbright", r_fullbright.value ? 0 : 1); break;
-				case 7: Cvar_Set("gl_texturemode", strcmp(gl_texturemode.string, "GL_LINEAR") ? "GL_LINEAR" : "GL_NEAREST_MIPMAP_LINEAR" ); break;
-				case 8: Cvar_SetValue("scr_dynamic_fov", scr_dynamic_fov.value ? 0 : 1); break;
-				case 9: M_Menu_Options_f (); break;
+				case 4: Cvar_SetValue("r_fullbright", r_fullbright.value ? 0 : 1); break;
+				case 5: Cvar_Set("gl_texturemode", strcmp(gl_texturemode.string, "GL_LINEAR") ? "GL_LINEAR" : "GL_NEAREST_MIPMAP_LINEAR" ); break;
+				case 6: M_Menu_Options_f (); break;
 				default: break;
 			}
 			break;
@@ -2745,18 +2690,12 @@ void M_Graphics_Settings_Key (int key)
 			S_LocalSound ("sounds/menu/navigate.wav");
 			gsettings_cursor--;
 
-			if (gsettings_cursor == 5)
-				gsettings_cursor = 3;
-
 			if (gsettings_cursor < 0)
 				gsettings_cursor = GSETTINGS_ITEMS;
 			break;
 		case K_DOWNARROW:
 			S_LocalSound ("sounds/menu/navigate.wav");
 			gsettings_cursor++;
-
-			if (gsettings_cursor == 4)
-				gsettings_cursor = 6;
 
 			if (gsettings_cursor > GSETTINGS_ITEMS)
 				gsettings_cursor = 0;
@@ -2803,11 +2742,7 @@ void Vita_ToggleRearTouchPad (void)
 
 void M_Control_Settings_Draw (void)
 {
-#ifdef VITA
-	int y = 0;
-#else
-	int y = vid.height * 0.5;
-#endif
+	MENU_INITVARS();
 	float r;
 
 	// Menu Background
@@ -2820,138 +2755,103 @@ void M_Control_Settings_Draw (void)
 	// Header
 	DRAW_HEADER("CONTROL SETTINGS");
 
-	// Draw Crosshair
-	if (csettings_cursor == 0)
-		Draw_ColoredStringScale(10, y + 55, "Draw Cursor", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 55, "Draw Cursor", 1, 1, 1, 1, 1.5f);
+	DRAW_MENUOPTION(0, "Draw Crosshair", csettings_cursor, false);
+	DRAW_MENUOPTION(1, "Aim Assist", csettings_cursor, false);
+	DRAW_MENUOPTION(2, "Look Sensitivity", csettings_cursor, false);
+	DRAW_BLANKOPTION("Look Acceleration", false);
+	DRAW_MENUOPTION(4, "Look Inversion", csettings_cursor, false);
+	DRAW_MENUOPTION(5, "Gyroscopic Aim", csettings_cursor, false);
+	DRAW_MENUOPTION(6, "Gyro Mode", csettings_cursor, false);
+	DRAW_MENUOPTION(7, "Gyro Sensitivity X", csettings_cursor, false);
+	DRAW_MENUOPTION(8, "Gyro Sensitivity Y", csettings_cursor, false);
 
-	if (crosshair.value == 0)
-		Draw_ColoredStringScale(300, y + 55, "Disabled", 1, 1, 1, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(300, y + 55, "Enabled", 1, 1, 1, 1, 1.5f);
+#ifdef VITA
+
+	DRAW_MENUOPTION(9, "Rear TouchPad", csettings_cursor, false);
+	DRAW_BACKBUTTON(10, csettings_cursor);
+
+#else
+
+	DRAW_BACKBUTTON(9, csettings_cursor);
+
+#endif // VITA
+
+	// Draw Crosshair
+	if (crosshair.value == 0) {
+		DRAW_SETTINGSVALUE(0, "Disabled");
+	} else {
+		DRAW_SETTINGSVALUE(0, "Enabled");
+	}
 
 	// Aim Assist
-	if (csettings_cursor == 1)
-		Draw_ColoredStringScale(10, y + 70, "Aim Assist", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 70, "Aim Assist", 1, 1, 1, 1, 1.5f);
-
-	if (in_aimassist.value == 0)
-		Draw_ColoredStringScale(300, y + 70, "Disabled", 1, 1, 1, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(300, y + 70, "Enabled", 1, 1, 1, 1, 1.5f);
+	if (in_aimassist.value == 0) {
+		DRAW_SETTINGSVALUE(1, "Disabled");
+	} else {
+		DRAW_SETTINGSVALUE(1, "Enabled");
+	}
 
 	// Look Sensitivity
-	if (csettings_cursor == 2)
-		Draw_ColoredStringScale(10, y + 85, "Look Sensitivity", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 85, "Look Sensitivity", 1, 1, 1, 1, 1.5f);
-
 	r = (sensitivity.value - 1)/10;
-	M_DrawSlider (308, y + 85, r);
-
-	// TODO
-	Draw_ColoredStringScale(10, y + 100, "Look Acceleration", 0.5, 0.5, 0.5, 1, 1.5f);
-/*
-	// Look Acceleration
-	if (csettings_cursor == 3)
-		Draw_ColoredStringScale(10, y + 100, "Look Acceleration", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 100, "Look Acceleration", 1, 1, 1, 1, 1.5f);
-
-	r = 1.0f -((in_acceleration.value - 0.5f)/1.5f);
-	M_DrawSlider (316, y + 100, r);
-*/
+	DRAW_SLIDER(2, r);
 
 	// Look Inversion
-	if (csettings_cursor == 4)
-		Draw_ColoredStringScale(10, y + 115, "Look Inversion", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 115, "Look Inversion", 1, 1, 1, 1, 1.5f);
+	if (joy_invert.value == 0) {
+		DRAW_SETTINGSVALUE(4, "Disabled");
+	} else {
+		DRAW_SETTINGSVALUE(4, "Enabled");
+	}
 
-	if (joy_invert.value == 0)
-		Draw_ColoredStringScale(300, y + 115, "Disabled", 1, 1, 1, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(300, y + 115, "Enabled", 1, 1, 1, 1, 1.5f);
-
-	// Gyro-Aim
-	if (csettings_cursor == 5)
-		Draw_ColoredStringScale(10, y + 130, "Gyro-Aim", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 130, "Gyro-Aim", 1, 1, 1, 1, 1.5f);
-
-	if (motioncam.value == 0)
-		Draw_ColoredStringScale(300, y + 130, "Disabled", 1, 1, 1, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(300, y + 130, "Enabled", 1, 1, 1, 1, 1.5f);
+	// Gyroscopic Aim
+	if (motioncam.value == 0) {
+		DRAW_SETTINGSVALUE(5, "Disabled");
+	} else {
+		DRAW_SETTINGSVALUE(5, "Enabled");
+	}
 
 	// Gyro Mode
-	if (csettings_cursor == 6)
-		Draw_ColoredStringScale(10, y + 145, "Gyro Mode", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 145, "Gyro Mode", 1, 1, 1, 1, 1.5f);
-
-	if (gyromode.value == 0)
-		Draw_ColoredStringScale(300, y + 145, "Always On", 1, 1, 1, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(300, y + 145, "ADS Only", 1, 1, 1, 1, 1.5f);
+	if (gyromode.value == 0) {
+		DRAW_SETTINGSVALUE(6, "Always On");
+	} else {
+		DRAW_SETTINGSVALUE(6, "ADS Only");
+	}
 
 	// Gyro Sensitivity X
-	if (csettings_cursor == 7)
-		Draw_ColoredStringScale(10, y + 160, "Gyro Sensitivity X", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 160, "Gyro Sensitivity X", 1, 1, 1, 1, 1.5f);
-
 	r = (gyrosensx.value - 0.5)*(1.0/0.5);
-	M_DrawSlider (308, y + 160, r);
+	DRAW_SLIDER(7, r);
 
 	// Gyro Sensitivity Y
-	if (csettings_cursor == 8)
-		Draw_ColoredStringScale(10, y + 175, "Gyro Sensitivity Y", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 175, "Gyro Sensitivity Y", 1, 1, 1, 1, 1.5f);
-
 	r = (gyrosensy.value - 0.5)*(1.0/0.5);
-	M_DrawSlider (308, y + 175, r);
+	DRAW_SLIDER(8, r);
 
 #ifdef VITA
-	if (csettings_cursor == 9)
-		Draw_ColoredStringScale(10, y + 190, "Rear TouchPad", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 190, "Rear TouchPad", 1, 1, 1, 1, 1.5f);
 
-	if (cl_enablereartouchpad.value == 0)
-		Draw_ColoredStringScale(300, y + 190, "Disabled", 1, 1, 1, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(300, y + 190, "Enabled", 1, 1, 1, 1, 1.5f);
+	// Rear TouchPad
+	if (cl_enablereartouchpad.value == 0) {
+		DRAW_SETTINGSVALUE(9, "Disabled");
+	} else {
+		DRAW_SETTINGSVALUE(9, "Enabled");
+	}
+
 #endif // VITA
-
-	// Back
-#ifdef VITA
-	if (csettings_cursor == 10)
-#else
-	if (csettings_cursor == 9)
-#endif // VITA
-		Draw_ColoredStringScale(10, y + 335, "Back", 1, 0, 0, 1, 1.5f);
-	else
-		Draw_ColoredStringScale(10, y + 335, "Back", 1, 1, 1, 1, 1.5f);
-
 
 	// Descriptions
 	switch(csettings_cursor) {
-		case 0: Draw_ColoredStringScale(10, y + 305, "Toggle Crosshair in-game.", 1, 1, 1, 1, 1.5f); break;
-		case 1: Draw_ColoredStringScale(10, y + 305, "Toggle Assisted Aim to improve Targeting.", 1, 1, 1, 1, 1.5f); break;
-		case 2: Draw_ColoredStringScale(10, y + 305, "Adjust Look Sensitivity.", 1, 1, 1, 1, 1.5f); break;
-		case 3: Draw_ColoredStringScale(10, y + 305, "Adjust Look Acceleration.", 1, 1, 1, 1, 1.5f); break;
-		case 4: Draw_ColoredStringScale(10, y + 305, "Toggle inverted Camera control.", 1, 1, 1, 1, 1.5f); break;
-		case 5: Draw_ColoredStringScale(10, y + 305, "Toggle Gyroscopic Aiming.", 1, 1, 1, 1, 1.5f); break;
-		case 6: Draw_ColoredStringScale(10, y + 305, "Set to use Gyro Always or only when ADS.", 1, 1, 1, 1, 1.5f); break;
-		case 7: Draw_ColoredStringScale(10, y + 305, "Adjust Gyro Sensitivty on the X Axis.", 1, 1, 1, 1, 1.5f); break;
-		case 8: Draw_ColoredStringScale(10, y + 305, "Adjust Gyro Sensitivty on the Y Axis.", 1, 1, 1, 1, 1.5f); break;
+		case 0: DRAW_DESCRIPTION("Toggle Crosshair in-game."); break;
+		case 1: DRAW_DESCRIPTION("Toggle Assisted Aim to improve Targeting."); break;
+		case 2: DRAW_DESCRIPTION("Adjust Look Sensitivity."); break;
+		case 3: DRAW_DESCRIPTION("Adjust Look Acceleration."); break;
+		case 4: DRAW_DESCRIPTION("Toggle inverted Camera control."); break;
+		case 5: DRAW_DESCRIPTION("Toggle Gyroscopic Aiming."); break;
+		case 6: DRAW_DESCRIPTION("Set to use Gyro Always or only when ADS."); break;
+		case 7: DRAW_DESCRIPTION("Adjust Gyro Sensitivty on the X Axis."); break;
+		case 8: DRAW_DESCRIPTION("Adjust Gyro Sensitivty on the Y Axis."); break;
+
 #ifdef VITA
-		case 9: Draw_ColoredStringScale(10, y + 305, "Toggle support for the PSVita Rear TouchPad.", 1, 1, 1, 1, 1.5f); break;
+
+		case 9: DRAW_DESCRIPTION("Toggle support for the PSVita Rear TouchPad."); break;
+
 #endif // VITA
+
 	}	
 }
 
@@ -3144,20 +3044,39 @@ void M_Keys_Draw (void)
 	DRAW_HEADER("CONTROLS");
 
 	if (bind_grab) {
+#ifndef VITA
 		Draw_ColoredStringScale(86, y + 305, "Press a key or button for this action", 1, 1, 1, 1, 1.5f);
+#else
+		Draw_ColoredStringScale((vid.width/2 - strlen("Press a key or button for this action")*8), y + 475, "Press a key or button for this action", 1, 1, 1, 1, 2.0f);
+#endif // VITA
 	} else {
+#ifndef VITA
 		Draw_ColoredStringScale(150, y + 305, "Press   to change,   to clear", 1, 1, 1, 1, 1.5f);
 		Draw_StretchPic(220, y + 305, b_abutton, 16, 16);
 		Draw_StretchPic(375, y + 305, b_ybutton, 16, 16);
+#else
+		Draw_ColoredStringScale((vid.width/2 - strlen("Press   to change,   to clear")*8), y + 475, "Press   to change,   to clear", 1, 1, 1, 1, 2.0f);
+		Draw_StretchPic(340, y + 468, b_abutton, 28, 28);
+		Draw_StretchPic(545, y + 468, b_ybutton, 28, 28);
+#endif // VITA
 	}
 
 	for(int i = 0; i < (int)NUMCOMMANDS; i++) {
-		int y_offset = y + (55 + 15 * i);
+#ifndef VITA
+		int y_offset = y + (55 + 15 * (i + 1));
 		if (i == keys_cursor) {
 			Draw_ColoredStringScale(10, y_offset, bindnames[i][1], 1, 0, 0, 1, 1.5f);
 		} else {
 			Draw_ColoredStringScale(10, y_offset, bindnames[i][1], 1, 1, 1, 1, 1.5f);
 		}
+#else
+		int y_offset = y + (70 + 30 * (i + 1));
+		if (i == keys_cursor) {
+			Draw_ColoredStringScale(10, y_offset, bindnames[i][1], 1, 0, 0, 1, 2.0f);
+		} else {
+			Draw_ColoredStringScale(10, y_offset, bindnames[i][1], 1, 1, 1, 1, 2.0f);
+		}
+#endif // VITA
 
 		for (int j = 0; j < 256; j++) {
 			b = keybindings[j];
@@ -3169,20 +3088,31 @@ void M_Keys_Draw (void)
 			if (!strcmp (b, bindnames[i][0]))
 			{
 				qpic_t *btn_to_draw = GetButtonIcon(bindnames[i][0]);
+#ifndef VITA
 				if (!strcmp("LSHOULDER", bindnames[i][0]) || !strcmp("RSHOULDER", bindnames[i][0]))
 					Draw_StretchPic(300, y_offset + 4, btn_to_draw, 16, 8);
 				else
 					Draw_StretchPic(300, y_offset, btn_to_draw, 16, 16);
+#else
+				if (!strcmp("LSHOULDER", bindnames[i][0]) || !strcmp("RSHOULDER", bindnames[i][0]))
+					Draw_StretchPic(400, y_offset + 4, btn_to_draw, 28, 14);
+				else
+					Draw_StretchPic(400, y_offset, btn_to_draw, 28, 28);
+#endif // VITA
                 break;
 			}
 		}
 	}
 
-	if (keys_cursor == NUMCOMMANDS) {
-		Draw_ColoredStringScale(10, y + 335, "Back", 1, 0, 0, 1, 1.5f);
-	} else {
-		Draw_ColoredStringScale(10, y + 335, "Back", 1, 1, 1, 1, 1.5f);
-		M_DrawCharacter (282, y + 58 + keys_cursor*15, 12+((int)(realtime*4)&1));
+	DRAW_BACKBUTTON(NUMCOMMANDS, keys_cursor);
+
+	// Cursor Flashing
+	if (keys_cursor != NUMCOMMANDS) {
+#ifndef VITA
+		M_DrawCharacter (282, y + 58 + (keys_cursor + 1)*15, 12+((int)(realtime*4)&1));
+#else
+		Draw_CharacterScale(375, y + 74 + (keys_cursor + 1)*30, 12+((int)(realtime*4)&1), 2.0f);
+#endif // VITA
 	}
 }
 
