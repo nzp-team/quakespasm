@@ -317,13 +317,9 @@ void CL_AdjustAngles (void)
 	// vita gyro support by rinnegatamante (originally from vitaquake)
 	// creds to the switch-examples for nx support
 	if (motioncam.value) {
-		//sB fix gyro activating while sprinting.
-		// cypress -- oops! this killed our early return! moving it
-		if (client_sprinting == 1)
-			return;
 
 		// If gyro is set to ADS only and we're not ADSing, goodbye.
-		if (gyromode.value && cl.stats[STAT_ZOOM] == 0)
+		if (gyromode.value && cl.stats[STAT_ZOOM] != 1 && cl.stats[STAT_ZOOM] != 2)
 			return;
 
 #ifdef VITA
