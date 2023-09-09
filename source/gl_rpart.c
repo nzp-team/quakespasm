@@ -972,6 +972,163 @@ void AddParticle (part_type_t type, vec3_t org, int count, float size, double ti
 	}
 }
 
+void AddParticleTrail (part_type_t type, vec3_t start, vec3_t end, float size, float time, col_t col)
+{
+	byte		*color;
+	int		i, j, num_particles;
+	float		count, length;
+	vec3_t		point, delta;
+	particle_t	*p;
+	particle_type_t	*pt;
+	static	float	rotangle = 0;
+    count = 0;
+
+	if (!qmb_initialized)
+		Sys_Error ("QMB particle added without initialization");
+
+	//assert (size > 0 && time > 0);
+
+	if (type < 0 || type >= num_particletypes)
+		Sys_Error ("AddParticle: Invalid type (%d)", type);
+
+	pt = &particle_types[particle_type_index[type]];
+
+	VectorCopy(start, point);
+	VectorSubtract(end, start, delta);
+	if (!(length = VectorLength(delta)))
+		return;
+
+	switch (type)
+	{
+
+    case p_q3blood_trail:
+	case p_q3rocketsmoke:
+		count = length / 40.0;
+		break;
+
+	case p_q3grenadesmoke:
+		count = length / 12.0;
+		break;
+
+	case p_alphatrail:
+	case p_trailpart:
+	case p_lavatrail:
+		count = length / 1.1;
+		break;
+
+	case p_blood3:
+		count = length / 8;
+		break;
+
+	case p_smoke:
+		count = length / 3.8;
+		break;
+
+	case p_dpsmoke:
+		count = length / 2.5;
+		break;
+
+	case p_dpfire:
+		count = length / 2.8;
+		break;
+
+	default:
+		//assert (!"AddParticleTrail: unexpected type");
+		break;
+	}
+
+	if (!(num_particles = (int)count))
+		num_particles = 1;
+
+	VectorScale(delta, 1.0 / num_particles, delta);
+
+	for (i=0 ; i < num_particles && free_particles ; i++)
+	{
+		color = col ? col : ColorForParticle (type);
+		INIT_NEW_PARTICLE(pt, p, color, size, time);
+
+		switch (type)
+		{
+		case p_alphatrail:
+		case p_trailpart:
+			VectorCopy (point, p->org);
+			VectorClear (p->vel);
+			p->growth = -size / time;
+			break;
+
+		case p_blood3:
+			VectorCopy (point, p->org);
+			for (j=0 ; j<3 ; j++)
+				p->org[j] += ((rand() & 15) - 8) / 8.0;
+			for (j=0 ; j<3 ; j++)
+				p->vel[j] = ((rand() & 15) - 8) / 2.0;
+			p->size = size * (rand() % 20) / 10.0;
+			p->growth = 6;
+			break;
+
+		case p_q3blood_trail:
+			VectorCopy (point, p->org);
+			for (j=0 ; j<3 ; j++)
+				p->org[j] += ((rand() & 15) - 8) / 8.0;
+			for (j=0 ; j<3 ; j++)
+				p->vel[j] = ((rand() & 15) - 8) / 2.0;
+			p->growth = 6;
+			break;
+
+		case p_smoke:
+			VectorCopy (point, p->org);
+			for (j=0 ; j<3 ; j++)
+				p->org[j] += ((rand() & 7) - 4) / 8.0;
+			p->vel[0] = p->vel[1] = 0;
+			p->vel[2] = rand() & 3;
+			p->growth = 4.5;
+			p->rotspeed = (rand() & 63) + 96;
+			break;
+
+        case p_q3rocketsmoke:
+		case p_q3grenadesmoke:
+			VectorCopy (point, p->org);
+			for (j=0 ; j<3 ; j++)
+				p->org[j] += ((rand() & 7) - 4) / 8.0;
+			VectorClear (p->vel);
+			p->growth = 30;
+			if (rotangle >= 360)
+				rotangle = 0;
+			p->rotangle = rotangle;
+			rotangle += 30;
+			break;
+
+		case p_dpsmoke:
+			VectorCopy (point, p->org);
+			for (j=0 ; j<3 ; j++)
+				p->vel[j] = (rand() % 10) - 5;
+			p->growth = 3;
+			p->rotspeed = (rand() & 63) + 96;
+			break;
+
+		case p_dpfire:
+			VectorCopy (point, p->org);
+			for (j=0 ; j<3 ; j++)
+				p->vel[j] = (rand() % 40) - 20;
+			break;
+
+		case p_lavatrail:
+			VectorCopy (point, p->org);
+			for (j=0 ; j<3 ; j++)
+				p->org[j] += ((rand() & 7) - 4);
+			p->vel[0] = p->vel[1] = 0;
+			p->vel[2] = rand() & 3;
+			break;
+
+		default:
+			//assert (!"AddParticleTrail: unexpected type");
+			break;
+		}
+
+		VectorAdd(point, delta, point);
+	}
+}
+
 void QMB_ParticleExplosion(vec3_t org)
 {
 	//shpuld
@@ -1360,14 +1517,16 @@ void QMB_RunParticleEffect (vec3_t org, vec3_t dir, int col, int count)
 		}
 		break;
 	case 256:
-		color[2] = 1.0f;
+		color[0] = 0;
+		color[1] = 255;
+		color[2] = 0;
 		AddParticle (p_raysmoke, org, 3, 25, 1.225f + ((rand() % 10) - 2) / 40.0, color, zerodir);
 		AddParticle (p_rayspark, org, 12, 75, 0.6f,  color, zerodir);
 		break;
 	case 512:
-		color[1] = 1.0f;
+		color[0] = 255;
+		color[1] = 0;
 		color[2] = 0;
-		color[3] = 0;
 		AddParticle (p_raysmoke, org, 3, 25, 1.225f + ((rand() % 10) - 2) / 40.0, color, zerodir);
 		AddParticle (p_rayspark, org, 12, 75, 0.6f,  color, zerodir);
 		break;
@@ -2231,31 +2390,28 @@ void QMB_MuzzleFlash(vec3_t org)
 	}
 }
 
-/*
-===============
-R_ToggleParticles_f
-
-function that toggles between classic and QMB particles
-===============
-*/
-
-/*
-void R_ToggleParticles_f (void)
+void QMB_RocketTrail (vec3_t start, vec3_t end, trail_type_t type)
 {
-	if (cmd_source != src_command)
-		return;
+	col_t		color;
 
-	if (particle_mode == pm_classic)
-		R_SetParticleMode (pm_qmb);
-	else if (particle_mode == pm_qmb)
-		R_SetParticleMode (pm_quake3);
-	else
-		R_SetParticleMode (pm_classic);
-
-	if (key_dest != key_menu && key_dest != key_menu_pause)
-		Con_Printf ("Using %s particles\n", R_NameForParticleMode());
+	switch (type)
+	{
+		case RAYGREEN_TRAIL:
+			color[0] = 0;
+			color[1] = 255;
+			color[2] = 0;
+			AddParticleTrail (p_alphatrail, start, end, 8, 0.6, color);
+			break;
+		case RAYRED_TRAIL:
+			color[0] = 255;
+			color[1] = 0;
+			color[2] = 0;
+			AddParticleTrail (p_alphatrail, start, end, 8, 0.6, color);
+			break;
+		default:
+			break;
+	}
 }
-*/
 
 void CheckDecals (void)
 {

@@ -571,11 +571,6 @@ void R_RocketTrail (vec3_t start, vec3_t end, int type)
 	int			dec;
 	static int	tracercount;
 
-	// Don't draw broken trails with the Ray Gun
-	// TODO: QMB Trails
-	if (type == 12 || type == 13)
-		return;
-
 	VectorSubtract (end, start, vec);
 	len = VectorNormalize (vec);
 	if (type < 128)
