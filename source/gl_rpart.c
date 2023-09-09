@@ -2132,9 +2132,14 @@ void QMB_DrawParticles (void)
 						continue;
 					}
 				}
+
+				if (pt->texture == ptex_muzzleflash || pt->texture == ptex_muzzleflash2 || pt->texture == ptex_muzzleflash3)
+					glDepthRange (0, 0.3);
 				
 				DRAW_PARTICLE_BILLBOARD(ptex, p, billboard);
 
+				if (pt->texture == ptex_muzzleflash || pt->texture == ptex_muzzleflash2 || pt->texture == ptex_muzzleflash3)
+					glDepthRange (0, 1);
 			}
 			break;
 
