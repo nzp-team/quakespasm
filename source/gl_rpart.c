@@ -2336,29 +2336,57 @@ float pap_detr(int weapon)
 }
 
 //R00k added particle muzzleflashes
+qboolean red_or_blue_pap;
 void QMB_MuzzleFlash(vec3_t org)
 {
 	double	frametime = fabs(cl.time - cl.oldtime);
 	col_t	color;
 
-	if (cl.stats[STAT_ACTIVEWEAPON] == W_RAY) {
-		color[0] = 0;
-		color[1] = 255;
-		color[2] = 0;
-	} else if (cl.stats[STAT_ACTIVEWEAPON] == W_PORTER) {
-		color[0] = 255;
-		color[1] = 0;
-		color[2] = 0;
-	} else if (pap_detr(cl.stats[STAT_ACTIVEWEAPON]) == 0) {
-		color[0] = color[1] = color[2] = 255;
-	} else {
-		color[0] = 132;
-		color[1] = 44;
-		color[2] = 139;
+	// No muzzleflash for the Panzerschreck or the Flamethrower
+	if (cl.stats[STAT_ACTIVEWEAPON] == W_PANZER || cl.stats[STAT_ACTIVEWEAPON] == W_LONGINUS ||
+	cl.stats[STAT_ACTIVEWEAPON] == W_M2 || cl.stats[STAT_ACTIVEWEAPON] == W_FIW)
+		return;
+
+	// Start fully colored
+	color[0] = color[1] = color[2] = 255;
+
+	// Alternate red and blue if it's a Pack-a-Punched weapon
+	if (pap_detr(cl.stats[STAT_ACTIVEWEAPON])) {
+		if (red_or_blue_pap) {
+			color[0] = 255;
+			color[1] = 10;
+			color[2] = 22;
+		} else {
+			color[0] = 22;
+			color[1] = 10;
+			color[2] = 255;
+		}
+
+		red_or_blue_pap = !red_or_blue_pap;
 	}
 
-	if (!qmb_initialized) {
-		return;
+	// Weapon overrides for muzzleflash color
+	switch(cl.stats[STAT_ACTIVEWEAPON]) {
+		case W_RAY:
+			color[0] = 0;
+			color[1] = 255;
+			color[2] = 0;
+			break;
+		case W_PORTER:
+			color[0] = 255;
+			color[1] = 0;
+			color[2] = 0;
+			break;
+		case W_TESLA:
+			color[0] = 22;
+			color[1] = 139;
+			color[2] = 255;
+			break;
+		case W_DG3:
+			color[0] = 255;
+			color[1] = 89;
+			color[2] = 22;
+			break;
 	}
 
 	float size, timemod;
