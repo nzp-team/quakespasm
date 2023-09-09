@@ -396,7 +396,7 @@ void HUD_Parse_Point_Change (int points, int negative, int x_start, int y_start)
 
 	f = HUD_itoa (points, str);
 #ifdef VITA
-	point_change[i].x = x_start + 120.0 + 4.0*f;
+	point_change[i].x = x_start + 105.0 + 4.0*f;
 #else
 	point_change[i].x = x_start - 10.0 - 8.0*f;
 #endif
