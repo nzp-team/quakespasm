@@ -1538,7 +1538,7 @@ Draw_Crosshair
 extern qboolean paused_hack;
 void SCR_DrawCrosshair (void)
 {
-	if (cl.stats[STAT_HEALTH] < 20 || paused_hack == true || m_state == m_exit) {
+	if (paused_hack == true || m_state == m_exit) {
 		return;
 	}
 
@@ -1546,6 +1546,9 @@ void SCR_DrawCrosshair (void)
 		Draw_FillByColor(vid.width/2, 0, 1, vid.height, 255, 0, 0, 255);
 		Draw_FillByColor(0, vid.height/2, vid.width, 1, 0, 255, 0, 255);
 	}
+
+	if (!crosshair.value)
+		return;
 	
 	float col;
 
