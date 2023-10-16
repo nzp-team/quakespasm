@@ -1278,6 +1278,29 @@ void PF_MaxAmmo(void)
 
 /*
 =================
+PF_GrenadePulse
+
+pulses grenade crosshair
+
+grenade_pulse()
+=================
+*/
+void PF_GrenadePulse(void)
+{
+	client_t	*client;
+	int			entnum;
+
+	entnum = G_EDICTNUM(OFS_PARM0);
+
+	if (entnum < 1 || entnum > svs.maxclients)
+		return;
+
+	client = &svs.clients[entnum-1];
+	MSG_WriteByte (&client->message,svc_pulse);
+}
+
+/*
+=================
 PF_achievement
 
 unlocks the achievement number for entity
@@ -3765,6 +3788,7 @@ static builtin_t pr_builtin[] =
 	NULL, 						// #499
 	PF_SongEgg,					// #500
 	PF_MaxAmmo,					// #501
+	PF_GrenadePulse,			// #502
 };
 
 builtin_t *pr_builtins = pr_builtin;

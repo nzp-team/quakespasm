@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "bgmusic.h"
 
 extern qboolean domaxammo;
+qboolean 			crosshair_pulse_grenade;
 
 const char *svc_strings[] =
 {
@@ -84,7 +85,7 @@ const char *svc_strings[] =
 	"svc_spawnstaticsound2", //	44		// [coord3] [short] samp [byte] vol [byte] aten
 	"svc_songegg", // 45
 	"svc_maxammo", // 46
-	"", // 47
+	"svc_pulse", // 47
 	"", // 48
 	"", // 49
 	"svc_bspdecal",   // 50     // [string] name [byte] decal_size [coords] pos
@@ -1544,6 +1545,9 @@ void CL_ParseServerMessage (void)
 			break;
 		case svc_maxammo:
 			domaxammo = true;
+			break;
+		case svc_pulse:
+			crosshair_pulse_grenade = true;
 			break;
 
 		//case svc_bspdecal:

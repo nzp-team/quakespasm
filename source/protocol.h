@@ -213,6 +213,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define svc_songegg				45 // 45
 #define	svc_maxammo				46 // 46
+#define svc_pulse 				47 // 47
 
 #define svc_limbupdate  		51
 #define	svc_achievement    		52      // [string] name [byte] decal_size [coords] pos

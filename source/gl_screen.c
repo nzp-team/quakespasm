@@ -1536,6 +1536,7 @@ Draw_Crosshair
 ================
 */
 extern qboolean paused_hack;
+extern qboolean crosshair_pulse_grenade;
 void SCR_DrawCrosshair (void)
 {
 	if (paused_hack == true || m_state == m_exit) {
@@ -1547,7 +1548,7 @@ void SCR_DrawCrosshair (void)
 		Draw_FillByColor(0, vid.height/2, vid.width, 1, 0, 255, 0, 255);
 	}
 
-	if (!crosshair.value)
+	if (cl.stats[STAT_HEALTH] <= 20)
 		return;
 	
 	float col;
@@ -1563,6 +1564,21 @@ void SCR_DrawCrosshair (void)
 #else
 	GL_SetCanvas(CANVAS_USEPRINT);
 #endif
+
+	if (cl.stats[STAT_ZOOM] == 2) {
+		GL_SetCanvas(CANVAS_DEFAULT);
+		Draw_AlphaStretchPic (0, 0, vid.width, vid.height, 255, sniper_scope);
+	}
+   	if (Hitmark_Time > sv.time) {
+        Draw_Pic ((vid.width/2 - hitmark->width)/2,vid.height/2 + (vid.height/2 - hitmark->height)/2, hitmark);
+   	}
+
+	// Make sure to do this after hitmark drawing.
+	if (cl.stats[STAT_ZOOM] == 2 || cl.stats[STAT_ZOOM] == 1) {
+		GL_SetCanvas(CANVAS_DEFAULT);
+		return;
+	}
+
 	if (crosshair_spread_time > sv.time && crosshair_spread_time)
     {
         cur_spread = cur_spread + 10;
@@ -1579,15 +1595,13 @@ void SCR_DrawCrosshair (void)
 		}
     }
 
-	if (cl.stats[STAT_ACTIVEWEAPON] == W_M2 || cl.stats[STAT_ACTIVEWEAPON] == W_TESLA || cl.stats[STAT_ACTIVEWEAPON] == W_FIW || cl.stats[STAT_ACTIVEWEAPON] == W_DG3)
-	{
-		Draw_CharacterRGBA ((vid.width)/4-4, (vid.height)*3/4, 'O', 255, col, col, 0.7);
+	int x_value, y_value;
+	int crosshair_offset;
 
-	}
-	else if (crosshair.value == 1 && cl.stats[STAT_ZOOM] != 1 && cl.stats[STAT_ZOOM] != 2 && cl.stats[STAT_ACTIVEWEAPON] != W_PANZER && cl.stats[STAT_ACTIVEWEAPON] != W_LONGINUS)
-    {
-        int x_value, y_value;
-        int crosshair_offset = CrossHairWeapon() + cur_spread;
+	// Standard crosshair (+)
+	if (crosshair.value == 1) {
+		x_value, y_value;
+        crosshair_offset = CrossHairWeapon() + cur_spread;
 		if (CrossHairMaxSpread() < crosshair_offset || croshhairmoving)
 			crosshair_offset = CrossHairMaxSpread();
 
@@ -1612,18 +1626,47 @@ void SCR_DrawCrosshair (void)
 		y_value = (vid.height - 8)*3/4 + crosshair_offset_step;
 
 		Draw_CharacterRGBA (x_value, y_value, 157, 255, col, col, 0.7);
-    }
-    else if (crosshair.value && cl.stats[STAT_ZOOM] != 1 && cl.stats[STAT_ZOOM] != 2)
-	{
+	}
+	// Area of Effect (o)
+	else if (crosshair.value == 2) {
+		Draw_CharacterRGBA ((vid.width)/4-4, (vid.height)*3/4, 'O', 255, col, col, 0.7);
+	}
+	// Dot crosshair (.)
+	else if (crosshair.value == 3) {
 		Draw_CharacterRGBA ((vid.width - 8)/4/* + crosshair_x*/, (vid.height - 8)*3/4/* + crosshair_y*/, '.', 255, col, col, 0.7);
 	}
-	if (cl.stats[STAT_ZOOM] == 2) {
-		GL_SetCanvas(CANVAS_DEFAULT);
-		Draw_AlphaStretchPic (0, 0, vid.width, vid.height, 255, sniper_scope);
+	// Grenade crosshair
+	else if (crosshair.value == 4) {
+		if (crosshair_pulse_grenade) {
+			crosshair_offset_step = 0;
+			cur_spread = 2;
+		}
+
+		crosshair_pulse_grenade = false;
+
+        crosshair_offset = 12 + cur_spread;
+		crosshair_offset_step += (crosshair_offset - crosshair_offset_step) * 0.5;
+
+		x_value = ((vid.width - 8)/4) - crosshair_offset_step;
+		y_value = (vid.height - 8)*3/4;
+
+		Draw_CharacterRGBA (x_value, y_value, 158, 255, 255, 255, 0.7);
+
+		x_value = ((vid.width - 8)/4) + crosshair_offset_step;
+		y_value = (vid.height - 8)*3/4;
+
+		Draw_CharacterRGBA (x_value, y_value, 158, 255, 255, 255, 0.7);
+
+		x_value = ((vid.width - 8)/4);
+		y_value = (vid.height - 8)*3/4 - crosshair_offset_step;
+
+		Draw_CharacterRGBA (x_value, y_value, 157, 255, 255, 255, 0.7);
+
+		x_value = ((vid.width - 8)/4);
+		y_value = (vid.height - 8)*3/4 + crosshair_offset_step;
+
+		Draw_CharacterRGBA (x_value, y_value, 157, 255, 255, 255,  0.7);
 	}
-   if (Hitmark_Time > sv.time) {
-        Draw_Pic ((vid.width/2 - hitmark->width)/2,vid.height/2 + (vid.height/2 - hitmark->height)/2, hitmark);
-   }
 
    	GL_SetCanvas(CANVAS_DEFAULT);
 }
