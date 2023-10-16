@@ -1301,6 +1301,21 @@ void PF_GrenadePulse(void)
 
 /*
 =================
+PF_MaxZombies
+
+Returns the total number of zombies
+the platform can have out at once.
+
+nzp_maxai()
+=================
+*/
+void PF_MaxZombies(void)
+{
+	G_FLOAT(OFS_RETURN) = 24;
+}
+
+/*
+=================
 PF_achievement
 
 unlocks the achievement number for entity
@@ -3788,7 +3803,8 @@ static builtin_t pr_builtin[] =
 	NULL, 						// #499
 	PF_SongEgg,					// #500
 	PF_MaxAmmo,					// #501
-	PF_GrenadePulse,			// #502
+	PF_GrenadePulse,				// #502
+	PF_MaxZombies, 					// #503
 };
 
 builtin_t *pr_builtins = pr_builtin;
