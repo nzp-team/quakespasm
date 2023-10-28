@@ -1222,6 +1222,7 @@ void CL_ParseLimbUpdate (void)
 CL_ParseServerMessage
 =====================
 */
+extern double bettyprompt_time;
 void CL_ParseServerMessage (void)
 {
 	int			cmd;
@@ -1548,6 +1549,9 @@ void CL_ParseServerMessage (void)
 			break;
 		case svc_pulse:
 			crosshair_pulse_grenade = true;
+			break;
+		case svc_bettyprompt:
+			bettyprompt_time = sv.time + 4;
 			break;
 
 		//case svc_bspdecal:

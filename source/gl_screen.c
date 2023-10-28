@@ -243,6 +243,54 @@ char *GetUseButtonL ()
 	return " ";
 }
 
+char *GetGrenadeButtonL ()
+{
+	int		j;
+	int		l;
+	char	*b;
+	l = strlen("+grenade");
+
+	for (j=0 ; j<256 ; j++)
+	{
+		b = keybindings[j];
+		if (!b)
+			continue;
+		if (!strncmp (b, "+grenade", l) )
+		{
+			if (!strcmp(Key_KeynumToString(j), "LSHOULDER") ||
+				!strcmp(Key_KeynumToString(j), "RSHOULDER"))
+				return "    ";
+			else
+				return "  ";
+		}
+	}
+	return " ";
+}
+
+char *GetBettyButtonL ()
+{
+	int		j;
+	int		l;
+	char	*b;
+	l = strlen("impulse 33");
+
+	for (j=0 ; j<256 ; j++)
+	{
+		b = keybindings[j];
+		if (!b)
+			continue;
+		if (!strncmp (b, "impulse 33", l) )
+		{
+			if (!strcmp(Key_KeynumToString(j), "LSHOULDER") ||
+				!strcmp(Key_KeynumToString(j), "RSHOULDER"))
+				return "    ";
+			else
+				return "  ";
+		}
+	}
+	return " ";
+}
+
 char *GetPerkName (int perk)
 {
 	switch (perk)

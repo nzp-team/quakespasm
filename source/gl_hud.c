@@ -37,6 +37,7 @@ qpic_t      *b_ybutton;
 qpic_t      *b_xbutton;
 qpic_t      *b_lt;
 qpic_t      *b_rt;
+qpic_t 		*b_touch;
 
 qpic_t		*sb_round[5];
 qpic_t		*sb_round_num[10];
@@ -69,6 +70,7 @@ qboolean domaxammo;
 qboolean has_chaptertitle;
 
 double HUD_Change_time;//hide hud when not chagned
+double bettyprompt_time;
 
 typedef struct
 {
@@ -119,6 +121,7 @@ void HUD_Init (void) {
 	if (sceKernelGetModel() == 0x20000) { // PSTV
 		b_lt = Draw_CachePic ("gfx/butticons/backl1_pstv.tga");
 		b_rt = Draw_CachePic ("gfx/butticons/backr1_pstv.tga");
+		b_touch = Draw_CachePic ("gfx/butticons/functouch_pstv.tga");
 		b_lthumb = Draw_CachePic ("gfx/butticons/backl1_pstv.tga"); // Not existent
 		b_rthumb = Draw_CachePic ("gfx/butticons/backr1_pstv.tga"); // Not existent
 		b_lshoulder = Draw_CachePic ("gfx/butticons/backl1_pstv.tga"); // Not existent
@@ -126,6 +129,7 @@ void HUD_Init (void) {
 	} else {
 		b_lt = Draw_CachePic ("gfx/butticons/backl1.tga");
 		b_rt = Draw_CachePic ("gfx/butticons/backr1.tga");
+		b_touch = Draw_CachePic ("gfx/butticons/functouch.tga");
 		b_lthumb = Draw_CachePic ("gfx/butticons/backl1.tga"); // Not existent
 		b_rthumb = Draw_CachePic ("gfx/butticons/backr1.tga"); // Not existent
 		b_lshoulder = Draw_CachePic ("gfx/butticons/backl1.tga"); // Not existent
@@ -597,18 +601,6 @@ void HUD_MaxAmmo(void)
 {
 	maxammoy -= cl.time * 0.003;
 	maxammoopac -= cl.time * 0.05;
-
-/*
-#ifdef VITA
-
-		Draw_ColoredStringScale(vid.width/2 - strlen("Round")*16, 160, "Round", 1, value/255, value/255, 1, 4.0f);
-
-#else
-
-		Draw_ColoredStringScale(vid.width/4 - strlen("Round")*8, vid.height*3/4 - sb_round[0]->height - 10, "Round", 1, value/255, value/255, 1, 2.0f);
-
-#endif // VITA
-*/
 
 #ifdef VITA
 
@@ -1941,6 +1933,51 @@ void HUD_Weapon (void)
 #endif
 }
 
+/*
+===============
+HUD_BettyPrompt
+===============
+*/
+void HUD_BettyPrompt (void)
+{
+	char str[64];
+	char str2[32];
+
+#ifdef VITA
+	strcpy(str, va("Tap    then press %s to\n", GetGrenadeButtonL()));
+	strcpy(str2, "place a Bouncing Betty\n");
+#else
+	strcpy(str, va("Press %s to place a\n", GetBettyButtonL()));
+	strcpy(str2, "Bouncing Betty\n");
+#endif // VITA
+
+	int x, x2, y;
+#ifdef VITA
+	x = (vid.width - strlen(str)*16)/2;
+	x2 = (vid.width - strlen(str2)*16)/2;
+	y = 165;
+#else
+	x = (vid.width - strlen(str)*10)/2;
+	x2 = (vid.width - strlen(str2)*10)/2;
+	y = vid.height*3/4 - sb_round[0]->height - 15;
+#endif // VITA
+
+#ifdef VITA
+
+	Draw_ColoredStringScale(x, y, str, 255, 255, 255, 255, 2.0f);
+	Draw_ColoredStringScale(x, y + 24, str2, 255, 255, 255, 255, 2.0f);
+	Draw_Pic (x + 4*16 - 6, y - 5, b_touch);
+	Draw_Pic (x + 18*16, y - 5, GetButtonIcon("+grenade"));
+
+#else
+
+	Draw_ColoredStringScale(x, y, str, 255, 255, 255, 255, 1.25f);
+	Draw_ColoredStringScale(x, y + 12, str2, 255, 255, 255, 255, 1.25f);
+	Draw_Pic (x + 6*10, y, GetButtonIcon("impulse 33"));
+
+#endif // VITA
+}
+
 //=============================================================================
 
 
@@ -1976,6 +2013,9 @@ void HUD_Draw (void) {
 		HUD_EndScreen ();
 		return;
 	}
+
+	if (bettyprompt_time > sv.time)
+		HUD_BettyPrompt();
 
 	HUD_Blood(); 
 	HUD_Rounds();
