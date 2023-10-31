@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "quakedef.h"
+#include "q_ctype.h"
 
 #define	STRINGTEMP_BUFFERS		1024
 #define	STRINGTEMP_LENGTH		1024
@@ -3123,6 +3124,22 @@ void PF_strtrim (void)
 	G_INT(OFS_RETURN) = PR_SetEngineString(s);
 };
 
+/*
+=================
+PF_strtolower
+
+string strtolower (string)
+=================
+*/
+void PF_strtolower (void)
+{
+	const char *in = G_STRING (OFS_PARM0);
+	char       *out, *result = PR_GetTempString ();
+	for (out = result; *in && out < result + STRINGTEMP_LENGTH - 1;)
+		*out++ = q_tolower (*in++);
+	*out = 0;
+	G_INT (OFS_RETURN) = PR_SetEngineString (result);
+}
 
 /*
 =================
@@ -3806,7 +3823,7 @@ static builtin_t pr_builtin[] =
 	NULL, 						// #477
 	NULL, 						// #478
 	NULL, 						// #479
-	NULL, 						// #480
+	PF_strtolower, 				// #480
 	NULL, 						// #481
 	NULL, 						// #482
 	NULL, 						// #483
