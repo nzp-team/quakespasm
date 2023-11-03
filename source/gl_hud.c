@@ -716,6 +716,7 @@ float 	color_shift_end[3];
 float 	color_shift_steps[3];
 int		color_shift_init;
 float 	blinking;
+float 	endroundchange;
 int 	textstate;
 float 	value, value2;
 
@@ -987,8 +988,16 @@ void HUD_Rounds (void)
 	}
 	else if (cl.stats[STAT_ROUNDCHANGE] == 4)//blink white
 	{
-		blinking = (float)(((int)(realtime*1000)&510) - 255);
-		blinking = abs(blinking);
+		if (endroundchange > cl.time) {
+			blinking = (float)(((int)(realtime*475)&510) - 255);
+			blinking = abs(blinking);
+		} else {
+			if (blinking)
+				blinking = blinking - 1;
+			else
+				blinking = 0;
+		}
+		
 		if (cl.stats[STAT_ROUNDS] > 0 && cl.stats[STAT_ROUNDS] < 11)
 		{
 			for (i = 0; i < cl.stats[STAT_ROUNDS]; i++)
@@ -1063,6 +1072,11 @@ void HUD_Rounds (void)
 			Draw_ColorPic ((2 + x_offset/2)*(vid.width/2)/272, vid.height - sb_round_num[num[0]]->height - 4, sb_round_num[num[0]], 1, 1, 1, blinking/255);
 			x_offset = x_offset + sb_round_num[num[0]]->width - 8;
 		#endif
+		}
+
+		if (endroundchange == 0) {
+			endroundchange = cl.time + 7.5;
+			blinking = 0;
 		}
 	}
 	else if (cl.stats[STAT_ROUNDCHANGE] == 5)//blink white
@@ -1149,9 +1163,16 @@ void HUD_Rounds (void)
 	}
 	else if (cl.stats[STAT_ROUNDCHANGE] == 6)//blink white while fading back
 	{
+		if (endroundchange) {
+			endroundchange = 0;
+			blinking = 0;
+		}
+
 		color_shift_init = 0;
-		blinking = ((int)(realtime*1000)&510) - 255;
-		blinking = abs(blinking);
+
+		blinking += host_frametime*475;
+		if (blinking > 255) blinking = 255;
+
 		if (cl.stats[STAT_ROUNDS] > 0 && cl.stats[STAT_ROUNDS] < 11)
 		{
 			for (i = 0; i < cl.stats[STAT_ROUNDS]; i++)
