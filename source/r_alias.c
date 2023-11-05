@@ -1111,7 +1111,7 @@ void R_DrawAliasModel (entity_t *e)
 	
 	//sB porting viewmodel FOV from 3ds build
 	// Special handling of view model to keep FOV from altering look.  Pretty good.  Not perfect but rather close.
-	if (e == &cl.viewent && scr_fov_viewmodel.value) {
+	if ((e == &cl.viewent || e == &cl.viewent2) && scr_fov_viewmodel.value) {
 		float scale = 1.0f / tan (DEG2RAD (scr_fov.value / 2.0f)) * scr_fov_viewmodel.value / 90.0f;
 		glTranslatef (paliashdr->scale_origin[0] * scale, paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
 		glScalef (paliashdr->scale[0] * scale, paliashdr->scale[1], paliashdr->scale[2]);
