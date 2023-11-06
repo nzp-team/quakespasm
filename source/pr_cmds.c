@@ -3097,31 +3097,30 @@ string strtrim (string)
 */
 void PF_strtrim (void)
 {
-	char *m;
-	m = G_STRING(OFS_PARM0);
-	
-  char *c;
-  char *s;
-  c = m; 
-  
-  while (c != '\0' && *c == ' ')
-    c++;
-  m = c;
-  
-  c = m + strlen (m) - 1;
-  while (c >= m)
-  {
-    if (*c == ' ')
-      *c = '\0';
-    else
-      break;
-      c--;
-  }
+	const char *str = G_STRING (OFS_PARM0);
+	const char *end;
+	char       *news;
+	size_t      len;
 
-  	s = PR_GetTempString();
-  	strcpy(s, m);
+	// figure out the new start
+	while (*str == ' ' || *str == '\t' || *str == '\n' || *str == '\r')
+		str++;
 
-	G_INT(OFS_RETURN) = PR_SetEngineString(s);
+	// figure out the new end.
+	end = str + strlen (str);
+	while (end > str && (end[-1] == ' ' || end[-1] == '\t' || end[-1] == '\n' || end[-1] == '\r'))
+		end--;
+
+	// copy that substring into a tempstring.
+	len = end - str;
+	if (len >= STRINGTEMP_LENGTH)
+		len = STRINGTEMP_LENGTH - 1;
+
+	news = PR_GetTempString ();
+	memcpy (news, str, len);
+	news[len] = 0;
+
+	G_INT (OFS_RETURN) = PR_SetEngineString (news);
 };
 
 /*
