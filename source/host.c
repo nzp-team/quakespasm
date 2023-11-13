@@ -568,6 +568,7 @@ void Host_ClearMemory (void)
 	perk_order[6] = 0;
 	perk_order[7] = 0;
 	cl.perks = 0;
+	cl.maxspeed = 0;
 	current_perk_order = 0;
 	crosshair_spread_time = 0;
 	crosshair_offset_step = 0;

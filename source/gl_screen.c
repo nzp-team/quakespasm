@@ -339,13 +339,13 @@ void SCR_UsePrint (int type, int cost, int weapon)
 			button_pic_x = 5;
 			break;
 		case 3://ammo
-			strcpy(w, PR_GetString(sv_player->v.Weapon_Name_Touch));
+			strcpy(w, cl.touchname);
 			strcpy(s, va("Hold %s to buy Ammo for %s\n", GetUseButtonL(), w, cost));
 			strcpy(c, va("[Cost: %i]\n", cost));
 			button_pic_x = 5;
 			break;
 		case 4://weapon
-			strcpy(w, PR_GetString(sv_player->v.Weapon_Name_Touch));
+			strcpy(w, cl.touchname);
 			strcpy(s, va("Hold %s to buy %s\n", GetUseButtonL(), w, cost));
 			strcpy(c, va("[Cost: %i]\n", cost));
 			button_pic_x = 5;
@@ -361,7 +361,7 @@ void SCR_UsePrint (int type, int cost, int weapon)
 			button_pic_x = 5;
 			break;
 		case 7://box take
-			strcpy(w, PR_GetString(sv_player->v.Weapon_Name_Touch));
+			strcpy(w, cl.touchname);
 			strcpy(s, va("Hold %s for %s\n", GetUseButtonL(), w));
 			strcpy(c, "");
 			button_pic_x = 5;
@@ -1601,7 +1601,7 @@ void SCR_DrawCrosshair (void)
 	
 	float col;
 
-	if (sv_player->v.facingenemy == 1) {
+	if (cl.facingenemy == 1) {
 		col = 0;
 	} else {
 		col = 255;

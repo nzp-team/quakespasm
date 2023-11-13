@@ -28,7 +28,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef VITA
 #include <vitasdk.h>
-#else
+#endif
+#ifdef __SWITCH__
 #include <switch.h>
 #include <switch/runtime/pad.h>
 #endif
@@ -44,7 +45,8 @@ cvar_t gyrosensy = {"gyrosensy", "1.0", CVAR_ARCHIVE};
 
 #ifdef VITA
 SceMotionState motionstate;
-#else
+#endif
+#ifdef __SWITCH__
 PadState gyropad;
 HidSixAxisSensorHandle handles[4];
 #endif
@@ -329,7 +331,8 @@ void CL_AdjustAngles (void)
 		// and the PITCH or the vertical y axis is controlled by angularVelocity.x but its what seems to work
 		float x_gyro_cam = motionstate.angularVelocity.y * gyrosensx.value;
 		float y_gyro_cam = motionstate.angularVelocity.x * gyrosensy.value;
-#else
+#endif
+#ifdef __SWITCH__
 		padUpdate(&gyropad);
 		// Read from the correct sixaxis handle depending on the current input style
 		HidSixAxisSensorState sixaxis = {0};
@@ -350,6 +353,13 @@ void CL_AdjustAngles (void)
 		float x_gyro_cam = sixaxis.angular_velocity.y * (gyrosensx.value*4);
 		float y_gyro_cam = sixaxis.angular_velocity.x * (gyrosensy.value*4);
 #endif // VITA
+
+#ifndef __SWITCH__
+#ifndef VITA
+		float x_gyro_cam = 0;
+		float y_gyro_cam = 0;
+#endif
+#endif
 
 		cl.viewangles[YAW] += x_gyro_cam;
 
@@ -387,7 +397,7 @@ void CL_BaseMove (usercmd_t *cmd)
 	Q_memset (cmd, 0, sizeof(*cmd));
 
 	// cypress - we handle movespeed in QC now.
-	cl_backspeed = cl_forwardspeed = cl_sidespeed = sv_player->v.maxspeed*0.71;
+	cl_backspeed = cl_forwardspeed = cl_sidespeed = cl.maxspeed*0.71;
 
 	// Throttle side and back speeds
 	cl_sidespeed *= 0.8;
@@ -399,14 +409,14 @@ void CL_BaseMove (usercmd_t *cmd)
 
 
 	// Limit max 
-	if (cl_backspeed > sv_player->v.maxspeed) {
-		cl_backspeed = sv_player->v.maxspeed;
+	if (cl_backspeed > cl.maxspeed) {
+		cl_backspeed = cl.maxspeed;
 	}
-	if (cl_sidespeed > sv_player->v.maxspeed) {
-		cl_sidespeed = sv_player->v.maxspeed;
+	if (cl_sidespeed > cl.maxspeed) {
+		cl_sidespeed = cl.maxspeed;
 	}
-	if (cl_forwardspeed > sv_player->v.maxspeed) {
-		cl_forwardspeed = sv_player->v.maxspeed;
+	if (cl_forwardspeed > cl.maxspeed) {
+		cl_forwardspeed = cl.maxspeed;
 	}
 
 
@@ -761,7 +771,8 @@ void CL_InitInput (void)
 #ifdef VITA
 	sceMotionReset();
  	sceMotionStartSampling();
-#else
+#endif
+#ifdef __SWITCH__
 	padConfigureInput(1, HidNpadStyleSet_NpadStandard);
 	padInitializeDefault(&gyropad);
 

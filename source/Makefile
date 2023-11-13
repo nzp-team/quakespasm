@@ -8,7 +8,7 @@
 DO_USERDIRS=0
 
 ### Enable/Disable SDL2
-USE_SDL2=0
+USE_SDL2=1
 
 ### Enable/Disable codecs for streaming music support
 USE_CODEC_WAVE=1
@@ -222,7 +222,9 @@ SYSOBJ_RES :=
 GLOBJS = \
 	gl_refrag.o \
 	gl_rlight.o \
+	gl_rpart.o \
 	gl_rmain.o \
+	gl_hud.o \
 	gl_fog.o \
 	gl_rmisc.o \
 	r_part.o \
@@ -240,8 +242,8 @@ GLOBJS = \
 	r_brush.o \
 	gl_model.o
 
-OBJS := strlcat.o \
-	strlcpy.o \
+OBJS := bsd_strlcat.o \
+	bsd_strlcpy.o \
 	$(GLOBJS) \
 	$(SYSOBJ_INPUT) \
 	$(COMOBJ_SND) \
@@ -270,6 +272,7 @@ OBJS := strlcat.o \
 	cfgfile.o \
 	host.o \
 	host_cmd.o \
+	matrixlib.o \
 	mathlib.o \
 	pr_cmds.o \
 	pr_edict.o \

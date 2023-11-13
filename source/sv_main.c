@@ -781,6 +781,7 @@ SV_WriteClientdataToMessage
 
 ==================
 */
+extern char* pr_strings;
 void SV_WriteClientdataToMessage (edict_t *ent, sizebuf_t *msg)
 {
 	int		bits;
@@ -830,6 +831,18 @@ void SV_WriteClientdataToMessage (edict_t *ent, sizebuf_t *msg)
 
 	if (ent->v.perks)
 		bits |= SU_PERKS;
+
+	if (ent->v.maxspeed)
+		bits |= SU_MAXSPEED;
+
+	if (ent->v.facingenemy)
+		bits |= SU_FACINGENEMY;
+
+	if (ent->v.Weapon_Name)
+		bits |= SU_WEAPONNAME;
+
+	//if (ent->v.ADS_Offset[0])
+	//	bits |= SU_ADSOFS;
 
 	if ( (int)ent->v.flags & FL_ONGROUND)
 		bits |= SU_ONGROUND;
@@ -893,8 +906,44 @@ void SV_WriteClientdataToMessage (edict_t *ent, sizebuf_t *msg)
 			MSG_WriteChar (msg, ent->v.velocity[i]/16);
 	}
 
+	for(i = 0; i < 3; i++)
+		MSG_WriteFloat(msg, ent->v.ADS_Offset[i]);
+
+	for(i = 0; i < 3; i++)
+		MSG_WriteFloat(msg, ent->v.Flash_Offset[i]);
+
+	MSG_WriteByte(msg, ent->v.Flash_Size);
+
 	if (bits & SU_PERKS)
 		MSG_WriteLong (msg, ent->v.perks);
+
+	if (bits & SU_MAXSPEED)
+		MSG_WriteFloat (msg, ent->v.maxspeed);
+
+	if (bits & SU_FACINGENEMY)
+		MSG_WriteByte (msg, ent->v.facingenemy);
+
+	if (bits & SU_WEAPONNAME) {
+		size_t len = 32;
+		if (strlen(pr_strings+ent->v.Weapon_Name) < 32)
+			len = strlen(pr_strings+ent->v.Weapon_Name);
+
+		MSG_WriteByte(msg, len);
+		for(i = 0; i < len; i++) {
+			MSG_WriteChar(msg, (pr_strings+ent->v.Weapon_Name)[i]);
+		}
+	}
+
+	if (bits & SU_TOUCHNAME) {
+		size_t len = 32;
+		if (strlen(pr_strings+ent->v.Weapon_Name_Touch) < 32)
+			len = strlen(pr_strings+ent->v.Weapon_Name_Touch);
+
+		MSG_WriteByte(msg, len);
+		for(i = 0; i < len; i++) {
+			MSG_WriteChar(msg, (pr_strings+ent->v.Weapon_Name_Touch)[i]);
+		}
+	}
 
 	if (bits & SU_WEAPONFRAME)
 		MSG_WriteByte (msg, ent->v.weaponframe);

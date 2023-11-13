@@ -761,7 +761,7 @@ void IN_JoyMove (usercmd_t *cmd)
 	// Naievil -- share speed for the viewangle
 	speed = 1;
 	//shpuld begin
-	if ((in_aimassist.value == 1) && (sv_player->v.facingenemy == 1) && cl.stats[STAT_CURRENTMAG] > 0) {
+	if ((in_aimassist.value == 1) && (cl.facingenemy == 1) && cl.stats[STAT_CURRENTMAG] > 0) {
 		speed *= 0.5;
 	}
 	// additionally, slice look speed when ADS/scopes

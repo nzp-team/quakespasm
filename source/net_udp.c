@@ -49,6 +49,11 @@ sys_socket_t UDP_Init (void)
 	char	*tst;
 	char	buff[MAXHOSTNAMELEN];
 	struct qsockaddr	addr;
+#ifndef VITA
+#ifndef __SWITCH__
+	struct hostent *local;
+#endif
+#endif
 
 	if (COM_CheckParm ("-noudp"))
 		return INVALID_SOCKET;

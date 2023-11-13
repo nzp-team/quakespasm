@@ -415,6 +415,7 @@ void HUD_Points (void)
 {
 	int				i, k, l;
 	int				x, y, f, xplus;
+	float 			r, g, b;
 	scoreboard_t	*s;
 	char str[12];
 
@@ -433,6 +434,14 @@ void HUD_Points (void)
 		s = &cl.scores[k];
 		if (!s->name[0])
 			continue;
+
+		switch(i) {
+			case 0: r = g = b = 1; break;
+			case 1: r = 0; g = 0.46; b = 0.7; break;
+			case 2: r = 0.92; g = 0.74; b = 0; break;
+			case 3: r = 0; g = 0.90; b = 0.13; break;
+			default: r = g = b = 1; break;
+		}
 
 	// draw background
 
@@ -467,17 +476,17 @@ void HUD_Points (void)
 			}
 		}
 #ifdef VITA
-		Draw_StretchPic(12, 407, sb_moneyback, 128, 32);
+		Draw_StretchPic(12, 407 - (35 * i), sb_moneyback, 128, 32);
 #else
-		Draw_StretchPic(8, 629, sb_moneyback, 86, 21);
+		Draw_StretchPic(8, 629 - (24 * i), sb_moneyback, 86, 21);
 #endif // VITA
 		
 #ifdef VITA
 		xplus = HUD_itoa (f, str)*16;
-		Draw_ColoredStringScale (((160 - xplus)/2)-5, 413, va("%i", current_points), 1, 1, 1, 1, 2.0f); //2x Scale/White
+		Draw_ColoredStringScale (((160 - xplus)/2)-5, 413 - (35 * i), va("%i", current_points), r, g, b, 1, 2.0f); //2x Scale/White
 #else
 		xplus = HUD_itoa (f, str)*12;
-		Draw_ColoredStringScale (((111 - xplus)/2)-5, 633, va("%i", current_points), 1, 1, 1, 1, 1.5f);
+		Draw_ColoredStringScale (((111 - xplus)/2)-5, 633 - (24 * i), va("%i", current_points), r, g, b, 1, 1.5f);
 #endif // VITA
 
 		if (old_points != f)
@@ -485,17 +494,17 @@ void HUD_Points (void)
 			if (f > old_points)
 			{
 			#ifdef VITA
-				HUD_Parse_Point_Change(f - old_points, 0, 80 - (xplus), 415);
+				HUD_Parse_Point_Change(f - old_points, 0, 80 - (xplus), 415 - (35 * i));
 			#else 
-				HUD_Parse_Point_Change(f - old_points, 0, 140 - (xplus), y);	
+				HUD_Parse_Point_Change(f - old_points, 0, 140 - (xplus), y - (24 * i));	
 			#endif // VITA
 			}
 			else
 			{
 			#ifdef VITA
-				HUD_Parse_Point_Change(old_points - f, 1, 80 - (xplus), 415);
+				HUD_Parse_Point_Change(old_points - f, 1, 80 - (xplus), 415 - (35 * i));
 			#else
-				HUD_Parse_Point_Change(old_points - f, 1, 140 - (xplus), y);
+				HUD_Parse_Point_Change(old_points - f, 1, 140 - (xplus), y - (24 * i));
 			#endif // VITA
 			}
 			old_points = f;
@@ -1942,7 +1951,7 @@ void HUD_Weapon (void)
 #else
 	y_value = vid.height - 16 - fragpic->height;
 #endif
-	strcpy(str, pr_strings+sv_player->v.Weapon_Name);
+	strcpy(str, cl.weaponname);
 	//strcpy(str, GetWeaponName(cl.stats[STAT_ACTIVEWEAPON]));
 	l = strlen(str);
 #ifdef VITA

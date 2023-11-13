@@ -86,7 +86,7 @@ static void Sys_InitSDL (void)
 #include <vitasdk.h>
 #define DEFAULT_MEMORY (128 * 1024 * 1024) // ericw -- was 72MB (64-bit) / 64MB (32-bit)
 #else
-#define DEFAULT_MEMORY (256 * 1024 * 1024) // ericw -- was 72MB (64-bit) / 64MB (32-bit)
+#define DEFAULT_MEMORY (512 * 1024 * 1024) // ericw -- was 72MB (64-bit) / 64MB (32-bit)
 #endif
 
 static quakeparms_t	parms;

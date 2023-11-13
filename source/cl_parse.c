@@ -779,6 +779,13 @@ void CL_ParseClientdata (void)
 	}
 	//johnfitz
 
+		for(i = 0; i < 3; i++)
+			cl.ads_offset[i] = MSG_ReadFloat();
+		for(i = 0; i < 3; i++)
+			cl.flash_offset[i] = MSG_ReadFloat();
+
+	cl.flash_size = MSG_ReadByte();
+
 	if (bits & SU_PERKS)
 		i = MSG_ReadLong ();
 	else
@@ -962,6 +969,40 @@ void CL_ParseClientdata (void)
 			current_perk_order--;
 		}
 		cl.perks = i;
+	}
+
+	if (bits & SU_MAXSPEED)
+		cl.maxspeed = MSG_ReadFloat();
+	else
+		cl.maxspeed = 0;
+
+	if (bits & SU_FACINGENEMY)
+		cl.facingenemy = MSG_ReadByte();
+	else
+		cl.facingenemy = 0;
+
+	if (bits & SU_WEAPONNAME) {
+		size_t len = MSG_ReadByte();
+
+		for(i = 0; i < 32; i++) {
+			cl.weaponname[i] = 0;
+		}
+
+		for(i = 0; i < len; i++) {
+			cl.weaponname[i] = MSG_ReadChar();
+		}
+	}
+
+	if (bits & SU_TOUCHNAME) {
+		size_t len = MSG_ReadByte();
+
+		for(i = 0; i < 32; i++) {
+			cl.touchname[i] = 0;
+		}
+
+		for(i = 0; i < len; i++) {
+			cl.touchname[i] = MSG_ReadChar();
+		}
 	}
 
 	cl.onground = (bits & SU_ONGROUND) != 0;
