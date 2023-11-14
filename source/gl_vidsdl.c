@@ -82,7 +82,11 @@ static int		nummodes;
 static qboolean	vid_initialized = false;
 
 #if defined(USE_SDL2)
+#ifndef __SWITCH__
 static SDL_Window	*draw_context;
+#else
+extern SDL_Window	*draw_context;
+#endif
 static SDL_GLContext	gl_context;
 #else
 static SDL_Surface	*draw_context;
