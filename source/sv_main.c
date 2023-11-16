@@ -841,6 +841,9 @@ void SV_WriteClientdataToMessage (edict_t *ent, sizebuf_t *msg)
 	if (ent->v.Weapon_Name)
 		bits |= SU_WEAPONNAME;
 
+	if (ent->v.Weapon_Name_Touch)
+		bits |= SU_TOUCHNAME;
+
 	//if (ent->v.ADS_Offset[0])
 	//	bits |= SU_ADSOFS;
 
