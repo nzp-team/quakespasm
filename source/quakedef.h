@@ -337,6 +337,9 @@ typedef struct
 #include "cdaudio.h"
 #include "glquake.h"
 
+#include <ctype.h>
+
+extern short closest_waypoints[MAX_EDICTS];
 
 //=============================================================================
 
@@ -434,6 +437,7 @@ typedef struct
 } waypoint_ai;
 
 extern waypoint_ai waypoints[MAX_WAYPOINTS];
+extern short closest_waypoints[MAX_EDICTS];
 
 #endif	/* QUAKEDEFS_H */
 

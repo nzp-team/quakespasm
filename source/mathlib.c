@@ -352,18 +352,19 @@ vec_t Length(vec3_t v)
 
 float VectorNormalize (vec3_t v)
 {
-	float	ilength;
+	float	length, ilength;
 
-	ilength = rsqrt(DotProduct(v,v));
+	length = sqrt(DotProduct(v,v));
 
-	if (ilength)
+	if (length)
 	{
+		ilength = 1/length;
 		v[0] *= ilength;
 		v[1] *= ilength;
 		v[2] *= ilength;
 	}
 
-	return ilength;
+	return length;
 }
 
 void VectorInverse (vec3_t v)

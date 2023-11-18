@@ -2302,7 +2302,7 @@ int CheckIfWayInList (int listnumber, int waynum)
 float heuristic_cost_estimate (int start_way, int end_way)
 {
 	//for now we will just look the distance between.
-	return VecLength2(waypoints[start_way].origin, waypoints[end_way].origin);
+	return VectorDistanceSquared(waypoints[start_way].origin, waypoints[end_way].origin);
 }
 
 
@@ -2338,6 +2338,7 @@ void reconstruct_path(int start_node, int current_node)
 			//Con_DPrintf("reconstruct_path: waypoints[current].came_from %i is in list!\n", waypoints[current].came_from);
 			for (i = 0;i < 8; i++)
 			{
+				if (waypoints[waypoints[current].came_from].target_id[i] < 0) break;
 				//Con_DPrintf("reconstruct_path for loop: waypoints[waypoints[current].came_from].target_id[i] =  %i, current = %i\n", waypoints[waypoints[current].came_from].target_id[i], current)
 				if (waypoints[waypoints[current].came_from].target_id[i] == current)
 				{
@@ -2355,11 +2356,11 @@ void reconstruct_path(int start_node, int current_node)
 		s++;
 	}
 	Con_DPrintf("\nreconstruct_path: dumping the final list\n");
-	for (s = MAX_WAYPOINTS - 1; s > -1; s--)
+	/*for (s = MAX_WAYPOINTS - 1; s > -1; s--)
 	{
 		//if (proces_list[s])
 			//Con_DPrintf("reconstruct_path final: s = %i, proces_list[s] = %i\n", s, proces_list[s]);
-	}
+	}*/
 }
 
 int Pathfind (int start_way, int end_way)//note thease 2 are ARRAY locations. Not the waypoints names.
@@ -2401,8 +2402,8 @@ int Pathfind (int start_way, int end_way)//note thease 2 are ARRAY locations. No
 
 		for (i = 0;i < 8; i++)
 		{
-
 			//Con_DPrintf("Pathfind for start\n");
+			if (waypoints[current].target_id[i] < 0) break;
 
 			if (!waypoints[waypoints[current].target_id[i]].open)
 			{
@@ -2454,70 +2455,111 @@ Do_Pathfind
 float Do_Pathfind (entity zombie, entity target)
 =================
 */
+float max_waypoint_distance = 750;
+short closest_waypoints[MAX_EDICTS]; 
+
 void Do_Pathfind (void)
 {
-	float best_dist;
-	float dist;
-	int i, s, best, best_target;
+	int i, s;
 	trace_t   trace;
-	edict_t   *ent;
-	edict_t   *zombie;
-	int			entnum;
 
-	entnum = G_EDICTNUM(OFS_PARM0);
-
-	best = 0;
 	Con_DPrintf("Starting Do_Pathfind\n"); //we first need to look for closest point for both zombie and the player
-	zombie = G_EDICT(OFS_PARM0);
-	ent = G_EDICT(OFS_PARM1);
 
-	best_dist = 1000000000;
-	dist = 0;
+	int zombie_entnum = G_EDICTNUM(OFS_PARM0);
+	int target_entnum = G_EDICTNUM(OFS_PARM1);
+	edict_t * zombie = G_EDICT(OFS_PARM0);
+	edict_t * ent = G_EDICT(OFS_PARM1);
 
-	for (i = 0; i < MAX_WAYPOINTS; i++)
-	{
-		if (waypoints[i].used && waypoints[i].open)
-		{
+	float best_dist_z = max_waypoint_distance * max_waypoint_distance;
+	float dist_z = 0;
+	int best_z = -1;
+	float best_dist_e = max_waypoint_distance * max_waypoint_distance;
+	float dist_e = 0;
+	int best_e = -1;
+
+	int prevclosest = closest_waypoints[zombie_entnum];
+	if (prevclosest >= 0) {
+		trace = SV_Move (zombie->v.origin, vec3_origin, vec3_origin, waypoints[prevclosest].origin, 1, zombie);
+		if (trace.fraction >= 1) {
+			dist_z = VectorDistanceSquared(waypoints[prevclosest].origin, zombie->v.origin);
+			best_dist_z = dist_z;
+			best_z = prevclosest;
+		} else {
+			for (s = 0; s < 8; s++) {
+				int neighbor = waypoints[prevclosest].target_id[s];
+				if (neighbor < 0) break;
+
+				dist_z = VectorDistanceSquared(waypoints[neighbor].origin, zombie->v.origin);
+				if (dist_z < best_dist_z) {
+					trace = SV_Move (zombie->v.origin, vec3_origin, vec3_origin, waypoints[neighbor].origin, 1, zombie);
+					if (trace.fraction >= 1) {
+						best_dist_z = dist_z;
+						best_z = neighbor;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	// copypasta, forgive me
+	prevclosest = closest_waypoints[target_entnum];
+	if (prevclosest >= 0) {
+		trace = SV_Move (ent->v.origin, vec3_origin, vec3_origin, waypoints[prevclosest].origin, 1, ent);
+		if (trace.fraction >= 1) {
+			dist_e = VectorDistanceSquared(waypoints[prevclosest].origin, ent->v.origin);
+			best_dist_e = dist_e;
+			best_e = prevclosest;
+		} else {
+			for (s = 0; s < 8; s++) {
+				int neighbor = waypoints[prevclosest].target_id[s];
+				if (neighbor < 0) break;
+
+				dist_e = VectorDistanceSquared(waypoints[neighbor].origin, ent->v.origin);
+				if (dist_e < best_dist_e) {
+					trace = SV_Move (ent->v.origin, vec3_origin, vec3_origin, waypoints[neighbor].origin, 1, ent);
+					if (trace.fraction >= 1) {
+						best_dist_e = dist_e;
+						best_e = neighbor;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	for (i = 0; i < MAX_WAYPOINTS; i++) {
+		if (!waypoints[i].used || !waypoints[i].open)
+			continue;
+		
+		dist_z = VectorDistanceSquared(waypoints[i].origin, zombie->v.origin);
+		if (dist_z < best_dist_z) {
 			trace = SV_Move (zombie->v.origin, vec3_origin, vec3_origin, waypoints[i].origin, 1, zombie);
-			if (trace.fraction >= 1)
-			{
-				dist = VecLength2(waypoints[i].origin, zombie->v.origin);
-
-				if(dist < best_dist)
-				{
-					best_dist = dist;
-					best = i;
-				}
+			if (trace.fraction >= 1) {
+				best_dist_z = dist_z;
+				best_z = i;
 			}
 		}
-	}
 
-	best_dist = 1000000000;
-	dist = 0;
-	best_target = 0;
-	for (i = 0; i < MAX_WAYPOINTS; i++)
-	{
-		if (waypoints[i].used && waypoints[i].open)
-		{
+		dist_e = VectorDistanceSquared(waypoints[i].origin, ent->v.origin);
+		if (dist_e < best_dist_e) {
 			trace = SV_Move (ent->v.origin, vec3_origin, vec3_origin, waypoints[i].origin, 1, ent);
-			if (trace.fraction >= 1)
-			{
-				dist = VecLength2(waypoints[i].origin, ent->v.origin);
-
-				if(dist < best_dist)
-				{
-					best_dist = dist;
-					best_target = i;
-				}
+			if (trace.fraction >= 1) {
+				best_dist_e = dist_e;
+				best_e = i;
 			}
 		}
 	}
-	Con_DPrintf("Starting waypoint: %i, Ending waypoint: %i\n", best, best_target);
-	if (Pathfind(best, best_target))
+
+	closest_waypoints[zombie_entnum] = best_z;
+	closest_waypoints[target_entnum] = best_e;
+
+	Con_DPrintf("Starting waypoint: %i, Ending waypoint: %i\n", best_z, best_e);
+	if (Pathfind(best_z, best_e))
 	{
 		for (i = 0; i < MaxZombies; i++)
 		{
-			if (entnum == zombie_list[i].zombienum)
+			if (zombie_entnum == zombie_list[i].zombienum)
 			{
 				for (s = 0; s < MAX_WAYPOINTS; s++)
 				{
@@ -2531,7 +2573,7 @@ void Do_Pathfind (void)
 				{
 					if (!zombie_list[i].zombienum)
 					{
-						zombie_list[i].zombienum = entnum;
+						zombie_list[i].zombienum = zombie_entnum;
 						for (s = 0; s < MAX_WAYPOINTS; s++)
 						{
 							zombie_list[i].pathlist[s] = proces_list[s];
@@ -2648,13 +2690,13 @@ void Get_Waypoint_Near (void)
 	{
 		if (waypoints[i].open)
 		{
-			trace = SV_Move (ent->v.origin, vec3_origin, vec3_origin, waypoints[i].origin, 1, ent);
-				dist = VecLength2(waypoints[i].origin, ent->v.origin);
+			dist = VecLength2(waypoints[i].origin, ent->v.origin);
 
 				//Con_DPrintf("Waypoint: %i, distance: %f, fraction: %f\n", i, dist, trace.fraction);
-			if (trace.fraction >= 1)
+			if(dist < best_dist)
 			{
-				if(dist < best_dist)
+				trace = SV_Move (ent->v.origin, vec3_origin, vec3_origin, waypoints[i].origin, 1, ent);
+				if (trace.fraction >= 1)
 				{
 					best_dist = dist;
 					best = i;
