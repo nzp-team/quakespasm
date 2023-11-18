@@ -32,6 +32,23 @@ float _mathlib_temp_float1, _mathlib_temp_float2, _mathlib_temp_float3;
 //#define DEG2RAD( a ) ( a * M_PI ) / 180.0F
 #define DEG2RAD( a ) ( (a) * M_PI_DIV_180 ) //johnfitz
 
+float rsqrt( float number )
+{
+	int	i;
+	float	x, y;
+
+	if( number == 0.0f )
+		return 0.0f;
+
+	x = number * 0.5f;
+	i = *(int *)&number;	// evil floating point bit level hacking
+	i = 0x5f3759df - (i >> 1);	// what the fuck?
+	y = *(float *)&i;
+	y = y * (1.5f - (x * y * y));	// first iteration
+
+	return y;
+}
+
 void SinCos( float radians, float *sine, float *cosine )
 {
     *sine = sin(radians);
@@ -335,20 +352,18 @@ vec_t Length(vec3_t v)
 
 float VectorNormalize (vec3_t v)
 {
-	float	length, ilength;
+	float	ilength;
 
-	length = sqrt(DotProduct(v,v));
+	ilength = rsqrt(DotProduct(v,v));
 
-	if (length)
+	if (ilength)
 	{
-		ilength = 1/length;
 		v[0] *= ilength;
 		v[1] *= ilength;
 		v[2] *= ilength;
 	}
 
-	return length;
-
+	return ilength;
 }
 
 void VectorInverse (vec3_t v)

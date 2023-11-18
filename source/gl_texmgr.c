@@ -138,7 +138,7 @@ static void TexMgr_TextureMode_f (cvar_t *var)
 
 	for (i = 0; i < NUM_GLMODES; i++)
 	{
-		if (!Q_strcmp (glmodes[i].name, gl_texturemode.string))
+		if (!strcmp (glmodes[i].name, gl_texturemode.string))
 		{
 			if (glmode_idx != i)
 			{

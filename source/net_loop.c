@@ -54,7 +54,7 @@ void Loop_SearchForHosts (qboolean xmit)
 		return;
 
 	hostCacheCount = 1;
-	if (Q_strcmp(hostname.string, "UNNAMED") == 0)
+	if (strcmp(hostname.string, "UNNAMED") == 0)
 		Q_strcpy(hostcache[0].name, "local");
 	else
 		Q_strcpy(hostcache[0].name, hostname.string);
@@ -68,7 +68,7 @@ void Loop_SearchForHosts (qboolean xmit)
 
 qsocket_t *Loop_Connect (const char *host)
 {
-	if (Q_strcmp(host,"local") != 0)
+	if (strcmp(host,"local") != 0)
 		return NULL;
 
 	localconnectpending = true;

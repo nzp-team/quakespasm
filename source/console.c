@@ -1030,7 +1030,7 @@ void Con_TabComplete (void)
 		match = keydown[K_SHIFT] ? t->prev->name : t->name;
 		do
 		{
-			if (!Q_strcmp(t->name, partial))
+			if (!strcmp(t->name, partial))
 			{
 				match = keydown[K_SHIFT] ? t->prev->name : t->next->name;
 				break;

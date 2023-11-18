@@ -251,7 +251,7 @@ cvar_t *Cvar_FindVar (const char *var_name)
 
 	for (var = cvar_vars ; var ; var = var->next)
 	{
-		if (!Q_strcmp(var_name, var->name))
+		if (!strcmp(var_name, var->name))
 			return var;
 	}
 

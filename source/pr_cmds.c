@@ -1158,6 +1158,7 @@ static void PF_findradius (void)
 
 	org = G_VECTOR(OFS_PARM0);
 	rad = G_FLOAT(OFS_PARM1);
+	rad *= rad;
 
 	ent = NEXT_EDICT(sv.edicts);
 	for (i = 1; i < sv.num_edicts; i++, ent = NEXT_EDICT(ent))
@@ -1168,7 +1169,8 @@ static void PF_findradius (void)
 			continue;
 		for (j = 0; j < 3; j++)
 			eorg[j] = org[j] - (ent->v.origin[j] + (ent->v.mins[j] + ent->v.maxs[j]) * 0.5);
-		if (VectorLength(eorg) > rad)
+		
+		if (DotProduct(eorg, eorg) > rad)
 			continue;
 
 		ent->v.chain = EDICT_TO_PROG(chain);

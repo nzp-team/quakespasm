@@ -1004,7 +1004,7 @@ qboolean SV_SendClientDatagram (client_t *client)
 	msg.cursize = 0;
 
 	//johnfitz -- if client is nonlocal, use smaller max size so packets aren't fragmented
-	if (Q_strcmp(NET_QSocketGetAddressString(client->netconnection), "LOCAL") != 0)
+	if (strcmp(NET_QSocketGetAddressString(client->netconnection), "LOCAL") != 0)
 		msg.maxsize = DATAGRAM_MTU;
 	//johnfitz
 
