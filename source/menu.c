@@ -583,7 +583,7 @@ int	m_main_cursor;
 #ifdef VITA
 #define	MAIN_ITEMS	5
 #else
-#define	MAIN_ITEMS	4
+#define	MAIN_ITEMS	3
 #endif
 
 
@@ -638,7 +638,7 @@ void M_Main_Draw (void)
 
 	DRAW_BLANKOPTION("Achievements", true);
 	DRAW_MENUOPTION(2, "Credits", m_main_cursor, true);
-	DRAW_MENUOPTION(3, "Exit", m_main_cursor, false);
+	//DRAW_MENUOPTION(3, "Exit", m_main_cursor, false);
 
 #endif // VITA
 
@@ -655,7 +655,7 @@ void M_Main_Draw (void)
 #else
 
 		case 2: DRAW_DESCRIPTION("View Credits for NZ:P."); break;
-		case 3: DRAW_DESCRIPTION("Return to Horizon."); break;
+		//case 3: DRAW_DESCRIPTION("Return to Horizon."); break;
 
 #endif // VITA
 
@@ -746,11 +746,9 @@ void M_Main_Key (int key)
 			break;
 	#ifdef VITA
 		case 4:
-	#else
-		case 3:
-	#endif
 			M_Menu_Quit_f ();
 			break;
+	#endif
 		}
 	}
 }
