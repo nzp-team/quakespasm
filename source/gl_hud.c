@@ -71,6 +71,9 @@ qboolean has_chaptertitle;
 
 double HUD_Change_time;//hide hud when not chagned
 double bettyprompt_time;
+double nameprint_time;
+
+char player_name[16];
 
 typedef struct
 {
@@ -2008,6 +2011,33 @@ void HUD_BettyPrompt (void)
 #endif // VITA
 }
 
+/*
+===============
+HUD_PlayerName
+===============
+*/
+void HUD_PlayerName (void)
+{
+	float alpha = 1.0;
+	int x, y;
+	float scale;
+
+#ifdef VITA
+	scale = 2.0f;
+	x = 147;
+	y = 413;
+#else
+	scale = 1.25f;
+	x = 100;
+	y = 633;
+#endif
+
+	if (nameprint_time - sv.time < 1)
+		alpha = (nameprint_time - sv.time);
+
+	Draw_ColoredStringScale(x, y, player_name, 255, 255, 255, alpha, scale);
+}
+
 //=============================================================================
 
 
@@ -2046,6 +2076,9 @@ void HUD_Draw (void) {
 
 	if (bettyprompt_time > sv.time)
 		HUD_BettyPrompt();
+
+	if (nameprint_time > sv.time)
+		HUD_PlayerName();
 
 	HUD_Blood(); 
 	HUD_Rounds();
