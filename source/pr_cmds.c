@@ -1304,6 +1304,34 @@ void PF_GrenadePulse(void)
 
 /*
 =================
+PF_SetDoubleTapVersion
+
+Server tells client which HUD icon
+to draw for Double-Tap (damage buff
+v.s. just rate of fire enhancement).
+
+nzp_setdoubletapver()
+=================
+*/
+void PF_SetDoubleTapVersion(void)
+{
+	client_t	*client;
+	int			entnum;
+	int 		state;
+
+	entnum = G_EDICTNUM(OFS_PARM0);
+	state = G_FLOAT(OFS_PARM1);
+
+	if (entnum < 1 || entnum > svs.maxclients)
+		return;
+
+	client = &svs.clients[entnum-1];
+	MSG_WriteByte (&client->message, svc_doubletap);
+	MSG_WriteByte (&client->message, state);
+}
+
+/*
+=================
 PF_BettyPrompt
 
 draws status on hud on
@@ -3921,6 +3949,7 @@ static builtin_t pr_builtin[] =
 	PF_MaxZombies, 				// #503
 	PF_BettyPrompt,				// #504
 	PF_SetPlayerName, 			// #505
+	PF_SetDoubleTapVersion,		// #506
 };
 
 builtin_t *pr_builtins = pr_builtin;

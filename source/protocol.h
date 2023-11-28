@@ -216,6 +216,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define svc_pulse 				47 // 47
 #define svc_bettyprompt			48 // 48
 #define svc_playername			49 // 49
+#define svc_doubletap			50 // 50
 
 #define svc_limbupdate  		51
 #define	svc_achievement    		52      // [string] name [byte] decal_size [coords] pos

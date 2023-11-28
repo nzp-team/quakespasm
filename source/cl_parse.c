@@ -1264,6 +1264,7 @@ CL_ParseServerMessage
 =====================
 */
 extern double bettyprompt_time;
+extern qboolean doubletap_has_damage_buff;
 void CL_ParseServerMessage (void)
 {
 	int			cmd;
@@ -1597,6 +1598,10 @@ void CL_ParseServerMessage (void)
 		case svc_playername:
 			nameprint_time = sv.time + 11;
 			strcpy(player_name, MSG_ReadString());
+			break;
+
+		case svc_doubletap:
+			doubletap_has_damage_buff = MSG_ReadByte();
 			break;
 
 		//case svc_bspdecal:

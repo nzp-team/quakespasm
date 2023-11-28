@@ -49,6 +49,7 @@ qpic_t		*jugpic;
 qpic_t		*floppic;
 qpic_t		*staminpic;
 qpic_t		*doublepic;
+qpic_t 		*doublepic2;
 qpic_t		*speedpic;
 qpic_t		*deadpic;
 qpic_t 		*mulepic;
@@ -68,6 +69,7 @@ float round_center_y;
 extern qboolean paused_hack;
 qboolean domaxammo;
 qboolean has_chaptertitle;
+qboolean 	doubletap_has_damage_buff;
 
 double HUD_Change_time;//hide hud when not chagned
 double bettyprompt_time;
@@ -114,6 +116,7 @@ void HUD_Init (void) {
 	floppic = Draw_CachePic ("gfx/hud/flopper.tga");
 	staminpic = Draw_CachePic ("gfx/hud/stamin.tga");
 	doublepic = Draw_CachePic ("gfx/hud/double.tga");
+	doublepic2 = Draw_CachePic ("gfx/hud/double2.tga");
 	speedpic = Draw_CachePic ("gfx/hud/speed.tga");
 	deadpic = Draw_CachePic ("gfx/hud/dead.tga");
 	mulepic = Draw_CachePic ("gfx/hud/mule.tga");
@@ -1480,12 +1483,19 @@ void HUD_Perks (void)
 	scale = 26;
 #endif // VITA
 
+	// Double-Tap 2.0 specialty icon
+	qpic_t* double_tap_icon;
+	if (doubletap_has_damage_buff)
+		double_tap_icon = doublepic2;
+	else
+		double_tap_icon = doublepic;
+
 	// Draw second column first -- these need to be
 	// overlayed below the first column.
 	for (int i = 4; i < 8; i++) {
 		if (perk_order[i]) {
 			if (perk_order[i] == P_JUG) {Draw_StretchPic(x, y, jugpic, scale, scale);}
-			if (perk_order[i] == P_DOUBLE) {Draw_StretchPic(x, y, doublepic, scale, scale);}
+			if (perk_order[i] == P_DOUBLE) {Draw_StretchPic(x, y, double_tap_icon, scale, scale);}
 			if (perk_order[i] == P_SPEED) {Draw_StretchPic(x, y, speedpic, scale, scale);}
 			if (perk_order[i] == P_REVIVE) {Draw_StretchPic(x, y, revivepic, scale, scale);}
 			if (perk_order[i] == P_FLOP) {Draw_StretchPic(x, y, floppic, scale, scale);}
@@ -1508,7 +1518,7 @@ void HUD_Perks (void)
 	for (int i = 0; i < 4; i++) {
 		if (perk_order[i]) {
 			if (perk_order[i] == P_JUG) {Draw_StretchPic(x, y, jugpic, scale, scale);}
-			if (perk_order[i] == P_DOUBLE) {Draw_StretchPic(x, y, doublepic, scale, scale);}
+			if (perk_order[i] == P_DOUBLE) {Draw_StretchPic(x, y, double_tap_icon, scale, scale);}
 			if (perk_order[i] == P_SPEED) {Draw_StretchPic(x, y, speedpic, scale, scale);}
 			if (perk_order[i] == P_REVIVE) {Draw_StretchPic(x, y, revivepic, scale, scale);}
 			if (perk_order[i] == P_FLOP) {Draw_StretchPic(x, y, floppic, scale, scale);}
