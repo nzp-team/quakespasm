@@ -683,63 +683,206 @@ void Sky_EmitSkyBoxVertex (float s, float t, int axis)
 	glVertex3fv (v);
 }
 
+extern float fog_red, fog_green, fog_blue;
+extern vec3_t	NULLVEC;
+void DrawSkyFogBlend (float skydepth) {
+	float skyfogblend = 0.6f;
+	//if (skyfogblend <= 0) return;
+
+	float endheight = skydepth * skyfogblend;
+	float startheight = MIN(skydepth * 0.075f, endheight * 0.3f);
+
+	glDisable(GL_TEXTURE_2D);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_BLEND);
+
+	float r = MIN(1.0f, fog_red * 0.01f);
+	float g = MIN(1.0f, fog_green * 0.01f);
+	float b = MIN(1.0f, fog_blue * 0.01f);
+
+	for (int i = -2; i < 2; i++) {
+		for (int j = 0; j < 2; j++) {
+			const int unclipped_vertex_count = 4;
+			vec3_t verts[unclipped_vertex_count];
+			vec3_t angles, forward, right;
+			angles[PITCH] = 0.f;
+			angles[YAW] = r_refdef.viewangles[YAW];
+			angles[ROLL] = 0.f;
+			AngleVectors(angles, forward, right, NULLVEC);
+
+			float forwardamount = skydepth * (0.7f - abs(i*i) * 0.15f); 
+			float forwardamount2 = skydepth * (0.7f - abs((i + 1)*(i + 1)) * 0.15f); 
+			qboolean no_alpha = j > 0;
+			//unsigned int uppercolor = j > 0 ? fogcol2 : fogcol1;
+			
+			float bottomheight = j > 0 ? startheight : -1.0f;
+			float topheight = j > 0 ? endheight : startheight;
+			bottomheight -= 40.0f;
+			topheight -= 40.0f;
+
+			glBegin(GL_QUADS);
+		
+			verts[0][0] = r_origin[0] + forward[0] * forwardamount + i * right[0] * skydepth;
+			verts[0][1] = r_origin[1] + forward[1] * forwardamount + i * right[1] * skydepth;
+			verts[0][2] = r_origin[2] + forward[2] * forwardamount + i * right[2] * skydepth + bottomheight;
+			glColor4f(r, g, b, 1.0f);
+			glVertex3fv(verts[0]);
+
+			verts[1][0] = r_origin[0] + forward[0] * forwardamount + i * right[0] * skydepth;
+			verts[1][1] = r_origin[1] + forward[1] * forwardamount + i * right[1] * skydepth;
+			verts[1][2] = r_origin[2] + forward[2] * forwardamount + i * right[2] * skydepth + topheight;
+			if (no_alpha)
+				glColor4f(r, g, b, 0.0f);
+			else
+				glColor4f(r, g, b, 1.0f);
+			glVertex3fv(verts[1]);
+		
+			verts[2][0] = r_origin[0] + forward[0] * forwardamount2 + (i + 1) * right[0] * skydepth;
+			verts[2][1] = r_origin[1] + forward[1] * forwardamount2 + (i + 1) * right[1] * skydepth;
+			verts[2][2] = r_origin[2] + forward[2] * forwardamount2 + (i + 1) * right[2] * skydepth + topheight;
+			if (no_alpha)
+				glColor4f(r, g, b, 0.0f);
+			else
+				glColor4f(r, g, b, 1.0f);
+			glVertex3fv(verts[2]);
+
+			verts[3][0] = r_origin[0] + forward[0] * forwardamount2 + (i + 1) * right[0] * skydepth;
+			verts[3][1] = r_origin[1] + forward[1] * forwardamount2 + (i + 1) * right[1] * skydepth;
+			verts[3][2] = r_origin[2] + forward[2] * forwardamount2 + (i + 1) * right[2] * skydepth + bottomheight;
+			glColor4f(r, g, b, 1.0f);
+			glVertex3fv(verts[3]);
+
+			glEnd();
+		}
+	}
+
+	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
+}
+
 /*
 ==============
 Sky_DrawSkyBox
-
-FIXME: eliminate cracks by adding an extra vert on tjuncs
 ==============
 */
+typedef struct
+{
+	float	x, y, z;
+	float	s, t;
+	float	r, g, b;
+} glvert_t;
+
+float skynormals[5][3] = {
+	{ 1.f, 0.f, 0.f },
+	{ -1.f, 0.f, 0.f },
+	{ 0.f, 1.f, 0.f },
+	{ 0.f, -1.f, 0.f },
+	{ 0.f, 0.f, 1.f }
+};
+
+float skyrt[5][3] = {
+	{ 0.f, -1.f, 0.f },
+	{ 0.f, 1.f, 0.f },
+	{ 1.f, 0.f, 0.f },
+	{ -1.f, 0.f, 0.f },
+	{ 0.f, -1.f, 0.f }
+};
+
+float skyup[5][3] = {
+	{ 0.f, 0.f, 1.f },
+	{ 0.f, 0.f, 1.f },
+	{ 0.f, 0.f, 1.f },
+	{ 0.f, 0.f, 1.f },
+	{ -1.f, 0.f, 0.f }
+};
+
 void Sky_DrawSkyBox (void)
 {
-	int		i;
+	int 	i, j, k;
+	vec3_t 	v;
+	float 	s, t;
 
-	for (i=0 ; i<6 ; i++)
+	glDisable(GL_BLEND);
+	glDisable(GL_ALPHA_TEST);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glDepthMask(GL_FALSE);
+	glDisable(GL_DEPTH_TEST);
+
+	float skydepth = 1000.0f;
+
+	for(i = 0; i < 5; i++)
 	{
-		if (skymins[0][i] >= skymaxs[0][i] || skymins[1][i] >= skymaxs[1][i])
-			continue;
+		const int vertex_count = 4;
+		glvert_t sky_vertices[vertex_count];
+
+		// check if poly needs to be drawn at all
+		float dot = DotProduct(skynormals[i], vpn);
+		// < 0 check would work at fov 90 or less, just guess a value that's high enough?
+		if (dot < -0.25f) continue;
 
 		GL_Bind (skybox_textures[skytexorder[i]]);
 
-#if 1 //FIXME: this is to avoid tjunctions until i can do it the right way
-		skymins[0][i] = -1;
-		skymins[1][i] = -1;
-		skymaxs[0][i] = 1;
-		skymaxs[1][i] = 1;
-#endif
-		glBegin (GL_QUADS);
-		Sky_EmitSkyBoxVertex (skymins[0][i], skymins[1][i], i);
-		Sky_EmitSkyBoxVertex (skymins[0][i], skymaxs[1][i], i);
-		Sky_EmitSkyBoxVertex (skymaxs[0][i], skymaxs[1][i], i);
-		Sky_EmitSkyBoxVertex (skymaxs[0][i], skymins[1][i], i);
-		glEnd ();
+		// if direction is not up, cut "down" vector to zero to only render half cube
+		//float upnegfact = i == 4 ? 1.0f : 0.0f;
+		float upnegfact = 1.0f;
 
-		rs_skypolys++;
-		rs_skypasses++;
+		float skyboxtexsize = 256.f;
+		// move ever so slightly less towards forward to make edges overlap a bit, just to not have shimmering pixels between sky edges
+		float forwardfact = 0.99f;
 
-		/*if (Fog_GetDensity() > 0 && skyfog > 0)
-		{
-			float *c;
+		glBegin(GL_QUADS);
 
-			c = Fog_GetColor();
-			glEnable (GL_BLEND);
-			glDisable (GL_TEXTURE_2D);
-			glColor4f (c[0],c[1],c[2], CLAMP(0.0,skyfog,1.0));
+		sky_vertices[0].s = 0.5f / skyboxtexsize;
+		sky_vertices[0].t = (skyboxtexsize - .5f) / skyboxtexsize;
+		sky_vertices[0].x = r_origin[0] + (forwardfact * skynormals[i][0] - skyrt[i][0] - skyup[i][0] * upnegfact) * skydepth;
+		sky_vertices[0].y = r_origin[1] + (forwardfact * skynormals[i][1] - skyrt[i][1] - skyup[i][1] * upnegfact) * skydepth;
+		sky_vertices[0].z = r_origin[2] + (forwardfact * skynormals[i][2] - skyrt[i][2] - skyup[i][2] * upnegfact) * skydepth;
+		v[0] = sky_vertices[0].x;
+		v[1] = sky_vertices[0].y;
+		v[2] = sky_vertices[0].z;
+		glTexCoord2f (sky_vertices[0].s, sky_vertices[0].t);
+		glVertex3fv (v);
 
-			glBegin (GL_QUADS);
-			Sky_EmitSkyBoxVertex (skymins[0][i], skymins[1][i], i);
-			Sky_EmitSkyBoxVertex (skymins[0][i], skymaxs[1][i], i);
-			Sky_EmitSkyBoxVertex (skymaxs[0][i], skymaxs[1][i], i);
-			Sky_EmitSkyBoxVertex (skymaxs[0][i], skymins[1][i], i);
-			glEnd ();
+		sky_vertices[1].s = 0.5f / skyboxtexsize;
+		sky_vertices[1].t = 0.5f / skyboxtexsize;
+		sky_vertices[1].x = r_origin[0] + (forwardfact * skynormals[i][0] - skyrt[i][0] + skyup[i][0]) * skydepth;
+		sky_vertices[1].y = r_origin[1] + (forwardfact * skynormals[i][1] - skyrt[i][1] + skyup[i][1]) * skydepth;
+		sky_vertices[1].z = r_origin[2] + (forwardfact * skynormals[i][2] - skyrt[i][2] + skyup[i][2]) * skydepth;
+		v[0] = sky_vertices[1].x;
+		v[1] = sky_vertices[1].y;
+		v[2] = sky_vertices[1].z;
+		glTexCoord2f (sky_vertices[1].s, sky_vertices[1].t);
+		glVertex3fv (v);
 
-			glColor3f (1, 1, 1);
-			glEnable (GL_TEXTURE_2D);
-			glDisable (GL_BLEND);
+		sky_vertices[2].s = (skyboxtexsize - .5f) / skyboxtexsize;
+		sky_vertices[2].t = 0.5f / skyboxtexsize;
+		sky_vertices[2].x = r_origin[0] + (forwardfact * skynormals[i][0] + skyrt[i][0] + skyup[i][0]) * skydepth;
+		sky_vertices[2].y = r_origin[1] + (forwardfact * skynormals[i][1] + skyrt[i][1] + skyup[i][1]) * skydepth;
+		sky_vertices[2].z = r_origin[2] + (forwardfact * skynormals[i][2] + skyrt[i][2] + skyup[i][2]) * skydepth;
+		v[0] = sky_vertices[2].x;
+		v[1] = sky_vertices[2].y;
+		v[2] = sky_vertices[2].z;
+		glTexCoord2f (sky_vertices[2].s, sky_vertices[2].t);
+		glVertex3fv (v);
 
-			rs_skypasses++;
-		}*/
+		sky_vertices[3].s = (skyboxtexsize - .5f) / skyboxtexsize;
+		sky_vertices[3].t = (skyboxtexsize - .5f) / skyboxtexsize;
+		sky_vertices[3].x = r_origin[0] + (forwardfact * skynormals[i][0] + skyrt[i][0] - skyup[i][0] * upnegfact) * skydepth;
+		sky_vertices[3].y = r_origin[1] + (forwardfact * skynormals[i][1] + skyrt[i][1] - skyup[i][1] * upnegfact) * skydepth;
+		sky_vertices[3].z = r_origin[2] + (forwardfact * skynormals[i][2] + skyrt[i][2] - skyup[i][2] * upnegfact) * skydepth;
+		v[0] = sky_vertices[3].x;
+		v[1] = sky_vertices[3].y;
+		v[2] = sky_vertices[3].z;
+		glTexCoord2f (sky_vertices[3].s, sky_vertices[3].t);
+		glVertex3fv (v);
+
+		glEnd();
 	}
+
+	DrawSkyFogBlend(256.0f);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
 }
 
 //==============================================================================
@@ -1028,5 +1171,4 @@ void Sky_DrawSky (void)
 	}
 
 	Fog_EnableGFog ();
-
 }
