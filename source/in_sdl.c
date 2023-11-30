@@ -695,6 +695,7 @@ extern float cl_forwardspeed;
 extern float cl_sidespeed;
 extern cvar_t in_aimassist;
 qboolean croshhairmoving;
+extern qboolean paused_hack;
 
 float client_sprinting;
 
@@ -773,8 +774,11 @@ void IN_JoyMove (usercmd_t *cmd)
 	speed = speed * (sensitivity.value / 11.0);
 
 	//shpuld end
-	cl.viewangles[YAW] -= lookEased.x * speed * joy_sensitivity_yaw.value * host_frametime;
-	cl.viewangles[PITCH] += lookEased.y * speed * joy_sensitivity_pitch.value * (joy_invert.value ? -1.0 : 1.0) * host_frametime;
+	if(paused_hack != true)
+	{
+		cl.viewangles[YAW] -= lookEased.x * speed * joy_sensitivity_yaw.value * host_frametime;
+		cl.viewangles[PITCH] += lookEased.y * speed * joy_sensitivity_pitch.value * (joy_invert.value ? -1.0 : 1.0) * host_frametime;
+	}
 
 	if (lookEased.x != 0 || lookEased.y != 0)
 		V_StopPitchDrift();
