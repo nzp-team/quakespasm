@@ -31,6 +31,8 @@ void early_fatal_error(const char *msg) {
 }
 
 void DrawExtractorDialog(int index, float file_extracted_bytes, float extracted_bytes, float file_total_bytes, float total_bytes, char *filename, int num_files) {
+	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DEFAULT);
+	
 	ImGui_ImplVitaGL_NewFrame();
 	
 	char msg1[256], msg2[256];
@@ -51,11 +53,11 @@ void DrawExtractorDialog(int index, float file_extracted_bytes, float extracted_
 	ImGui::ProgressBar(extracted_bytes / total_bytes, ImVec2(200, 0));
 	
 	ImGui::End();
+	
 	glViewport(0, 0, static_cast<int>(ImGui::GetIO().DisplaySize.x), static_cast<int>(ImGui::GetIO().DisplaySize.y));
 	ImGui::Render();
 	ImGui_ImplVitaGL_RenderDrawData(ImGui::GetDrawData());
 	vglSwapBuffers(GL_FALSE);
-	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DEFAULT);
 }
 
 void DrawDownloaderDialog(int index, float downloaded_bytes, float total_bytes, char *text, int passes, bool self_contained) {
@@ -96,4 +98,5 @@ void DrawDownloaderDialog(int index, float downloaded_bytes, float total_bytes, 
 		ImGui_ImplVitaGL_RenderDrawData(ImGui::GetDrawData());
 		vglSwapBuffers(GL_FALSE);
 	}
+	
 }
