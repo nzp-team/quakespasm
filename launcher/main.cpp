@@ -9,10 +9,14 @@
 #include <string>
 #include <cstring>
 #include <taihen.h>
+#include <psp2/ctrl.h> 
 #include "unzip.h"
 #include "utils.h"
 #include "dialogs.h"
 #include "network.h"
+
+#define SCR_WIDTH 960
+#define SCR_HEIGHT 544
 
 int _newlib_heap_size_user = 256 * 1024 * 1024;
 
@@ -71,7 +75,23 @@ void extract_file(char *file, char *dir) {
 	ImGui::GetIO().MouseDrawCursor = false;
 }
 
+void download_update() 
+{
+	sceAppMgrUmount("app0:");
+	download_file("https://github.com/nzp-team/nzportable/releases/download/nightly/nzportable-vita.zip", "Downloading update");
+	extract_file(TEMP_DOWNLOAD_NAME, "ux0:/");
+	sceIoRemove(TEMP_DOWNLOAD_NAME);
+	extract_file("ux0:data/nzp.vpk", "ux0:app/NZZMBSPTB/");
+	sceIoRemove("ux0:data/nzp.vpk");
+							
+	printf("%s\n", generic_mem_buffer);
+	sceAppMgrLoadExec("app0:nzp.bin", NULL, NULL);
+	return 0;
+}
+
 int main(int argc, char *argv[]) {
+	bool optionsmenu = true;
+	
 	scePowerSetArmClockFrequency(444);
 	scePowerSetBusClockFrequency(222);
 	sceIoRemove(TEMP_DOWNLOAD_NAME);
@@ -87,7 +107,7 @@ int main(int argc, char *argv[]) {
 		initparam.flags = 0;
 		sceNetInit(&initparam);
 	}
-	
+		
 	// Checking for network connection
 	char cur_version[32] = {0};
 	char *start;
@@ -95,61 +115,101 @@ int main(int argc, char *argv[]) {
 	sceNetCtlInit();
 	sceNetCtlInetGetState(&ret);
 	if (ret != SCE_NETCTL_STATE_CONNECTED) {
-		goto launch_nzp;
+		sceAppMgrLoadExec("app0:nzp.bin", NULL, NULL);
+		return 0;
 	}
-	
+		
 	// Check for libshacccg.suprx existence
 	if (!file_exists("ur0:/data/libshacccg.suprx") && !file_exists("ur0:/data/external/libshacccg.suprx"))
 		early_fatal_error("Error: libshacccg.suprx is not installed.");
 	
 	// Starting dear ImGui
-	vglInitExtended(0, 960, 544, 0x1800000, SCE_GXM_MULTISAMPLE_NONE);
+	vglInitExtended(0, SCR_WIDTH, SCR_HEIGHT, 0x1800000, SCE_GXM_MULTISAMPLE_NONE);
+	
 	ImGui::CreateContext();
+	
 	SceKernelThreadInfo info;
 	info.size = sizeof(SceKernelThreadInfo);
-	ImGui_ImplVitaGL_Init_Extended();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui_ImplVitaGL_Init();
 	ImGui::GetIO().MouseDrawCursor = false;
 	
-	// Getting current version
-	f = fopen("ux0:data/nzp/nzp/version.txt", "r");
-	if (f) {
-		fread(cur_version, 1, 32, f);
-		fclose(f);
-		if (cur_version[strlen(cur_version) - 1] == '\n')
-			cur_version[strlen(cur_version) - 1] = 0;
-	} else {
-		goto download_update;
-	}
-	printf("Current version: %s\n", cur_version);
-	
-	// Checking for updates
-	download_file("https://api.github.com/repos/nzp-team/nzportable/releases/tags/nightly", "Checking for updates");
-	f = fopen(TEMP_DOWNLOAD_NAME, "r");
-	if (f) {
-		fread(generic_mem_buffer, 1, 32 * 1024 * 1024, f);
-		fclose(f);
-		start = strstr(generic_mem_buffer, "\"name\": \"") + 9;
-		start[strlen(cur_version)] = 0;
-		printf("Last version: %s\n", start);
-		if (!strcmp(cur_version, start)) {
-			printf("Up to date\n");
-			goto launch_nzp;
-		} else {
-download_update:
-			sceAppMgrUmount("app0:");
-			printf("Downloading update\n");
-			download_file("https://github.com/nzp-team/nzportable/releases/download/nightly/nzportable-vita.zip", "Downloading update");
-			printf("Extracting data files\n");
-			extract_file(TEMP_DOWNLOAD_NAME, "ux0:/");
-			sceIoRemove(TEMP_DOWNLOAD_NAME);
-			printf("Extracting vpk\n");
-			extract_file("ux0:data/nzp.vpk", "ux0:app/NZZMBSPTB/");
-			sceIoRemove("ux0:data/nzp.vpk");
+	bool done = false; 
+	while(!done)
+	{
+		ImGui_ImplVitaGL_NewFrame();
+		
+		sceCtrlSetSamplingMode(SCE_CTRL_MODE_ANALOG);
+		SceCtrlData ctrl;
+		sceCtrlPeekBufferPositive(0, &ctrl, 1);
+		
+		if(optionsmenu)
+		{
+			char msg1[256], msg2[256];
+			sprintf(msg1, "Press X to check for updates");
+			sprintf(msg2, "Or press START to slay zombies!");
+			ImVec2 pos1 = ImGui::CalcTextSize(msg1);
+			ImVec2 pos2 = ImGui::CalcTextSize(msg2);
+			
+			ImGui::SetNextWindowPos(ImVec2((SCR_WIDTH / 2) - 200, (SCR_HEIGHT / 2) - 50), ImGuiSetCond_Always);
+			ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiSetCond_Always);
+			ImGui::Begin("", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNav);
+			ImGui::SetCursorPos(ImVec2((400 - pos1.x) / 2, 35));
+			ImGui::Text(msg1);
+			ImGui::SetCursorPos(ImVec2((400 - pos2.x) / 2, 53));
+			ImGui::Text(msg2);
+			ImGui::End();
+			
+			// Rendering
+			glViewport(0, 0, static_cast<int>(ImGui::GetIO().DisplaySize.x), static_cast<int>(ImGui::GetIO().DisplaySize.y));
+			ImGui::Render();
+			ImGui_ImplVitaGL_RenderDrawData(ImGui::GetDrawData());
+			vglSwapBuffers(GL_FALSE);
+		}
+		if(ctrl.buttons & SCE_CTRL_CROSS)
+		{
+			optionsmenu = false;
+			
+			// Getting current version
+			f = fopen("ux0:data/nzp/nzp/version.txt", "r");
+			if (f) {
+				fread(cur_version, 1, 32, f);
+				fclose(f);
+			if (cur_version[strlen(cur_version) - 1] == '\n')
+					cur_version[strlen(cur_version) - 1] = 0;
+			} else {
+				download_update();
+			}
+			printf("Current version: %s\n", cur_version);
+					
+			// Checking for updates
+			download_file("https://api.github.com/repos/nzp-team/nzportable/releases/tags/nightly", "Checking for updates");
+			f = fopen(TEMP_DOWNLOAD_NAME, "r");
+			if (f) {
+				fread(generic_mem_buffer, 1, 32 * 1024 * 1024, f);
+				fclose(f);
+				start = strstr(generic_mem_buffer, "\"name\": \"") + 9;
+				start[strlen(cur_version)] = 0;
+				printf("Last version: %s\n", start);
+				if (!strcmp(cur_version, start)) {
+					sceAppMgrLoadExec("app0:nzp.bin", NULL, NULL);
+					return 0;
+				} else {
+					download_update();
+				}
+			}
+		}
+		if(ctrl.buttons & SCE_CTRL_START)
+		{
+			sceAppMgrLoadExec("app0:nzp.bin", NULL, NULL);
+			return 0;
 		}
 	}
-	printf("%s\n", generic_mem_buffer);
 	
-launch_nzp:
-	sceAppMgrLoadExec("app0:nzp.bin", NULL, NULL);
+	// Cleanup
+	ImGui_ImplVitaGL_Shutdown();
+	ImGui::DestroyContext();
+	vglEnd();
+	
 	return 0;
 }
