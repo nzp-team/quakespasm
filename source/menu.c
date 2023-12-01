@@ -108,11 +108,12 @@ typedef struct
 
 usermap_t custom_maps[50];
 
-#define BASE_MAP_COUNT   3
+#define BASE_MAP_COUNT   4
 char* base_maps [] = 
 {
 	"ndu",
-	"warehouse",
+	"nzp_warehouse",
+	"nzp_warehouse2",
 	"christmas_special"
 };
 
@@ -909,7 +910,7 @@ int x_map_info_disp = 0;
 #endif
 
 int	m_singleplayer_cursor;
-#define	SINGLEPLAYER_ITEMS	5
+#define	SINGLEPLAYER_ITEMS	6
 
 
 void M_Menu_SinglePlayer_f (void)
@@ -924,7 +925,8 @@ void M_SinglePlayer_Draw (void)
 {
 	qpic_t *menu_ndu 	= Draw_CachePic("gfx/menu/nacht_der_untoten.tga");
 	//qpic_t *menu_kn 	= Draw_CachePic("gfx/menu/kino_der_toten.tga");
-	qpic_t *menu_wh 	= Draw_CachePic("gfx/menu/warehouse.tga");
+	qpic_t *menu_wh 	= Draw_CachePic("gfx/menu/nzp_warehouse.tga");
+	qpic_t *menu_wh2 	= Draw_CachePic("gfx/menu/nzp_warehouse2.tga");
 	//qpic_t* menu_wn 	= Draw_CachePic("gfx/menu/wahnsinn.tga");
 	qpic_t* menu_ch 	= Draw_CachePic("gfx/menu/christmas_special.tga");
 	qpic_t* menu_custom = Draw_CachePic("gfx/menu/custom.tga");
@@ -944,13 +946,12 @@ void M_SinglePlayer_Draw (void)
 	// Header
 	DRAW_HEADER("SOLO");
 
-	DRAW_MENUOPTION(0, "Nacht der Untoten", m_singleplayer_cursor, false);
-	DRAW_BLANKOPTION("Kino der Toten", false);
+	DRAW_MENUOPTION(0, "Nacht der Untoten", m_singleplayer_cursor, true);
 	DRAW_MENUOPTION(1, "Warehouse", m_singleplayer_cursor, false);
-	DRAW_BLANKOPTION("Wahnsinn", false);
-	DRAW_MENUOPTION(2, "Christmas Special", m_singleplayer_cursor, true);
-	DRAW_MENUOPTION(3, "Custom Maps", m_singleplayer_cursor, false);
-	DRAW_BACKBUTTON(4, m_singleplayer_cursor);
+	DRAW_MENUOPTION(2, "Warehouse (Classic)", m_singleplayer_cursor, false);
+	DRAW_MENUOPTION(3, "Christmas Special", m_singleplayer_cursor, true);
+	DRAW_MENUOPTION(4, "Custom Maps", m_singleplayer_cursor, false);
+	DRAW_BACKBUTTON(5, m_singleplayer_cursor);
 
 	// Map description & pic
 	switch (m_singleplayer_cursor) {
@@ -966,18 +967,27 @@ void M_SinglePlayer_Draw (void)
 			DRAW_MAPDESC(7, "to the overwhelming onslaught?");
 			break;
 		case 1: 
+			DRAW_MAPTHUMB(menu_wh2);
+			DRAW_MAPDESC(0, "Four nameless marines find them-");
+			DRAW_MAPDESC(1, "selves at a forsaken warehouse,");
+			DRAW_MAPDESC(2, "or is it something more? Fight");
+			DRAW_MAPDESC(3, "your way to uncovering its sec-");
+			DRAW_MAPDESC(4, "rets, though you may not like");
+			DRAW_MAPDESC(5, "what you find..");
+			break;
+		case 2: 
 			DRAW_MAPTHUMB(menu_wh);
 			DRAW_MAPDESC(0, "Old Warehouse full of Zombies!");
 			DRAW_MAPDESC(1, "Fight your way to the Power");
 			DRAW_MAPDESC(2, "Switch through the Hordes!");
 			break;
-		case 2: 
+		case 3: 
 			DRAW_MAPTHUMB(menu_ch);
 			DRAW_MAPDESC(0, "No Santa this year. Though we're");
 			DRAW_MAPDESC(1, "sure you will get presents from");
 			DRAW_MAPDESC(2, "the undead! Will you accept them?");
 			break;
-		case 3: 
+		case 4: 
 			DRAW_MAPTHUMB(menu_custom);
 			DRAW_MAPDESC(0, "Custom Maps made by Community");
 			DRAW_MAPDESC(1, "Members on GitHub and the NZ:P");
@@ -1053,15 +1063,33 @@ void M_SinglePlayer_Key (int key)
 			Cbuf_AddText ("maxplayers 1\n");
 			Cbuf_AddText ("deathmatch 0\n");
 			Cbuf_AddText ("coop 0\n"); 
-			Cbuf_AddText ("map warehouse\n");
+			Cbuf_AddText ("map nzp_warehouse2\n");
 			Cbuf_AddText ("music_loop 0\n");
 			Cbuf_AddText ("music_stop\n");
 			loadingScreen = 1;
-			loadname2 = "warehouse";
+			loadname2 = "nzp_warehouse2";
 			loadnamespec = "Warehouse";
 			break;
 
 		case 2:
+			// Warehouse (Classic)
+			IN_Activate();
+			key_dest = key_game;
+			if (sv.active)
+				Cbuf_AddText ("disconnect\n");
+			
+			Cbuf_AddText ("maxplayers 1\n");
+			Cbuf_AddText ("deathmatch 0\n");
+			Cbuf_AddText ("coop 0\n"); 
+			Cbuf_AddText ("map nzp_warehouse\n");
+			Cbuf_AddText ("music_loop 0\n");
+			Cbuf_AddText ("music_stop\n");
+			loadingScreen = 1;
+			loadname2 = "nzp_warehouse";
+			loadnamespec = "Warehouse (Classic)";
+			break;
+
+		case 3:
 			// Christmas Special
 			IN_Activate();
 			key_dest = key_game;
@@ -1079,12 +1107,12 @@ void M_SinglePlayer_Key (int key)
 			loadnamespec = "Christmas Special";
 			break;
 
-		case 3:
+		case 4:
 			// Custom Maps
 			M_Menu_Maps_f ();
 			break;
 
-		case 4:
+		case 5:
 			// Back
 			M_Menu_Main_f ();
 			break;
