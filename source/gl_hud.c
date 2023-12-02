@@ -42,6 +42,7 @@ qpic_t 		*b_touch;
 qpic_t		*sb_round[5];
 qpic_t		*sb_round_num[10];
 qpic_t		*sb_moneyback;
+qpic_t 		*sb_moneyback_condensed;
 qpic_t		*instapic;
 qpic_t		*x2pic;
 qpic_t 		*revivepic;
@@ -58,8 +59,8 @@ qpic_t		*bettypic;
 
 qpic_t      *fx_blood_lu;
 
-int old_points;
-int current_points;
+int old_points[4]; // cypress -- fix point display in coop.
+int current_points[4]; // cypress -- fix point display in coop.
 int point_change_interval;
 int point_change_interval_neg;
 int alphabling = 0;
@@ -108,6 +109,7 @@ void HUD_Init (void) {
 	}
 
 	sb_moneyback = Draw_CachePic ("gfx/hud/moneyback.tga");
+	sb_moneyback_condensed = Draw_CachePic ("gfx/hud/moneyback_condensed.tga");
 	instapic = Draw_CachePic ("gfx/hud/in_kill.tga");
 	x2pic = Draw_CachePic ("gfx/hud/2x.tga");
 
@@ -194,8 +196,10 @@ void HUD_NewMap (void)
 		point_change[i].alive_time = 0.0;
 	}
 
-	old_points = 500;
-	current_points = 500;
+	for(i = 0; i < 4; i++) {
+		old_points[i] = current_points[i] = 500;
+	}
+
 	point_change_interval = 0;
 	point_change_interval_neg = 0;
 
@@ -453,67 +457,99 @@ void HUD_Points (void)
 
 	// draw number
 		f = s->points;
-		if (f > current_points)
+		if (f > current_points[i])
 		{
 			point_change_interval_neg = 0;
 			if (!point_change_interval)
 			{
-				point_change_interval = (int)(f - old_points)/55;;
+				point_change_interval = (int)(f - old_points[i])/55;;
 			}
-			current_points = old_points + point_change_interval;
-			if (f < current_points)
+			current_points[i] = old_points[i] + point_change_interval;
+			if (f < current_points[i])
 			{
-				current_points = f;
+				current_points[i] = f;
 				point_change_interval = 0;
 			}
 		}
-		else if (f < current_points)
+		else if (f < current_points[i])
 		{
 			point_change_interval = 0;
 			if (!point_change_interval_neg)
 			{
-				point_change_interval_neg = (int)(old_points - f)/55;
+				point_change_interval_neg = (int)(old_points[i] - f)/55;
 			}
-			current_points = old_points - point_change_interval_neg;
-			if (f > current_points)
+			current_points[i] = old_points[i] - point_change_interval_neg;
+			if (f > current_points[i])
 			{
-				current_points = f;
+				current_points[i] = f;
 				point_change_interval_neg = 0;
 			}
 		}
+
+		// Draw a "condensed" version of the score background
+		// if it's for a player other than us, for easier
+		// differential, and screen space saving.
+		qpic_t* moneyback;
+		int x_position;
+		int point_x_offset;
+
+		if (i == cl.viewentity - 1) {
+			moneyback = sb_moneyback;
+
 #ifdef VITA
-		Draw_StretchPic(12, 407 - (35 * i), sb_moneyback, 128, 32);
+			x_position = 12;
+			point_x_offset = 5;
 #else
-		Draw_StretchPic(8, 629 - (24 * i), sb_moneyback, 86, 21);
+			x_position = 5;
+			point_x_offset = 4;
+#endif // VITA
+			
+		} else {
+			moneyback = sb_moneyback_condensed;
+
+#ifdef VITA
+			x_position = 3;
+			point_x_offset = 14;
+#else
+			x_position = -4;
+			point_x_offset = 15;
+#endif // VITA			
+		}
+			
+
+#ifdef VITA
+		Draw_StretchPic(x_position, 407 - (35 * i), moneyback, 128, 32);
+#else
+		Draw_StretchPic(x_position, 629 - (24 * i), moneyback, 86, 21);
 #endif // VITA
 		
 #ifdef VITA
 		xplus = HUD_itoa (f, str)*16;
-		Draw_ColoredStringScale (((160 - xplus)/2)-5, 413 - (35 * i), va("%i", current_points), r, g, b, 1, 2.0f); //2x Scale/White
+		Draw_ColoredStringScale (((160 - xplus)/2)-point_x_offset, 413 - (35 * i), va("%i", current_points[i]), r, g, b, 1, 2.0f); //2x Scale/White
 #else
 		xplus = HUD_itoa (f, str)*12;
-		Draw_ColoredStringScale (((111 - xplus)/2)-5, 633 - (24 * i), va("%i", current_points), r, g, b, 1, 1.5f);
+		Draw_ColoredStringScale (((111 - xplus)/2)-point_x_offset, 633 - (24 * i), va("%i", current_points[i]), r, g, b, 1, 1.5f);
 #endif // VITA
 
-		if (old_points != f)
+		if (old_points[i] != f)
 		{
-			if (f > old_points)
+			if (f > old_points[i])
 			{
 			#ifdef VITA
-				HUD_Parse_Point_Change(f - old_points, 0, 80 - (xplus), 415 - (35 * i));
+				HUD_Parse_Point_Change(f - old_points[i], 0, 80 - (xplus), 415 - (35 * i));
 			#else 
-				HUD_Parse_Point_Change(f - old_points, 0, 140 - (xplus), y - (24 * i));	
+				HUD_Parse_Point_Change(f - old_points[i], 0, 140 - (xplus), y - (28 * i));	
 			#endif // VITA
 			}
 			else
 			{
 			#ifdef VITA
-				HUD_Parse_Point_Change(old_points - f, 1, 80 - (xplus), 415 - (35 * i));
+				HUD_Parse_Point_Change(old_points[i] - f, 1, 80 - (xplus), 415 - (35 * i));
 			#else
-				HUD_Parse_Point_Change(old_points - f, 1, 140 - (xplus), y - (24 * i));
+				HUD_Parse_Point_Change(old_points[i] - f, 1, 140 - (xplus), y - (28 * i));
 			#endif // VITA
 			}
-			old_points = f;
+			old_points[i] = f;
 		}
 		
 		y += 10;
