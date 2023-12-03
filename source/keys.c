@@ -356,8 +356,10 @@ void Key_Console (int key)
 			// for clientside cmds							
 			if (cls.state == ca_connected)
 			{
+#ifndef VITA
 				pr_global_struct->CMD_STRING = (key_lines[edit_line-1]+1 - pr_strings);
 				PR_ExecuteProgram (pr_global_struct->ParseClientCommand);
+#endif // VITA
 			}
 			return;
 		case K_TAB:
@@ -549,7 +551,7 @@ void Key_Console (int key)
 		}
 	}
 
-	
+
 }
 
 void Char_Console (int key)
