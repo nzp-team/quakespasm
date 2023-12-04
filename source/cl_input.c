@@ -450,11 +450,11 @@ void CL_BaseMove (usercmd_t *cmd)
 
 }
 
-int infront(edict_t *ent1, edict_t *ent2)
+int infront(entity_t ent1, entity_t *ent2)
 {
 	vec3_t vec;
 	float dot;
-	VectorSubtract(ent2->v.origin,ent1->v.origin,vec);
+	VectorSubtract(ent2->origin, ent1.origin, vec);
 	VectorNormalize(vec);
 
 	vec3_t temp_angle,temp_forward,temp_right,temp_up;
@@ -470,103 +470,116 @@ int infront(edict_t *ent1, edict_t *ent2)
 	return 0;
 }
 
-int EN_Find(int num,char *string)
+//
+// CL_FindZombieEnt(stat_pos, ent_type)
+// Client-safe way to grab a Zombie ent in current PVS
+// at the given start position (usually last index).
+// entity_t structs do not hold anything like classnames,
+// so we have to, erm, uh, string compare models. yea.
+//
+#define FINDENT_ZOMBIE_BODY	0
+#define FINDENT_ZOMBIE_HEAD	1
+
+int CL_FindZombieEnt(int start_pos, int ent_type)
 {
-	edict_t *ed;
+	entity_t* 	ent;
 
-	int e;
-	e = num;
+	// Start +1 so we aren't always just returning the same dude
+	// over, and over..
+	for (int i = start_pos + 1; i < cl_numvisedicts; i++) {
+		ent = cl_visedicts[i];
 
-	for(e++; e < sv.num_edicts; e++)
-	{
-		ed = EDICT_NUM(e);
-		if(ed->free)
-			continue;
-		
-		if(!strcmp(PR_GetString(ed->v.classname),string))
-		{
-			return e;
+		//
+		// Here's the part I hate!
+		//
+		char ident_char = ent->model->name[strlen(ent->model->name) - 5];
+
+		if ((ident_char == '%' && FINDENT_ZOMBIE_BODY) || (ident_char == '^' && FINDENT_ZOMBIE_HEAD)) {
+			return i;
 		}
+		//
+		// End awful part!
+		//
 	}
+
 	return 0;
 }
 
+#define 	P_DEAD 		64 // FUCK
 void CL_Aim_Snap(void)
 {
-	
-	edict_t *z,*bz,*player;
-	int znum;
-	trace_t trace;
-	float bestDist = 10000;
-	vec3_t distVec, zOrg, pOrg;
-	//32 is v_ofs num
+	entity_t 	*zombie, *best_zombie;
+	entity_t 	client;
+	vec3_t 		distance_vector, zombie_org, client_org;
+	float 		best_distance = 10000;
+	int 		last_visedict_index;
 
-	bz = sv.edicts;
+	best_zombie = cl_visedicts[0]; // set best to world.
 
-	int vofs = 32;//32 is actual v_ofs num
-	int aimOfs = -10;//30 is top of bbox, 20 is our goal, so -10
-	//Zombie body bbox vert max = 30
-	//20 is the offset of the height of the zombie that we're aiming at, 20 above the origin
-	//Crawler body bbox vert max = -15
+	int aim_offset = 20;
 
-	//Equation = origin + bbox vertical offset - 20
+	client = cl_entities[cl.viewentity];
+	VectorCopy(client.origin, client_org);
+	client_org[2] += cl.viewheight; // cypress -- actually grab viewheight now, so stances make sense.
+									// (also helps with crawlers, probably?)
 
-	player = EDICT_NUM(cl.viewentity);
-	VectorCopy(player->v.origin,pOrg);
-	pOrg[2] += vofs;
+	// Snap to the head instead of the torso with Deadshot
+	if (cl.perks & P_DEAD)
+		last_visedict_index = CL_FindZombieEnt(0, FINDENT_ZOMBIE_HEAD);
+	else
+		last_visedict_index = CL_FindZombieEnt(0, FINDENT_ZOMBIE_BODY);
 
-	if (cl.perks & 64)
-    	znum = EN_Find(0,"ai_zombie_head");
-  	else
-    	znum = EN_Find(0,"ai_zombie");
+	zombie = cl_visedicts[last_visedict_index];
 
-	z = EDICT_NUM(znum);
-	VectorCopy(z->v.origin,zOrg);
-	zOrg[2] += z->v.maxs[2];//Setting to top of zomb ent
-	zOrg[2] += aimOfs;
+	while(last_visedict_index != 0) {
+		if (infront(client, zombie)) {
+			VectorCopy(zombie->origin, zombie_org);
 
-	while(znum != 0)
-	{
-		if((z->v.health > 0) && infront(player,z))
-		{
-			VectorCopy(z->v.origin,zOrg);
-			zOrg[2] += aimOfs;
-			VectorSubtract(pOrg,zOrg,distVec);
-			if(VectorLength(distVec) < bestDist)
-			{
-				trace = SV_Move (pOrg, vec3_origin, vec3_origin,zOrg, 1, player);
-				if (trace.fraction >= 1)
-				{
-					bestDist = VectorLength(distVec);
-					bz = z;
+			zombie_org[2] += aim_offset;
+			// If using Deadshot, go up a little more to hit the
+			// center of their head, makes it more obvious.
+			if (cl.perks & P_DEAD)
+				zombie_org[2] += 10;
+
+			VectorSubtract(client_org, zombie_org, distance_vector);
+
+			if (VectorLength(distance_vector) < best_distance) {
+				vec3_t impact;
+				vec3_t normal;
+				if (!TraceLineN(zombie_org, client_org, impact, normal)) {
+					best_distance = VectorLength(distance_vector);
+					best_zombie = zombie;
 				}
 			}
 		}
-		if (cl.perks & 64) {
-		  	znum = EN_Find(znum,"ai_zombie_head");
-		} else {
-      		znum = EN_Find(znum,"ai_zombie");
-    	}
-    	
-		z = EDICT_NUM(znum);
+
+		if (cl.perks & P_DEAD)
+			last_visedict_index = CL_FindZombieEnt(last_visedict_index, FINDENT_ZOMBIE_HEAD);
+		else
+			last_visedict_index = CL_FindZombieEnt(last_visedict_index, FINDENT_ZOMBIE_BODY);
+
+		zombie = cl_visedicts[last_visedict_index];
 	}
 
-	if(bz != sv.edicts)
-	{
-		VectorCopy(bz->v.origin,zOrg);
-		zOrg[2] += bz->v.maxs[2];//Setting to top of bbox
-		zOrg[2] += aimOfs;
-		VectorSubtract(zOrg,pOrg,distVec);
-		VectorNormalize(distVec);
-		vectoangles(distVec,distVec);
-		distVec[0] += (distVec[0]  > 180)? -360 : 0;//Need to bound pitch around 0, from -180, to + 180
-		distVec[0] *= -1;//inverting pitch
+	// We got a decent Zombie, not world.
+	if (best_zombie != cl_visedicts[0]) {
+		VectorCopy(best_zombie->origin, zombie_org);
 
-		if(distVec[0] < -70 || distVec[0] > 80)
-			return;
+		zombie_org[2] += aim_offset;
+		if (cl.perks & P_DEAD)
+			zombie_org[2] += 10;
 
-		VectorCopy(distVec,cl.viewangles);
-	}
+		VectorSubtract(zombie_org, client_org, distance_vector);
+		VectorNormalize(distance_vector);
+		vectoangles(distance_vector, distance_vector);
+		distance_vector[0] += (distance_vector[0]  > 180)? -360 : 0; // Need to bound pitch around 0, from -180, to + 180
+		distance_vector[0] *= -1; // inverting pitch
+
+		if(distance_vector[0] < -70 || distance_vector[0] > 80)
+	 		return;
+
+	 	VectorCopy(distance_vector, cl.viewangles);
+	}	
 }
 
 /*
