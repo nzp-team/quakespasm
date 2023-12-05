@@ -779,15 +779,12 @@ void CL_ParseClientdata (void)
 	}
 	//johnfitz
 
-		for(i = 0; i < 3; i++)
-			cl.ads_offset[i] = MSG_ReadFloat();
-		for(i = 0; i < 3; i++)
-			cl.flash_offset[i] = MSG_ReadFloat();
-
-	cl.flash_size = MSG_ReadByte();
+	// Flash_Offset
+	for(i = 0; i < 3; i++)
+		cl.flash_offset[i] = MSG_ReadFloat();
 
 	if (bits & SU_PERKS)
-		i = MSG_ReadLong ();
+		i = MSG_ReadByte ();
 	else
 		i = 0;
 	if (cl.perks != i)
@@ -981,18 +978,6 @@ void CL_ParseClientdata (void)
 	else
 		cl.facingenemy = 0;
 
-	if (bits & SU_WEAPONNAME) {
-		size_t len = MSG_ReadByte();
-
-		for(i = 0; i < 32; i++) {
-			cl.weaponname[i] = 0;
-		}
-
-		for(i = 0; i < len; i++) {
-			cl.weaponname[i] = MSG_ReadChar();
-		}
-	}
-
 	if (bits & SU_TOUCHNAME) {
 		size_t len = MSG_ReadByte();
 
@@ -1006,7 +991,7 @@ void CL_ParseClientdata (void)
 	}
 
 	cl.onground = (bits & SU_ONGROUND) != 0;
-	cl.inwater = (bits & SU_INWATER) != 0;
+	// cl.inwater = (bits & SU_INWATER) != 0;
 
 	if (bits & SU_WEAPONFRAME)
 		cl.stats[STAT_WEAPONFRAME] = MSG_ReadByte ();
@@ -1018,18 +1003,45 @@ void CL_ParseClientdata (void)
 	else
 		cl.stats[STAT_WEAPONSKIN] = 0;
 
-	if (bits & SU_WEAPON)
-		i = MSG_ReadByte ();
-	else
-		i = 0;
+	// Active Weapon
+	i = MSG_ReadByte ();
+	if (cl.stats[STAT_ACTIVEWEAPON] != i)
+	{
+		cl.stats[STAT_ACTIVEWEAPON] = i;
+	    HUD_Change_time = Sys_DoubleTime() + 5;
+	}
+
+	// Weapon model index
+	i = MSG_ReadByte();
 	if (cl.stats[STAT_WEAPON] != i)
 	{
 		cl.stats[STAT_WEAPON] = i;
 		Sbar_Changed ();
 	}
 
+	// Other weapon stats
+	if (bits & SU_WEAPON) {
+		// Weapon Name
+		size_t len = MSG_ReadByte();
+
+		for(i = 0; i < 32; i++) {
+			cl.weaponname[i] = 0;
+		}
+
+		for(i = 0; i < len; i++) {
+			cl.weaponname[i] = MSG_ReadChar();
+		}
+
+		// Weapon ADS Offset
+		for(i = 0; i < 3; i++)
+			cl.ads_offset[i] = MSG_ReadFloat();
+
+		// Muzzle flash size
+		cl.flash_size = MSG_ReadByte();
+	}
+
 	if (bits & SU_GRENADES)
-		i = MSG_ReadLong ();
+		i = MSG_ReadByte();
 	else
 		i = 0;
 
@@ -1039,7 +1051,7 @@ void CL_ParseClientdata (void)
 		cl.stats[STAT_GRENADES] = i;
 	}
 
-	i = MSG_ReadShort ();
+	i = MSG_ReadByte();
 	if (cl.stats[STAT_PRIGRENADES] != i)
 	{
 		HUD_Change_time = Sys_DoubleTime() + 5;
@@ -1047,14 +1059,14 @@ void CL_ParseClientdata (void)
 	}
 
 
-	i = MSG_ReadShort ();
+	i = MSG_ReadByte();
 	if (cl.stats[STAT_SECGRENADES] != i)
 	{
 		HUD_Change_time = Sys_DoubleTime() + 5;
 		cl.stats[STAT_SECGRENADES] = i;
 	}
 
-	i = MSG_ReadShort ();
+	i = MSG_ReadByte();
 	if (cl.stats[STAT_HEALTH] != i)
 	{
 		cl.stats[STAT_HEALTH] = i;
@@ -1078,13 +1090,6 @@ void CL_ParseClientdata (void)
 	i = MSG_ReadByte ();
 	if (cl.stats[STAT_ZOOM] != i)
 		cl.stats[STAT_ZOOM] = i;
-
-	i = MSG_ReadByte ();
-	if (cl.stats[STAT_ACTIVEWEAPON] != i)
-	{
-		cl.stats[STAT_ACTIVEWEAPON] = i;
-	    HUD_Change_time = Sys_DoubleTime() + 5;
-	}
 
 	// This corresponds to SV_WriteClientdataToMessage
 	i = MSG_ReadByte ();

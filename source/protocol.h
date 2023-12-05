@@ -105,10 +105,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define SU_WEAPONALPHA	(1<<25) // 1 byte, this is alpha for weaponmodel, uses ENTALPHA_ENCODE, not sent if ENTALPHA_DEFAULT
 #define SU_MAXSPEED		(1<<26)
 #define SU_FACINGENEMY	(1<<27)
-#define SU_WEAPONNAME	(1<<28)
-#define SU_TOUCHNAME	(1<<29)
-#define SU_UNUSED30		(1<<30)
-#define SU_EXTEND3		(1<<31) // another byte to follow, future expansion
+#define SU_TOUCHNAME	(1<<28)
+#define SU_UNUSED30		(1<<29)
+#define SU_EXTEND3		(1<<30) // another byte to follow, future expansion
 //johnfitz
 
 // a sound with no channel is a local only sound

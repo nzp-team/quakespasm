@@ -838,20 +838,15 @@ void SV_WriteClientdataToMessage (edict_t *ent, sizebuf_t *msg)
 	if (ent->v.facingenemy)
 		bits |= SU_FACINGENEMY;
 
-	if (ent->v.Weapon_Name)
-		bits |= SU_WEAPONNAME;
-
 	if (ent->v.Weapon_Name_Touch)
 		bits |= SU_TOUCHNAME;
-
-	//if (ent->v.ADS_Offset[0])
-	//	bits |= SU_ADSOFS;
 
 	if ( (int)ent->v.flags & FL_ONGROUND)
 		bits |= SU_ONGROUND;
 
-	if ( ent->v.waterlevel >= 2)
-		bits |= SU_INWATER;
+	// cypress - Water stuff is useless.
+	// if ( ent->v.waterlevel >= 2)
+	// 	bits |= SU_INWATER;
 
 	for (i=0 ; i<3 ; i++)
 	{
@@ -867,8 +862,10 @@ void SV_WriteClientdataToMessage (edict_t *ent, sizebuf_t *msg)
 	if (ent->v.weaponskin)
 		bits |= SU_WEAPONSKIN;
 
-//	if (ent->v.weapon)
+	if ((int)ent->v.weapon != ent->last_weapon) {
 		bits |= SU_WEAPON;
+		ent->last_weapon = (int)ent->v.weapon; // cypress -- don't network a bunch of weapon shit. also, why is this a float?
+	}
 
 	if (ent->v.grenades)
 		bits |= SU_GRENADES;
@@ -909,16 +906,15 @@ void SV_WriteClientdataToMessage (edict_t *ent, sizebuf_t *msg)
 			MSG_WriteChar (msg, ent->v.velocity[i]/16);
 	}
 
-	for(i = 0; i < 3; i++)
-		MSG_WriteFloat(msg, ent->v.ADS_Offset[i]);
-
+	// FIXME: We allow QC to change Flash_Offset on-the-fly
+	// for left-handed weapons. May want to make this it's
+	// own field, but until then it's float spam!
 	for(i = 0; i < 3; i++)
 		MSG_WriteFloat(msg, ent->v.Flash_Offset[i]);
 
-	MSG_WriteByte(msg, ent->v.Flash_Size);
-
+	// WHY WAS THIS A LONG????
 	if (bits & SU_PERKS)
-		MSG_WriteLong (msg, ent->v.perks);
+		MSG_WriteByte (msg, ent->v.perks);
 
 	if (bits & SU_MAXSPEED)
 		MSG_WriteFloat (msg, ent->v.maxspeed);
@@ -926,17 +922,8 @@ void SV_WriteClientdataToMessage (edict_t *ent, sizebuf_t *msg)
 	if (bits & SU_FACINGENEMY)
 		MSG_WriteByte (msg, ent->v.facingenemy);
 
-	if (bits & SU_WEAPONNAME) {
-		size_t len = 32;
-		if (strlen(pr_strings+ent->v.Weapon_Name) < 32)
-			len = strlen(pr_strings+ent->v.Weapon_Name);
-
-		MSG_WriteByte(msg, len);
-		for(i = 0; i < len; i++) {
-			MSG_WriteChar(msg, (pr_strings+ent->v.Weapon_Name)[i]);
-		}
-	}
-
+	// FIXME: I don't really like forcing a pass of 32 bytes per frame whenever
+	// we touch a weapon or something. Kinda lame.
 	if (bits & SU_TOUCHNAME) {
 		size_t len = 32;
 		if (strlen(pr_strings+ent->v.Weapon_Name_Touch) < 32)
@@ -952,20 +939,47 @@ void SV_WriteClientdataToMessage (edict_t *ent, sizebuf_t *msg)
 		MSG_WriteByte (msg, ent->v.weaponframe);
 	if (bits & SU_WEAPONSKIN)
 		MSG_WriteByte (msg, ent->v.weaponskin);
-	if (bits & SU_WEAPON)
-		MSG_WriteByte (msg, SV_ModelIndex(PR_GetString(ent->v.weaponmodel)));
 
+	// Active Weapon
+	MSG_WriteByte (msg, ent->v.weapon);
+
+	// Weapon model index
+	MSG_WriteByte (msg, SV_ModelIndex(PR_GetString(ent->v.weaponmodel)));
+
+	// Cypress -- SU_WEAPON exchanges are now a lot more involved, so they only
+	// happen if absolutely necessary.
+	if (bits & SU_WEAPON) {
+		// Weapon Name
+		size_t len = 32; // hard-coded 32 character limit, deal with it.
+		if (strlen(pr_strings+ent->v.Weapon_Name) < 32)
+			len = strlen(pr_strings+ent->v.Weapon_Name);
+
+		MSG_WriteByte(msg, len);
+		for(i = 0; i < len; i++) {
+			MSG_WriteChar(msg, (pr_strings+ent->v.Weapon_Name)[i]);
+		}
+
+		// Weapon ADS Offset
+		for(i = 0; i < 3; i++)
+			MSG_WriteFloat(msg, ent->v.ADS_Offset[i]);
+
+		// Muzzle flash size
+		MSG_WriteByte(msg, ent->v.Flash_Size);
+	}
+
+	// Why the fuck was this a long?
 	if (bits & SU_GRENADES)
-		MSG_WriteLong (msg, ent->v.grenades);
+		MSG_WriteByte(msg, ent->v.grenades);
 
-	MSG_WriteShort (msg, ent->v.primary_grenades);
-	MSG_WriteShort (msg, ent->v.secondary_grenades);
-	MSG_WriteShort (msg, ent->v.health);
+	// Why the FUCK were these shorts?!?!?
+	MSG_WriteByte (msg, ent->v.primary_grenades);
+	MSG_WriteByte (msg, ent->v.secondary_grenades);
+	MSG_WriteByte (msg, ent->v.health);		// this one was id's 'fault'
+
 	MSG_WriteByte (msg, ent->v.currentammo);
 	MSG_WriteByte (msg, ent->v.currentmag);
 	MSG_WriteByte (msg, ent->v.zoom);
 
-	MSG_WriteByte (msg, ent->v.weapon);
 	MSG_WriteByte (msg, pr_global_struct->rounds); // This cooresponds to CL_ParseClientdata
 	MSG_WriteByte (msg, pr_global_struct->rounds_change);
 	MSG_WriteByte (msg, ent->v.x2_icon);

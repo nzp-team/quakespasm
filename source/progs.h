@@ -46,6 +46,7 @@ typedef struct edict_s
 	int		leafnums[MAX_ENT_LEAFS];
 
 	entity_state_t	baseline;
+	int 			last_weapon; 	/* cypress -- hack to avoid spamming a bunch of data, and only send on wep change */
 	unsigned char	alpha;			/* johnfitz -- hack to support alpha since it's not part of entvars_t */
 	qboolean	sendinterval;		/* johnfitz -- send time until nextthink to client for better lerp timing */
 
