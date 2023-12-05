@@ -1653,10 +1653,11 @@ void W_stov (char *v, vec3_t out)
 }
 
 waypoint_ai waypoints[MAX_WAYPOINTS];
+int n_waypoints;
 void Load_Waypoint ()
 {
 	char temp[64];
-	int i, p, s;
+	int p, s;
 	vec3_t d;
 	int h = 0;
 
@@ -1668,7 +1669,8 @@ void Load_Waypoint ()
 		Con_DPrintf("No waypoint file (%s/maps/%s.way) found\n", com_gamedir, sv.name);
 		return;
 	}
-	for (i = 0; i < MAX_WAYPOINTS; i++)
+	n_waypoints = 0;
+	for (int i = 0; i < MAX_WAYPOINTS; i++)
 	{
 		waypoints[i].used = 0;
 		waypoints[i].id = -1;
@@ -1678,13 +1680,16 @@ void Load_Waypoint ()
 		}
 	}
 
-	for (i = 0; i < MAX_EDICTS; i++)
+	for (int i = 0; i < MAX_EDICTS; i++)
 	{
 		closest_waypoints[i] = -1;
 	}
 
-	i = 0;
 	Con_DPrintf("Loading waypoints\n");
+	int i;
+	// Keep track of the waypoint with the highest index we've loaded
+	int max_waypoint_idx = -1;
+	int n_waypoints_parsed = 0;
 	while (1)
 	{
 		if (strncmp(W_fgets (h), "Waypoint", 8))
@@ -1695,21 +1700,23 @@ void Load_Waypoint ()
 		else
 		{
 			W_fgets (h);
-
 			W_stov (W_substring (W_fgets (h), 9, 20), d);
-
 			strcpy(temp, W_substring (W_fgets (h), 5, 20));
-
 			i = atoi (temp);
 
 			if (i >= MAX_WAYPOINTS)
+			{
 				Sys_Error ("Waypoint with id %d past MAX_WAYPOINTS {%i)\n", i, MAX_WAYPOINTS);
-
+			}
 			// what's the point of id and index being the same?
 			waypoints[i].id = i;
+			n_waypoints_parsed += 1;
+			if(i > max_waypoint_idx)
+			{
+				max_waypoint_idx = i;
+			}
 
 			VectorCopy (d, waypoints[i].origin);
-
 			strcpy(waypoints[i].special, W_substring (W_fgets (h), 10, 20));
 
 			if (waypoints[i].special[0])
@@ -1750,48 +1757,23 @@ void Load_Waypoint ()
 			waypoints[i].target[7]);
 		}
 	}
-	Con_DPrintf("Total waypoints: %i\n", i);
-	for (i = 0;i < MAX_WAYPOINTS; i++) //for sake of saving time later we are now going to save each targets array position and distace to each waypoint
-	{
-		for (p = 0;waypoints[i].target[p]; p++)
-		{
-			if (waypoints[i].target[p] < 0) break;
-
-			for (s = 0; s < MAX_WAYPOINTS; s++)
-			{
-				if (waypoints[i].target[p] == s)
-				{
+	Con_DPrintf("Total waypoints: %i\n, num parsed: %i\n", max_waypoint_idx, n_waypoints_parsed);
+	// Store in global `n_waypoints`
+	n_waypoints = max_waypoint_idx;
+	//for sake of saving time later we are now going to save each targets array position and distace to each waypoint
+	for (i = 0; i < MAX_WAYPOINTS; i++) {
+		for (p = 0; waypoints[i].target[p]; p++) {
+			if (waypoints[i].target[p] < 0) {
+				break;
+			}
+			for (s = 0; s < MAX_WAYPOINTS; s++) {
+				if (waypoints[i].target[p] == s) {
 					waypoints[i].dist[p] = VecLength2(waypoints[s].origin, waypoints[i].origin);
 					break;
 				}
 			}
 		}
 			// Con_DPrintf("Waypoint (%i)target: %i (%i, %f), target2: %i (%i, %f), target3: %i (%i, %f), target4: %i (%i, %f), target5: %i (%i, %f), target6: %i (%i, %f), target7: %i (%i, %f), target8: %i (%i, %f)\n",
-			// waypoints[i].id,
-			// waypoints[i].target[0],
-			// waypoints[i].target_id[0],
-			// waypoints[i].dist[0],
-			// waypoints[i].target[1],
-			// waypoints[i].target_id[1],
-			// waypoints[i].dist[1],
-			// waypoints[i].target[2],
-			// waypoints[i].target_id[2],
-			// waypoints[i].dist[2],
-			// waypoints[i].target[3],
-			// waypoints[i].target_id[3],
-			// waypoints[i].dist[3],
-			// waypoints[i].target[4],
-			// waypoints[i].target_id[4],
-			// waypoints[i].dist[4],
-			// waypoints[i].target[5],
-			// waypoints[i].target_id[5],
-			// waypoints[i].dist[5],
-			// waypoints[i].target[6],
-			// waypoints[i].target_id[6],
-			// waypoints[i].dist[6],
-			// waypoints[i].target[7],
-			// waypoints[i].target_id[7],
-			// waypoints[i].dist[7]);
 	}
 	W_fclose(h);
 	//Z_Free (w_string_temp);
