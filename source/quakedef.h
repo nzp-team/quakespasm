@@ -339,8 +339,6 @@ typedef struct
 
 #include <ctype.h>
 
-extern short closest_waypoints[MAX_EDICTS];
-
 //=============================================================================
 
 // the host system specifies the base of the directory tree, the
@@ -419,6 +417,7 @@ extern int		minimum_memory;
 typedef struct
 {
 	int pathlist [MAX_WAYPOINTS];
+	int pathlist_length;
 	int zombienum;
 } zombie_ai;
 
@@ -437,6 +436,7 @@ typedef struct
 } waypoint_ai;
 
 extern waypoint_ai waypoints[MAX_WAYPOINTS];
+extern int n_waypoints;
 extern short closest_waypoints[MAX_EDICTS];
 
 #endif	/* QUAKEDEFS_H */
