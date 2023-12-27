@@ -54,12 +54,10 @@ jobs:
     steps:
       - name: Download VPK Artifact
         uses: actions/download-artifact@v4
-        working-directory: ./
         with:
           name: vita-nzp-vpk
       - name: Download NRO Artifact
         uses: actions/download-artifact@v4
-        working-directory: ./
         with:
           name: nx-nzp-nro
       - name: Generate Build Date
