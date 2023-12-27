@@ -6,7 +6,8 @@ jobs:
     container:
       image: vitasdk/vitasdk:latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Install Packages and update VitaSDK
         run: |
           apk add bash build-base zip git curl cmake
@@ -24,22 +25,16 @@ jobs:
         working-directory: ./build/vita
         run: |
           zip -r vita-nzp-vpk.zip nzp.vpk
-      - uses: actions/upload-artifact@v3
       - name: Upload Artifact 
+        uses: actions/upload-artifact@v3
         with:
           name: vita-nzp-vpk
           path: ./build/vita/vita-nzp-vpk.zip
   Compile-NRO:
     runs-on: ubuntu-latest
-    needs: Compile-VPK
     container:
       image: devkitpro/devkita64
     steps:
-      - uses: actions/checkout@v2
-      - name: Store VPK link
-        id: vpk
-        run: |
-          echo "::set-output name=vpk::${{ needs.Compile-VPK.outputs.vpk_link }}"
       - name: Build
         working-directory: ./
         run: |
@@ -48,8 +43,8 @@ jobs:
         working-directory: ./build/nx
         run: |
           zip -r nx-nzp-nro.zip nzportable.nro nzportable.nacp
-      - uses: actions/upload-artifact@v3
       - name: Upload Artifact 
+        uses: actions/upload-artifact@v3
         with:
           name: nx-nzp-nro
           path: ./build/nx/nx-nzp-nro.zip
@@ -57,13 +52,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: [Compile-VPK, Compile-NRO]
     steps:
-      - uses: actions/download-artifact@v4
       - name: Download VPK Artifact
+        uses: actions/download-artifact@v4
         working-directory: ./
         with:
           name: vita-nzp-vpk
-      - uses: actions/download-artifact@v4
       - name: Download NRO Artifact
+        uses: actions/download-artifact@v4
         working-directory: ./
         with:
           name: nx-nzp-nro
