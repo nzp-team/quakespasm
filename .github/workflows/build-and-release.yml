@@ -57,6 +57,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ./
+      - name: Turn Artifacts into .ZIP archives
+        run: |
+          zip -r vita-nzp-vpk.zip vita-nzp-vpk/nzp.vpk
+          zip -r nx-nzp-nro.zip nx-nzp-nro/nzportable.nro nx-nzp-nro/nzportable.nacp
       - name: Generate Build Date
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
@@ -90,7 +94,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./vita-nzp-vpk
+          asset_path: ./vita-nzp-vpk.zip
           asset_name: vita-nzp-vpk.zip
           asset_content_type: application/zip
       - name: Upload NX Archive
@@ -99,7 +103,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./nx-nzp-nro
+          asset_path: ./nx-nzp-nro.zip
           asset_name: nx-nzp-nro.zip
           asset_content_type: application/zip
       - name: Publish Release
