@@ -59,8 +59,8 @@ jobs:
           path: ./
       - name: Turn Artifacts into .ZIP archives
         run: |
-          zip -r vita-nzp-vpk.zip vita-nzp-vpk/nzp.vpk
-          zip -r nx-nzp-nro.zip nx-nzp-nro/nzportable.nro nx-nzp-nro/nzportable.nacp
+          zip -r -j vita-nzp-vpk.zip vita-nzp-vpk/*
+          zip -r -j nx-nzp-nro.zip nx-nzp-nro/*
       - name: Generate Build Date
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
