@@ -53,11 +53,11 @@ jobs:
         shell: bash
       - name: Make Artifact Directory
         run: |
-          mkdir /artifacts/
+          mkdir ./artifacts/
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: /artifacts/
+          path: ./artifacts/
       - name: Generate Build Date
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
@@ -91,7 +91,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /artifacts/vita-nzp-vpk.zip
+          asset_path: ./artifacts/vita-nzp-vpk.zip
           asset_name: vita-nzp-vpk.zip
           asset_content_type: application/zip
       - name: Upload NX Archive
@@ -100,7 +100,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /artifacts/nx-nzp-nro.zip
+          asset_path: ./artifacts/nx-nzp-nro.zip
           asset_name: nx-nzp-nro.zip
           asset_content_type: application/zip
       - name: Publish Release
