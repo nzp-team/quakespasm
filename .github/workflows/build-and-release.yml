@@ -16,11 +16,11 @@ jobs:
           git clone https://github.com/bythos14/SceShaccCgExt.git
           cd SceShaccCgExt
           mkdir build && cd build
-          cmake .. && make -j$(numproc) install
+          cmake .. && make -j12 install
       - name: Build
         working-directory: ./
         run: |
-          make -j$(numproc) -f Makefile.vita
+          make -j12 -f Makefile.vita
       - name: Upload Artifact 
         uses: actions/upload-artifact@v4
         with:
@@ -36,7 +36,7 @@ jobs:
       - name: Build
         working-directory: ./
         run: |
-          make -j$(numproc) -f Makefile.nx
+          make -j12 -f Makefile.nx
       - name: Upload Artifact 
         uses: actions/upload-artifact@v4
         with:
@@ -90,7 +90,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./vita-nzp-vpk.zip
+          asset_path: ./vita-nzp-vpk
           asset_name: vita-nzp-vpk.zip
           asset_content_type: application/zip
       - name: Upload NX Archive
@@ -99,7 +99,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./nx-nzp-nro.zip
+          asset_path: ./nx-nzp-nro
           asset_name: nx-nzp-nro.zip
           asset_content_type: application/zip
       - name: Publish Release
