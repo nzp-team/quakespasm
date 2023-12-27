@@ -3,8 +3,6 @@ on: [push]
 jobs:
   Compile-VPK:
     runs-on: ubuntu-latest
-    outputs:
-      vpk_link: ${{ steps.zip.outputs.zip }}
     container:
       image: vitasdk/vitasdk:latest
     steps:
@@ -22,19 +20,18 @@ jobs:
         working-directory: ./
         run: |
           make -j$(numproc) -f Makefile.vita
-      - name: Zip and Upload
-        id: zip
+      - name: Archive
         working-directory: ./build/vita
         run: |
           zip -r vita-nzp-vpk.zip nzp.vpk
-          curl --upload-file ./vita-nzp-vpk.zip https://transfer.sh/vita-nzp-vpk.zip > output-log.log
-          echo "::set-output name=zip::$(cat output-log.log)"
+      - uses: actions/upload-artifact@v3
+      - name: Upload Artifact 
+        with:
+          name: vita-nzp-vpk
+          path: ./build/vita/vita-nzp-vpk.zip
   Compile-NRO:
     runs-on: ubuntu-latest
     needs: Compile-VPK
-    outputs:
-      vpk_link: ${{ steps.vpk.outputs.vpk }}
-      nx_link: ${{ steps.zip.outputs.zip }}
     container:
       image: devkitpro/devkita64
     steps:
@@ -47,23 +44,29 @@ jobs:
         working-directory: ./
         run: |
           make -j$(numproc) -f Makefile.nx
-      - name: Zip and Upload
-        id: zip
+      - name: Archive
         working-directory: ./build/nx
         run: |
           zip -r nx-nzp-nro.zip nzportable.nro nzportable.nacp
-          curl --upload-file ./nx-nzp-nro.zip https://transfer.sh/nx-nzp-nro.zip > output-log.log
-          echo "::set-output name=zip::$(cat output-log.log)"
+      - uses: actions/upload-artifact@v3
+      - name: Upload Artifact 
+        with:
+          name: nx-nzp-nro
+          path: ./build/nx/nx-nzp-nro.zip
   Unify-and-Release:
     runs-on: ubuntu-latest
-    needs: Compile-NRO
+    needs: [Compile-VPK, Compile-NRO]
     steps:
-      - uses: actions/checkout@v2
-      - name: Download Archives
+      - uses: actions/download-artifact@v4
+      - name: Download VPK Artifact
         working-directory: ./
-        run: |
-          curl ${{ needs.Compile-NRO.outputs.vpk_link }} -o vita-nzp-vpk.zip
-          curl ${{ needs.Compile-NRO.outputs.nx_link }} -o nx-nzp-nro.zip
+        with:
+          name: vita-nzp-vpk
+      - uses: actions/download-artifact@v4
+      - name: Download NRO Artifact
+        working-directory: ./
+        with:
+          name: nx-nzp-nro
       - name: Generate Build Date
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
@@ -83,7 +86,7 @@ jobs:
           tag_name: bleeding-edge
           release_name: Automated Release ${{ steps.date.outputs.date }}
           body: |
-            This is a **bleeding edge** NZ:P PSP NX/VITA release, stability is not guarenteed.
+            This is a **bleeding edge** NZ:P NX/VITA release, stability is not guarenteed.
 
             To install:
             - Grab the .ZIP archive for your platform
