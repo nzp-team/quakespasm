@@ -48,14 +48,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [Compile-VPK, Compile-NRO]
     steps:
-      - name: Download VPK Artifact
+      - name: Download Artifacts
         uses: actions/download-artifact@v4
-        with:
-          name: vita-nzp-vpk
-      - name: Download NRO Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: nx-nzp-nro
       - name: Generate Build Date
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M-%S')"
