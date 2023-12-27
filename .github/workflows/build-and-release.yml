@@ -48,6 +48,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [Compile-VPK, Compile-NRO]
     steps:
+      - name: Wait for GitHub to keep up..
+        run: sleep 30s
+        shell: bash
       - name: Download Artifacts
         uses: actions/download-artifact@v4
       - name: Generate Build Date
