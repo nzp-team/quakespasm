@@ -1726,8 +1726,10 @@ void M_Menu_Maps_Key (int key)
 			M_Menu_SinglePlayer_f ();
 		} else if (m_maps_cursor == 16) {
 			current_custom_map_page--;
+			m_map_cursor = 0;
 		} else if (m_maps_cursor == 15) {
 			current_custom_map_page++;
+			m_map_cursor = 0;
 		} else {
 			if (sv.active)
 				Cbuf_AddText ("disconnect\n");
