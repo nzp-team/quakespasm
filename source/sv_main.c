@@ -654,6 +654,9 @@ void SV_WriteEntitiesToClient (edict_t	*clent, sizebuf_t *msg)
 		if (ent->baseline.light_lev != ent->v.light_lev)
 			bits |= U_LIGHTLEVEL;
 
+		if (ent->v.scale != ENTSCALE_DEFAULT && ent->v.scale != 0)
+			bits |= U_SCALE;
+
 		//johnfitz -- alpha
 		if (pr_alpha_supported)
 		{
@@ -735,6 +738,9 @@ void SV_WriteEntitiesToClient (edict_t	*clent, sizebuf_t *msg)
 		if (bits & U_LIGHTLEVEL)
 			MSG_WriteByte(msg, ent->v.light_lev);
 		// NZP END
+
+		if (bits & U_SCALE)
+			MSG_WriteByte(msg, ENTSCALE_ENCODE(ent->v.scale));
 
 		//johnfitz -- PROTOCOL_FITZQUAKE
 		if (bits & U_ALPHA)

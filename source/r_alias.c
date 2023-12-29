@@ -883,7 +883,7 @@ void R_DrawTransparentAliasModel (entity_t *e)
 	// transform it
 	//
 	glPushMatrix ();
-	R_RotateForEntity (lerpdata.origin, lerpdata.angles);
+	R_RotateForEntity (lerpdata.origin, lerpdata.angles, e->scale);
 	
 	glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
 	glScalef (paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
@@ -985,7 +985,7 @@ void R_DrawZombieLimb (entity_t *e,int which)
 
 	glPushMatrix ();
 	
-	R_RotateForEntity (lerpdata.origin, lerpdata.angles);
+	R_RotateForEntity (lerpdata.origin, lerpdata.angles, e->scale);
 	
 	paliashdr = (aliashdr_t *)Mod_Extradata (e->model);
 	rs_aliaspolys += paliashdr->numtris;
@@ -1080,7 +1080,7 @@ void R_DrawAliasModel (entity_t *e)
 	// transform it
 	//
 	glPushMatrix ();
-	R_RotateForEntity (lerpdata.origin, lerpdata.angles);
+	R_RotateForEntity (lerpdata.origin, lerpdata.angles, ENTSCALE_DEFAULT);
 	/* //sB needs fixing in Quakespasm but fuck GL bro
 	//specChar = clmodel->name[strlen(clmodel->name) - 5];
 	if(doZHack && specChar == '#')
@@ -1113,11 +1113,14 @@ void R_DrawAliasModel (entity_t *e)
 	// Special handling of view model to keep FOV from altering look.  Pretty good.  Not perfect but rather close.
 	if ((e == &cl.viewent || e == &cl.viewent2) && scr_fov_viewmodel.value) {
 		float scale = 1.0f / tan (DEG2RAD (scr_fov.value / 2.0f)) * scr_fov_viewmodel.value / 90.0f;
+		if (e->scale != ENTSCALE_DEFAULT && e->scale != 0) scale *= ENTSCALE_DECODE(e->scale);
 		glTranslatef (paliashdr->scale_origin[0] * scale, paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
 		glScalef (paliashdr->scale[0] * scale, paliashdr->scale[1], paliashdr->scale[2]);
 	} else {
-		glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
-		glScalef (paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
+		float scale = 1.0f;
+		if (e->scale != ENTSCALE_DEFAULT && e->scale != 0) scale *= ENTSCALE_DECODE(e->scale);
+		glTranslatef (paliashdr->scale_origin[0] * scale, paliashdr->scale_origin[1] * scale, paliashdr->scale_origin[2] * scale);
+		glScalef (paliashdr->scale[0] * scale, paliashdr->scale[1] * scale, paliashdr->scale[2] * scale);
 	}
 
 	//
@@ -1454,7 +1457,7 @@ void R_DrawAliasModel_ShowTris (entity_t *e)
 	R_SetupEntityTransform (e, &lerpdata);
 
 	glPushMatrix ();
-	R_RotateForEntity (lerpdata.origin,lerpdata.angles);
+	R_RotateForEntity (lerpdata.origin,lerpdata.angles, e->scale);
 	glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
 	glScalef (paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
 

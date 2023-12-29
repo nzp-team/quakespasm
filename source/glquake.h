@@ -353,7 +353,7 @@ void R_CullSurfaces (void);
 qboolean R_CullBox (vec3_t emins, vec3_t emaxs);
 void R_StoreEfrags (efrag_t **ppefrag);
 qboolean R_CullModelForEntity (entity_t *e);
-void R_RotateForEntity (vec3_t origin, vec3_t angles);
+void R_RotateForEntity (vec3_t origin, vec3_t angle, unsigned char scale);
 void R_MarkLights (dlight_t *light, int num, mnode_t *node);
 
 void R_InitParticles (void);

@@ -614,6 +614,11 @@ void CL_ParseUpdate (int bits)
 		ent->light_lev = MSG_ReadByte();
 	// NZP END
 
+	if (bits & U_SCALE)
+		ent->scale = MSG_ReadByte();
+	else
+		ent->scale = ENTSCALE_DEFAULT;
+
 	//johnfitz -- PROTOCOL_FITZQUAKE and PROTOCOL_NEHAHRA
 	if (cl.protocol == PROTOCOL_FITZQUAKE || cl.protocol == PROTOCOL_RMQ)
 	{
@@ -621,8 +626,6 @@ void CL_ParseUpdate (int bits)
 			ent->alpha = MSG_ReadByte();
 		else
 			ent->alpha = ent->baseline.alpha;
-		if (bits & U_SCALE)
-			MSG_ReadByte(); // PROTOCOL_RMQ: currently ignored
 		if (bits & U_FRAME2)
 			ent->frame = (ent->frame & 0x00FF) | (MSG_ReadByte() << 8);
 		if (bits & U_MODEL2)

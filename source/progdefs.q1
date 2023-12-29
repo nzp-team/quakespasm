@@ -164,6 +164,7 @@ typedef struct
 	float   	currentmag2;
 	float   	maxspeed;
 	float 		facingenemy;
+	float 		scale;
 	vec3_t		colormod;
 	vec3_t		glowmod;
 	float		light_lev;

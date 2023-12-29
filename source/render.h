@@ -73,6 +73,8 @@ typedef struct entity_s
 	int						dlightbits;
 	float 					light_lev;
 
+	unsigned char 			scale;
+
 // FIXME: could turn these into a union
 	int						trivial_accept;
 	struct mnode_s			*topnode;		// for bmodels, first world node
