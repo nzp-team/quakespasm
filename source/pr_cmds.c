@@ -3243,6 +3243,21 @@ void PF_strtolower (void)
 
 /*
 =================
+PF_crc16
+
+float crc16 (float, string)
+=================
+*/
+void PF_crc16(void)
+{
+	int insens = G_FLOAT(OFS_PARM0);
+	char *s = G_STRING(OFS_PARM1);
+
+	G_FLOAT(OFS_RETURN) = (unsigned short) ((insens ? CRC_Block_CaseInsensitive : CRC_Block2) ((unsigned char *) s, strlen(s)));
+}
+
+/*
+=================
 PF_strlen
 
 float strlen (string)
@@ -3937,7 +3952,7 @@ static builtin_t pr_builtin[] =
 	NULL, 						// #491
 	NULL, 						// #492
 	NULL, 						// #493
-	NULL, 						// #494
+	PF_crc16, 					// #494
 	NULL, 						// #495
 	NULL, 						// #496
 	NULL, 						// #497
