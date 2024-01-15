@@ -67,6 +67,12 @@ int alphabling = 0;
 float round_center_x;
 float round_center_y;
 
+int screenflash_color;
+double screenflash_duration;
+int screenflash_type;
+double screenflash_worktime;
+double screenflash_starttime;
+
 extern qboolean paused_hack;
 qboolean domaxammo;
 qboolean has_chaptertitle;
@@ -2084,11 +2090,91 @@ void HUD_PlayerName (void)
 	Draw_ColoredStringScale(x, y, player_name, 255, 255, 255, alpha, scale);
 }
 
+/*
+===============
+HUD_Screenflash
+===============
+*/
+
+//
+// Types of screen-flashes.
+//
+
+// Colors
+#define SCREENFLASH_COLOR_WHITE			0
+#define SCREENFLASH_COLOR_BLACK			1
+
+// Types
+#define SCREENFLASH_FADE_INANDOUT		0
+#define SCREENFLASH_FADE_IN 			1
+#define SCREENFLASH_FADE_OUT 			2
+
+//
+// invert float takes in float value between 0 and 1, inverts position
+// eg: 0.1 returns 0.9, 0.34 returns 0.66
+float invertfloat(float input) {
+    if (input < 0)
+        return 0; // adjust to lower boundary
+    else if (input > 1)
+        return 1; // adjust to upper boundary
+    else
+        return (1 - input);
+}
+
+void HUD_Screenflash (void)
+{
+	int r, g, b, a;
+	float flash_alpha;
+
+	double percentage_complete = screenflash_worktime / (screenflash_duration - screenflash_starttime);
+
+	// Fade Out
+	if (screenflash_type == SCREENFLASH_FADE_OUT) {
+		flash_alpha = invertfloat((float)percentage_complete);
+	}
+	// Fade In
+	else if (screenflash_type == SCREENFLASH_FADE_IN) {
+		flash_alpha = (float)percentage_complete;
+	}
+	// Fade In + Fade Out
+	else {
+		// Fade In
+		if (percentage_complete < 0.5) {
+			flash_alpha = (float)percentage_complete;
+		} 
+		// Fade Out
+		else {
+			flash_alpha = invertfloat((float)percentage_complete);
+		}
+	}
+
+	// Obtain the flash color
+	switch(screenflash_color) {
+		case SCREENFLASH_COLOR_BLACK: r = 0; g = 0; b = 0; a = (int)(flash_alpha * 255); break;
+		case SCREENFLASH_COLOR_WHITE: r = 255; g = 255; b = 255; a = (int)(flash_alpha * 255); break;
+		default: r = 255; g = 0; b = 0; a = 255; break;
+	}
+
+	screenflash_worktime += host_frametime;
+
+#ifdef VITA
+	Draw_FillByColor(0, 0, vid.width, vid.height, r, g, b, a);
+#else
+	Draw_FillByColor(0, vid.height * 0.5, vid.width/2, vid.height/2, r, g, b, a);
+#endif
+}
+
 //=============================================================================
 
 
 void HUD_Draw (void) {
-	if (key_dest == key_menu_pause || paused_hack == true || m_state == m_exit) {
+	if (m_state == m_exit || paused_hack == true)
+		return;
+
+	if (key_dest == key_menu_pause) {
+		// Make sure we still draw the screen flash.
+		if (screenflash_duration > sv.time)
+			HUD_Screenflash();
 		return;
 	}
 
@@ -2117,6 +2203,10 @@ void HUD_Draw (void) {
 
 	if (cl.stats[STAT_HEALTH] <= 0) {
 		HUD_EndScreen ();
+
+		// Make sure we still draw the screen flash.
+		if (screenflash_duration > sv.time)
+			HUD_Screenflash();
 		return;
 	}
 
@@ -2155,6 +2245,10 @@ void HUD_Draw (void) {
 		}
 		HUD_MaxAmmo();
 	}
+
+	// This should always come last!
+	if (screenflash_duration > sv.time)
+		HUD_Screenflash();
 
 	GL_SetCanvas(CANVAS_DEFAULT);
 }

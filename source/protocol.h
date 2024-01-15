@@ -226,6 +226,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define	svc_achievement    		52      // [string] name [byte] decal_size [coords] pos
 #define	svc_updatekills		    53	    // [string] to put in center of the screen
 
+#define svc_screenflash			54 // [byte] color [byte] duration [byte] type
+
 //
 // client to server
 //
