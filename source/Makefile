@@ -27,7 +27,7 @@ MP3LIB=mad
 VORBISLIB=vorbis
 
 # ---------------------------
-# Helper functions
+# Helper functions 
 # ---------------------------
 
 check_gcc = $(shell if echo | $(CC) $(1) -Werror -S -o /dev/null -xc - > /dev/null 2>&1; then echo "$(1)"; else echo "$(2)"; fi;)
