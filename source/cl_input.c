@@ -270,8 +270,6 @@ Moves the local angle positions
 ================
 */
 
-extern float	client_sprinting; //sB fix a bugggggggg and SQUASH
-
 void CL_AdjustAngles (void)
 {
 	float	speed;

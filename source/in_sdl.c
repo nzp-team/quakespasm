@@ -697,8 +697,6 @@ extern cvar_t in_aimassist;
 qboolean croshhairmoving;
 extern qboolean paused_hack;
 
-float client_sprinting;
-
 void IN_JoyMove (usercmd_t *cmd)
 {
 #if defined(USE_SDL2)
@@ -734,20 +732,6 @@ void IN_JoyMove (usercmd_t *cmd)
 		speed = cl_movespeedkey.value;
 	else
 		speed = 1;
-	
-	if ((moveRaw.x > -0.65 && moveRaw.y < -0.65) || (moveRaw.x < 0.65 && moveRaw.y < -0.65)) {
-		// naievil -- Can stop sprinting, we hit the zone to stop (top 90 degrees of joycon)
-		// Set the flag to be able to sprint
-		if (!client_sprinting) {
-			Cbuf_AddText("impulse 32");
-		}
-		client_sprinting = 1;
-	} else {
-		if (client_sprinting) {
-			Cbuf_AddText("impulse 31");
-		}
-		client_sprinting = 0;
-	}
 
 	cmd->sidemove += (cl_sidespeed * speed * moveEased.x);
 	cmd->forwardmove -= (cl_forwardspeed * speed * moveEased.y);
