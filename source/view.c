@@ -241,12 +241,11 @@ float V_CalcBob (float speed,float which)//0 = regular, 1 = side bobbing
 			speed = 0.25;
 
 		if (which == 0)
-            bob = cl_bobup.value * 20 * speed * (sprint * sprint) * sin(cl.time * 3.25 * sprint);
-        else
-            bob = cl_bobside.value * 50 * speed * (sprint * sprint * sprint) * sin((cl.time * 2 * sprint) - (M_PI * 0.25));
-	} 
+			bob = cl_bobup.value * 20 * speed * (sprint * sprint) * sin(cl.time * 3.25 * sprint);
+		else
+			bob = cl_bobside.value * 50 * speed * (sprint * sprint * sprint) * sin((cl.time * 2 * sprint) - (M_PI * 0.25));
+	} else {
 	// Normal walk/sprint bob.
-	else {
 		if(cl.stats[STAT_ZOOM] == 3)
 			sprint = 1.8; //this gets sprinting speed in comparison to walk speed per weapon
 
@@ -1153,37 +1152,37 @@ void V_CalcRefdef (void)
 	VectorAdd (r_refdef.viewangles, lastPunchAngle, r_refdef.viewangles);
 	VectorAdd (r_refdef.viewangles, cl.gun_kick, r_refdef.viewangles);
 
-// smooth out stair step ups
-if (cl.onground && ent->origin[2] - oldz > 0)
-{
-	float steptime;
+	// smooth out stair step ups
+	if (cl.onground && ent->origin[2] - oldz > 0)
+	{
+		float steptime;
 
-	steptime = cl.time - cl.oldtime;
-	if (steptime < 0)
-//FIXME		I_Error ("steptime < 0");
-		steptime = 0;
+		steptime = cl.time - cl.oldtime;
+		if (steptime < 0)
+	//FIXME		I_Error ("steptime < 0");
+			steptime = 0;
 
-	oldz += steptime * 80;
-	if (oldz > ent->origin[2])
+		oldz += steptime * 80;
+		if (oldz > ent->origin[2])
+			oldz = ent->origin[2];
+		if (ent->origin[2] - oldz > 12)
+			oldz = ent->origin[2] - 12;
+		r_refdef.vieworg[2] += oldz - ent->origin[2];
+		view->origin[2] += oldz - ent->origin[2];
+	}
+	else
 		oldz = ent->origin[2];
-	if (ent->origin[2] - oldz > 12)
-		oldz = ent->origin[2] - 12;
-	r_refdef.vieworg[2] += oldz - ent->origin[2];
-	view->origin[2] += oldz - ent->origin[2];
-}
-else 
-	oldz = ent->origin[2];
 
 	// Naievil -- fixme third person
 	//if (chase_active.value)
 	//	Chase_Update ();
 
 	view2->origin[0] = view->origin[0];
-    view2->origin[1] = view->origin[1];
-    view2->origin[2] = view->origin[2];   
-    view2->angles[0] = view->angles[0];
-    view2->angles[1] = view->angles[1];
-    view2->angles[2] = view->angles[2];
+	view2->origin[1] = view->origin[1];
+	view2->origin[2] = view->origin[2];
+	view2->angles[0] = view->angles[0];
+	view2->angles[1] = view->angles[1];
+	view2->angles[2] = view->angles[2];
 }
 
 /*

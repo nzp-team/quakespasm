@@ -334,7 +334,7 @@ qmodel_t *Mod_LoadModel (qmodel_t *mod, qboolean crash)
 	buf = COM_LoadStackFile (mod->name, stackbuf, sizeof(stackbuf), & mod->path_id);
 	if (!buf)
 	{
-		buf = (unsigned*)COM_LoadStackFile ("models/missing_model.mdl", stackbuf, sizeof(stackbuf), NULL);
+		buf = COM_LoadStackFile ("models/missing_model.mdl", stackbuf, sizeof(stackbuf), NULL);
 		if (buf){
 			Con_Printf ("Missing model %s substituted\n", mod->name);
 		}else if(!buf){

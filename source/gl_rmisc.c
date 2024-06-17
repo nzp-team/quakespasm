@@ -177,6 +177,25 @@ float GL_WaterAlphaForSurface (msurface_t *fa)
 		return map_wateralpha;
 }
 
+/*
+==================
+R_InitOtherTextures
+==================
+*/
+void	R_InitOtherTextures (void)
+{
+	//static decals
+	decal_blood1  = loadtextureimage ("textures/decals/blood_splat01");
+	decal_blood2  = loadtextureimage ("textures/decals/blood_splat02");
+	decal_blood3  = loadtextureimage ("textures/decals/blood_splat03");
+    decal_q3blood = loadtextureimage ("textures/decals/blood_stain");
+	decal_burn	  = loadtextureimage ("textures/decals/explo_burn01");
+	decal_mark	  = loadtextureimage ("textures/decals/particle_burn01");
+	decal_glow	  = loadtextureimage ("textures/decals/glow2");
+
+	// external zombie skin
+	zombie_skin   = loadtextureimage ("models/ai/zfull.mdl_0");
+}
 
 /*
 ===============
@@ -661,25 +680,5 @@ void GL_ClearBufferBindings ()
 	current_element_array_buffer = 0;
 	GL_BindBufferFunc (GL_ARRAY_BUFFER, 0);
 	GL_BindBufferFunc (GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
-/*
-==================
-R_InitOtherTextures
-==================
-*/
-void	R_InitOtherTextures (void)
-{
-	//static decals
-	decal_blood1  = loadtextureimage ("textures/decals/blood_splat01");
-	decal_blood2  = loadtextureimage ("textures/decals/blood_splat02");
-	decal_blood3  = loadtextureimage ("textures/decals/blood_splat03");
-    decal_q3blood = loadtextureimage ("textures/decals/blood_stain");
-	decal_burn	  = loadtextureimage ("textures/decals/explo_burn01");
-	decal_mark	  = loadtextureimage ("textures/decals/particle_burn01");
-	decal_glow	  = loadtextureimage ("textures/decals/glow2");
-
-	// external zombie skin
-	zombie_skin   = loadtextureimage ("models/ai/zfull.mdl_0");
 }
 

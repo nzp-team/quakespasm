@@ -798,6 +798,7 @@ static qboolean VID_SetMode (int width, int height, int refreshrate, int bpp, qb
 #ifdef VITA
 	depthbits = 24;
 	gl_stencilbits = 8;
+	fsaa_obtained = 0;
 #else
 // read the obtained z-buffer depth
 	if (SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &depthbits) == -1)

@@ -115,7 +115,7 @@ void utf2ascii(char* dst, uint16_t* src){
 	*dst=0x00;
 }
 
-int nzp_main (unsigned int argc, char *argv[])
+int nzp_main (SceSize, void*)
 #else
 int main(int argc, char *argv[])
 #endif

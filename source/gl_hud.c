@@ -685,7 +685,7 @@ void HUD_WorldText(float alpha)
 {
 	// for parser
 	char key[128], value[4096];
-	char *data;
+	const char *data;
 
 	// first, parse worldspawn
 	data = COM_Parse(cl.worldmodel->entities);
@@ -1684,10 +1684,13 @@ void HUD_Achievement (void)
 
 }
 
+// from menu.c
+void Save_Achivements(void);
+
 void HUD_Parse_Achievement (int ach)
 {
-    if (achievement_list[ach].unlocked)
-        return;
+	if (achievement_list[ach].unlocked)
+		return;
 
 	achievement_unlocked = 1;
 	smallsec = 0;

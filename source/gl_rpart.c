@@ -508,8 +508,8 @@ void QMB_InitParticles (void)
 
 	for (i = 0 ; i < 5 ; i++)
 		ADD_PARTICLE_TEXTURE(ptex_q3blood, glpic, i, 5, i * 64, 128, (i + 1) * 64, 192);
-		ADD_PARTICLE_TEXTURE(ptex_q3smoke, glpic, 0, 1, 256, 0, 384, 128);
-		ADD_PARTICLE_TEXTURE(ptex_q3blood_trail, glpic, 0, 1, 320, 128, 384, 192);
+	ADD_PARTICLE_TEXTURE(ptex_q3smoke, glpic, 0, 1, 256, 0, 384, 128);
+	ADD_PARTICLE_TEXTURE(ptex_q3blood_trail, glpic, 0, 1, 320, 128, 384, 192);
 	
 	loading_cur_step++;
 	SCR_UpdateScreen ();
