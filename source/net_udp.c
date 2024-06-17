@@ -99,7 +99,7 @@ sys_socket_t UDP_Init (void)
 		sceAppUtilInit(&init_param, &boot_param);
 		SceChar8 nick[SCE_SYSTEM_PARAM_USERNAME_MAXSIZE];
 		sceAppUtilSystemParamGetString(SCE_SYSTEM_PARAM_ID_USERNAME, nick, SCE_SYSTEM_PARAM_USERNAME_MAXSIZE);
-		Cvar_Set ("hostname", nick);
+		Cvar_Set ("hostname", (const char*)nick);
 	}
 #else
 	if (gethostname(buff, MAXHOSTNAMELEN) != 0)
