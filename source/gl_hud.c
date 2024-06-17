@@ -1684,6 +1684,9 @@ void HUD_Achievement (void)
 
 }
 
+// from menu.c
+void Save_Achivements(void);
+
 void HUD_Parse_Achievement (int ach)
 {
 	if (achievement_list[ach].unlocked)
