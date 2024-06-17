@@ -1422,6 +1422,8 @@ void PF_SetPlayerName(void)
 	MSG_WriteString (&client->message, s);
 }
 
+#define MaxZombies 24
+
 /*
 =================
 PF_MaxZombies
@@ -1434,7 +1436,7 @@ nzp_maxai()
 */
 void PF_MaxZombies(void)
 {
-	G_FLOAT(OFS_RETURN) = 24;
+	G_FLOAT(OFS_RETURN) = MaxZombies;
 }
 
 /*
@@ -2225,7 +2227,6 @@ int closedset[MAX_WAYPOINTS]; // The set of nodes already evaluated.
 int openset[MAX_WAYPOINTS];//Actual sorted open list
 int opensetRef[MAX_WAYPOINTS];//Reference values of open list
 int opensetLength;//equivalent of javaScript's array[].length;
-#define MaxZombies 16
 
 zombie_ai zombie_list[MaxZombies];
 
