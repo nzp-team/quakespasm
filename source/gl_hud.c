@@ -685,7 +685,7 @@ void HUD_WorldText(float alpha)
 {
 	// for parser
 	char key[128], value[4096];
-	char *data;
+	const char *data;
 
 	// first, parse worldspawn
 	data = COM_Parse(cl.worldmodel->entities);
