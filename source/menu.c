@@ -601,6 +601,7 @@ void M_Menu_Main_f (void)
 	m_entersound = true;
 	
 #ifdef VITA
+	void Load_Achivements(void);
 	Load_Achivements();
 #endif
 }
