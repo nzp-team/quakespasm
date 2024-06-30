@@ -1370,6 +1370,33 @@ void PF_ScreenFlash(void)
 
 /*
 =================
+PF_LockViewmodel
+
+Server tells client to lock their
+viewmodel in place, if applicable.
+
+nzp_lockviewmodel()
+=================
+*/
+void PF_LockViewmodel(void)
+{
+	client_t	*client;
+	int			entnum;
+	int 		state;
+
+	entnum = G_EDICTNUM(OFS_PARM0);
+	state = G_FLOAT(OFS_PARM1);
+
+	if (entnum < 1 || entnum > svs.maxclients)
+		return;
+
+	client = &svs.clients[entnum-1];
+	MSG_WriteByte (&client->message, svc_lockviewmodel);
+	MSG_WriteByte (&client->message, state);
+}
+
+/*
+=================
 PF_BettyPrompt
 
 draws status on hud on
@@ -4005,6 +4032,7 @@ static builtin_t pr_builtin[] =
 	PF_SetPlayerName, 			// #505
 	PF_SetDoubleTapVersion,		// #506
 	PF_ScreenFlash,				// #507
+	PF_LockViewmodel,			// #508
 };
 
 builtin_t *pr_builtins = pr_builtin;
