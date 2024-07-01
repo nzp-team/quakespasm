@@ -37,15 +37,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 int rumble_tick = 0;
 int rumble_duration;
-
-void IN_StartRumble (float intensity_small, float intensity_large, float duration)
+void IN_StartRumble(int low_frequency, int high_frequency, int duration)
 {
 	SceCtrlActuator handle;
-	handle.small = (int)(intensity_small * 100.0f);
-	handle.large = (int)(intensity_large * 100.0f);
+	handle.small = high_frequency / 256;
+	handle.large = low_frequency / 256;
 	sceCtrlSetActuator(1, &handle);
 	rumble_tick = sceKernelGetProcessTimeWide();
-	rumble_duration = (int)(duration * 1000000.0f);
+	rumble_duration = (int)(duration * 1000.0f);
 }
 
 void IN_StopRumble (void)
@@ -58,7 +57,51 @@ void IN_StopRumble (void)
 		rumble_tick = 0;
 	}
 }
-#endif
+#else
+
+#include <switch.h>
+#include <switch/runtime/pad.h>
+
+float rumble_tick = 0;
+float rumble_duration;
+u32 target_device;
+
+extern PadState gyropad;
+extern HidVibrationValue VibrationValue;
+extern HidVibrationValue VibrationValue_stop;
+extern HidVibrationValue VibrationValues[2];
+extern HidVibrationDeviceHandle VibrationDeviceHandles[2][2];
+void IN_StartRumble(int low_frequency, int high_frequency, int duration)
+{
+	target_device = padIsHandheld(&gyropad) ? 0 : 1;
+
+	VibrationValue.amp_low = VibrationValue.amp_high = low_frequency == 0 ? 0.0f : 320.0f;
+    VibrationValue.freq_low = low_frequency == 0 ? 160.0f : (float) low_frequency / 204;
+    VibrationValue.freq_high = high_frequency == 0 ? 320.0f : (float) high_frequency / 204;
+
+	memcpy(&VibrationValues[0], &VibrationValue, sizeof(HidVibrationValue));
+    memcpy(&VibrationValues[1], &VibrationValue, sizeof(HidVibrationValue));
+
+    hidSendVibrationValues(VibrationDeviceHandles[target_device], VibrationValues, 2);
+
+	rumble_tick = cl.time;
+	rumble_duration = ((float)duration)/1000;
+}
+
+void IN_StopRumble (void)
+{
+	if (rumble_tick && (cl.time - rumble_tick > rumble_duration)) {
+		memcpy(&VibrationValues[0], &VibrationValue_stop, sizeof(HidVibrationValue));
+		memcpy(&VibrationValues[1], &VibrationValue_stop, sizeof(HidVibrationValue));
+
+		hidSendVibrationValues(VibrationDeviceHandles[target_device], VibrationValues, 2);
+		//Could also do this with 1 hidSendVibrationValues() call + a larger VibrationValues array.
+		hidSendVibrationValues(VibrationDeviceHandles[1-target_device], VibrationValues, 2);
+		rumble_tick = 0;
+	}
+}
+
+#endif // VITA
 
 static qboolean	textmode;
 

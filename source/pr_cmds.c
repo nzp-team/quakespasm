@@ -1397,6 +1397,39 @@ void PF_LockViewmodel(void)
 
 /*
 =================
+PF_Rumble
+
+Server tells client to rumble their
+GamePad.
+
+nzp_rumble()
+=================
+*/
+void PF_Rumble(void)
+{
+	client_t	*client;
+	int			entnum;
+	int 		low_frequency;
+	int 		high_frequency;
+	int 		duration;
+
+	entnum = G_EDICTNUM(OFS_PARM0);
+	low_frequency = G_FLOAT(OFS_PARM1);
+	high_frequency = G_FLOAT(OFS_PARM2);
+	duration = G_FLOAT(OFS_PARM3);
+
+	if (entnum < 1 || entnum > svs.maxclients)
+		return;
+
+	client = &svs.clients[entnum-1];
+	MSG_WriteByte (&client->message, svc_rumble);
+	MSG_WriteShort (&client->message, low_frequency);
+	MSG_WriteShort (&client->message, high_frequency);
+	MSG_WriteShort (&client->message, duration);
+}
+
+/*
+=================
 PF_BettyPrompt
 
 draws status on hud on
@@ -3504,24 +3537,6 @@ void PF_ArgV  (void)
 	G_INT(OFS_RETURN) = PR_SetEngineString(s);
 }
 
-/*
-=================
-PF_rumble
-
-void rumble (float,float)
-=================
-*/
-void PF_rumble (void)
-{
-	// writes to file, like bprint
-	float intensity_small = G_FLOAT(OFS_PARM0);
-	float intensity_large = G_FLOAT(OFS_PARM1);
-	float duration = G_FLOAT(OFS_PARM2);
-#ifdef VITA
-	IN_StartRumble(intensity_small, intensity_large, duration);
-#endif // VITA
-}
-
 static builtin_t pr_builtin[] =
 {
 	PF_Fixme,
@@ -3656,7 +3671,7 @@ static builtin_t pr_builtin[] =
 	NULL, 						// #129
 	NULL, 						// #130
 	NULL, 						// #131
-	PF_rumble,					// #132
+	NULL,					// #132
 	NULL, 						// #133
 	NULL, 						// #134
 	NULL, 						// #135
@@ -4033,6 +4048,7 @@ static builtin_t pr_builtin[] =
 	PF_SetDoubleTapVersion,		// #506
 	PF_ScreenFlash,				// #507
 	PF_LockViewmodel,			// #508
+	PF_Rumble,					// #509
 };
 
 builtin_t *pr_builtins = pr_builtin;

@@ -53,9 +53,9 @@ void IN_Activate ();
 // called when the app becomes inactive
 void IN_Deactivate (qboolean free_cursor);
 
-#ifdef VITA
 qboolean IN_SwitchKeyboard(char *out, int out_len);
-void IN_StartRumble (float intensity_small, float intensity_large, float duration);
+#ifdef VITA
+void IN_StartRumble(int low_frequency, int high_frequency, int duration);
 void IN_StopRumble (void);
 #endif
 

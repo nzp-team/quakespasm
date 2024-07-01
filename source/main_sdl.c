@@ -195,9 +195,7 @@ int main(int argc, char *argv[])
 	while (1)
 	{
 		/* If we have no input focus at all, sleep a bit */
-#ifdef VITA
 		IN_StopRumble();
-#else
 		if (!VID_HasMouseOrInputFocus() || cl.paused)
 		{
 			SDL_Delay(16);

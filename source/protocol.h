@@ -228,6 +228,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define svc_screenflash			54 // [byte] color [byte] duration [byte] type
 #define svc_lockviewmodel		55
+#define svc_rumble				56 		// [short] low frequency [short] high frequency [short] duration (ms)
+
 
 //
 // client to server

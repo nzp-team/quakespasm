@@ -48,6 +48,10 @@ SceMotionState motionstate;
 #endif
 #ifdef __SWITCH__
 PadState gyropad;
+HidVibrationValue VibrationValue;
+HidVibrationValue VibrationValue_stop;
+HidVibrationValue VibrationValues[2];
+HidVibrationDeviceHandle VibrationDeviceHandles[2][2];
 HidSixAxisSensorHandle handles[4];
 #endif
 
@@ -794,6 +798,15 @@ void CL_InitInput (void)
     hidStartSixAxisSensor(handles[1]);
     hidStartSixAxisSensor(handles[2]);
     hidStartSixAxisSensor(handles[3]);
+
+	hidInitializeVibrationDevices(VibrationDeviceHandles[0], 2, HidNpadIdType_Handheld, HidNpadStyleTag_NpadHandheld);
+	memset(VibrationValues, 0, sizeof(VibrationValues));
+    memset(&VibrationValue_stop, 0, sizeof(HidVibrationValue));
+
+	// Switch like stop behavior with muted band channels and frequencies set to default.
+    VibrationValue_stop.freq_low  = 160.0f;
+    VibrationValue_stop.freq_high = 320.0f;
+
 #endif // VITA
 }
 

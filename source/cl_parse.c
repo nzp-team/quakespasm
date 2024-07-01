@@ -1617,6 +1617,10 @@ void CL_ParseServerMessage (void)
 			MSG_ReadByte();
 			break;
 
+		case svc_rumble:
+			IN_StartRumble((int)MSG_ReadShort(), (int)MSG_ReadShort(), (int)MSG_ReadShort());
+			break;
+
 		case svc_screenflash:
 			screenflash_color = MSG_ReadByte();
 			screenflash_duration = sv.time + MSG_ReadByte();
