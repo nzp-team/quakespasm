@@ -61,6 +61,7 @@ static inline int IS_NAN (float x) {
 
 #define DotProduct(x,y) (x[0]*y[0]+x[1]*y[1]+x[2]*y[2])
 #define DoublePrecisionDotProduct(x,y) ((double)x[0]*y[0]+(double)x[1]*y[1]+(double)x[2]*y[2])
+#define VectorLerp( v1, lerp, v2, c ) ((c)[0] = (v1)[0] + (lerp) * ((v2)[0] - (v1)[0]), (c)[1] = (v1)[1] + (lerp) * ((v2)[1] - (v1)[1]), (c)[2] = (v1)[2] + (lerp) * ((v2)[2] - (v1)[2]))
 #define VectorSubtract(a,b,c) {c[0]=a[0]-b[0];c[1]=a[1]-b[1];c[2]=a[2]-b[2];}
 #define VectorAdd(a,b,c) {c[0]=a[0]+b[0];c[1]=a[1]+b[1];c[2]=a[2]+b[2];}
 #define VectorCopy(a,b) {b[0]=a[0];b[1]=a[1];b[2]=a[2];}
@@ -69,6 +70,8 @@ static inline int IS_NAN (float x) {
 #define RAD2DEG( x )	((float)(x) * (float)(180.f / M_PI))
 #define DEG2RAD( a ) ( a * M_PI ) / 180.0F //sB porting seperate viewmodel fov
 #define VectorDistanceSquared(a,b)((a[0]-b[0])*(a[0]-b[0])+(a[1]-b[1])*(a[1]-b[1])+(a[2]-b[2])*(a[2]-b[2]))
+#define VectorMax(a,b,out) {out[0]=a[0]>b[0]?a[0]:b[0]; out[1]=a[1]>b[1]?a[1]:b[1]; out[2]=a[2]>b[2]?a[2]:b[2];}
+#define VectorMin(a,b,out) {out[0]=a[0]<b[0]?a[0]:b[0]; out[1]=a[1]<b[1]?a[1]:b[1]; out[2]=a[2]<b[2]?a[2]:b[2];}
 
 //johnfitz -- courtesy of lordhavoc
 // QuakeSpasm: To avoid strict aliasing violations, use a float/int union instead of type punning.
