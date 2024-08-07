@@ -2300,6 +2300,7 @@ void sv_way_print_sorted_open_set() {
 		Con_Printf("%.0f, ",waypoints[openset_waypoints[i]].f_score);
 	}
 	Con_Printf("\n");
+}
 
 // 
 // Removes a waypoint from a set, if it belongs to it. 
