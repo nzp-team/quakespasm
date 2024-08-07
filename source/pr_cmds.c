@@ -2291,21 +2291,15 @@ unsigned short openset_waypoints[MAX_WAYPOINTS]; // List of waypoints currently 
 unsigned short openset_length; // Current length of the open set
 zombie_ai zombie_list[MaxZombies];
 
-//Debug//
-void printSortedOpenSet()
-{
-	//
-	// Debugs prints the current sorted list of waypoints in the open set
-	//
-	void sv_way_print_sorted_open_set() {
-		Con_Printf("Sorted open-set F-scores: ");
-		for(int i = 0; i < openset_length; i++) {
-			Con_Printf("%.0f, ",waypoints[openset_waypoints[i]].f_score);
-		}
-		Con_Printf("\n");
-}
-}
-//------//
+//
+// Debugs prints the current sorted list of waypoints in the open set
+//
+void sv_way_print_sorted_open_set() {
+	Con_Printf("Sorted open-set F-scores: ");
+	for(int i = 0; i < openset_length; i++) {
+		Con_Printf("%.0f, ",waypoints[openset_waypoints[i]].f_score);
+	}
+	Con_Printf("\n");
 
 // 
 // Removes a waypoint from a set, if it belongs to it. 
