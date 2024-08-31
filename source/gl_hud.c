@@ -322,8 +322,8 @@ void HUD_EndScreen (void)
 
 #ifdef VITA
 
-	Draw_ColoredStringScale(vid.width/2 - strlen("GAME OVER")*16, 110, "GAME OVER", 1, 1, 1, 1, 4.0f);
-	Draw_ColoredStringScale(vid.width/2 - strlen(str)*8, 150, str, 1, 1, 1, 1, 2.0f);
+	Draw_ColoredStringCentered(110, "GAME OVER", 1, 1, 1, 1, 4.0f);
+	Draw_ColoredStringCentered(150, str, 1, 1, 1, 1, 2.0f);
 
 	Draw_ColoredStringScale(vid.width/2 + 40, 185, "Points", 1, 1, 1, 1, 2.0f);
 	Draw_ColoredStringScale(vid.width/2 + 240, 185, "Kills", 1, 1, 1, 1, 2.0f);
@@ -354,8 +354,8 @@ void HUD_EndScreen (void)
 
 #else
 
-	Draw_ColoredStringScale(vid.width/4 - strlen("GAME OVER")*8, vid.height*3/4 - 98, "GAME OVER", 1, 1, 1, 1, 2.0f);
-	Draw_ColoredStringScale(vid.width/4 - strlen(str)*6, vid.height*3/4 - 70, str, 1, 1, 1, 1, 1.5f);
+	Draw_ColoredStringCentered(vid.height*3/4 - 98, "GAME OVER", 1, 1, 1, 1, 2.0f);
+	Draw_ColoredStringCentered(vid.height*3/4 - 70, str, 1, 1, 1, 1, 1.5f);
 
 	Draw_ColoredStringScale(vid.width/4 + 35, vid.height*3/4 - 40, "Points", 1, 1, 1, 1, 1.25f);
 	Draw_ColoredStringScale(vid.width/4 + 130, vid.height*3/4 - 40, "Kills", 1, 1, 1, 1, 1.25f);
@@ -530,10 +530,10 @@ void HUD_Points (void)
 #endif // VITA
 		
 #ifdef VITA
-		xplus = HUD_itoa (f, str)*16;
+		xplus = getTextWidth(HUD_itoa (f, str), 2.0f);
 		Draw_ColoredStringScale (((160 - xplus)/2)-point_x_offset, 413 - (35 * i), va("%i", current_points[i]), r, g, b, 1, 2.0f); //2x Scale/White
 #else
-		xplus = HUD_itoa (f, str)*12;
+		xplus = getTextWidth(HUD_itoa (f, str), 1.5f);
 		Draw_ColoredStringScale (((111 - xplus)/2)-point_x_offset, 633 - (24 * i), va("%i", current_points[i]), r, g, b, 1, 1.5f);
 #endif // VITA
 
@@ -659,15 +659,7 @@ void HUD_MaxAmmo(void)
 	maxammoy -= cl.time * 0.003;
 	maxammoopac -= cl.time * 0.05;
 
-#ifdef VITA
-
-	Draw_ColoredStringScale(vid.width/2 - strlen("MAX AMMO!")*8, maxammoy, "MAX AMMO!", 255, 255, 255, maxammoopac/255, 2.0f);
-
-#else
-
-	Draw_ColoredStringScale(vid.width/4 - strlen("MAX AMMO!")*8, maxammoy, "MAX AMMO!", 255, 255, 255, maxammoopac/255, 2.0f);
-
-#endif // VITA
+	Draw_ColoredStringCentered(maxammoy, "MAX AMMO!", 1, 1, 1, maxammoopac/255, 2.0f);
 
 	if (maxammoopac <= 0) {
 		domaxammo = false;
@@ -794,11 +786,11 @@ void HUD_Rounds (void)
 
 #ifdef VITA
 
-		Draw_ColoredStringScale(vid.width/2 - strlen("Round")*16, 160, "Round", 1, value/255, value/255, 1, 4.0f);
+		Draw_ColoredStringCentered(160, "Round", 1, value/255, value/255, 1, 4.0f);
 
 #else
 
-		Draw_ColoredStringScale(vid.width/4 - strlen("Round")*8, vid.height*3/4 - sb_round[0]->height - 10, "Round", 1, value/255, value/255, 1, 2.0f);
+		Draw_ColoredStringCentered(vid.height*3/4 - sb_round[0]->height - 10, "Round", 1, value/255, value/255, 1, 2.0f);
 
 #endif // VITA
 		
@@ -817,11 +809,11 @@ void HUD_Rounds (void)
 
 #ifdef VITA
 
-		Draw_ColoredStringScale(vid.width/2 - strlen("Round")*16, 160, "Round", 1, 0, 0, value/255, 4.0f);
+		Draw_ColoredStringCentered(160, "Round", 1, 0, 0, value/255, 4.0f);
 
 #else
 
-		Draw_ColoredStringScale(vid.width/4 - strlen("Round")*8, vid.height*3/4 - sb_round[0]->height - 10, "Round", 1, 0, 0, value/255, 2.0f);
+		Draw_ColoredStringCentered(vid.height*3/4 - sb_round[0]->height - 10, "Round", 1, 0, 0, value/255, 2.0f);
 
 #endif // VITA		
 
@@ -1757,16 +1749,16 @@ void HUD_Ammo (void)
 
 #endif // VITA
 
-	reslen = strlen(va("/%i", cl.stats[STAT_AMMO]));
+	reslen = getTextWidth(va("/%i", cl.stats[STAT_AMMO]), scale);
 
 	//
 	// Magazine
 	//
 	magstring = va("%i", cl.stats[STAT_CURRENTMAG]);
 	if (GetLowAmmo(cl.stats[STAT_ACTIVEWEAPON], 1) >= cl.stats[STAT_CURRENTMAG]) {
-		Draw_ColoredStringScale((x_value - (reslen*8*scale)) - strlen(magstring)*8*scale, y_value, magstring, 1, 0, 0, 1, scale);
+		Draw_ColoredStringScale((x_value - reslen) - getTextWidth(magstring, scale), y_value, magstring, 1, 0, 0, 1, scale);
 	} else {
-		Draw_ColoredStringScale((x_value - (reslen*8*scale)) - strlen(magstring)*8*scale, y_value, magstring, 1, 1, 1, 1, scale);
+		Draw_ColoredStringScale((x_value - reslen) - getTextWidth(magstring, scale), y_value, magstring, 1, 1, 1, 1, scale);
 	}
 
 	//
@@ -1774,9 +1766,9 @@ void HUD_Ammo (void)
 	//
 	magstring = va("/%i", cl.stats[STAT_AMMO]);
 	if (GetLowAmmo(cl.stats[STAT_ACTIVEWEAPON], 0) >= cl.stats[STAT_AMMO]) {
-		Draw_ColoredStringScale(x_value - strlen(magstring)*8*scale, y_value, magstring, 1, 0, 0, 1, scale);
+		Draw_ColoredStringScale(x_value - getTextWidth(magstring, scale), y_value, magstring, 1, 0, 0, 1, scale);
 	} else {
-		Draw_ColoredStringScale(x_value - strlen(magstring)*8*scale, y_value, magstring, 1, 1, 1, 1, scale);
+		Draw_ColoredStringScale(x_value - getTextWidth(magstring, scale), y_value, magstring, 1, 1, 1, 1, scale);
 	}
 
 	//
@@ -1785,9 +1777,9 @@ void HUD_Ammo (void)
 	if (IsDualWeapon(cl.stats[STAT_ACTIVEWEAPON])) {
 		magstring = va("%i", cl.stats[STAT_CURRENTMAG2]);
 		if (GetLowAmmo(cl.stats[STAT_ACTIVEWEAPON], 0) >= cl.stats[STAT_CURRENTMAG2]) {
-			Draw_ColoredStringScale(x_value - 34*scale - strlen(magstring)*8*scale, y_value, magstring, 1, 0, 0, 1, scale);
+			Draw_ColoredStringScale(x_value - 34*scale - getTextWidth(magstring, scale), y_value, magstring, 1, 0, 0, 1, scale);
 		} else {
-			Draw_ColoredStringScale(x_value - 34*scale - strlen(magstring)*8*scale, y_value, magstring, 1, 1, 1, 1, scale);
+			Draw_ColoredStringScale(x_value - 34*scale - getTextWidth(magstring, scale), y_value, magstring, 1, 1, 1, 1, scale);
 		}
 	}
 }
@@ -1806,21 +1798,21 @@ void HUD_AmmoString (void)
 	{
 		if (0 < cl.stats[STAT_AMMO] && cl.stats[STAT_CURRENTMAG] >= 0) {
 		#ifdef VITA
-			Draw_ColoredStringScale ((vid.width)/2 - 43, (vid.height)/2 + 34, "Reload", 1, 1, 1, 1, 2.0f);
+			Draw_ColoredStringCentered((vid.height)/2 + 34, "Reload", 1, 1, 1, 1, 2.0f);
 		#else
-			Draw_ColoredStringScale(vid.width/4 - strlen("Reload")*6, (vid.height)*3/4 + 40, "Reload", 1, 1, 1, 1, 1.5f);
+			Draw_ColoredStringCentered((vid.height)*3/4 + 40, "Reload", 1, 1, 1, 1, 1.5f);
 		#endif
 		} else if (0 < cl.stats[STAT_CURRENTMAG]) {
 		#ifdef VITA
-			Draw_ColoredStringScale ((vid.width)/2 - 73, (vid.height)/2 + 34, "LOW AMMO", 1, 1, 0, 1, 2.5f);
+			Draw_ColoredStringCentered((vid.height)/2 + 34, "LOW AMMO", 1, 1, 0, 1, 2.0f);
 		#else
-			Draw_ColoredStringScale(vid.width/4 - strlen("LOW AMMO")*6, (vid.height)*3/4 + 40, "LOW AMMO", 1, 1, 0, 1, 1.5f);
+			Draw_ColoredStringCentered((vid.height)*3/4 + 40, "LOW AMMO", 1, 1, 0, 1, 1.5f);
 		#endif
 		} else {
 		#ifdef VITA
-			Draw_ColoredStringScale ((vid.width)/2 - 66, (vid.height)/2 + 34, "NO AMMO", 1, 0, 0, 1, 2.5f);
+			Draw_ColoredStringCentered((vid.height)/2 + 34, "NO AMMO", 1, 0, 0, 1, 2.0f);
 		#else
-			Draw_ColoredStringScale(vid.width/4 - strlen("NO AMMO")*6, (vid.height)*3/4 + 40, "NO AMMO", 1, 0, 0, 1, 1.5f);
+			Draw_ColoredStringCentered((vid.height)*3/4 + 40, "NO AMMO", 1, 0, 0, 1, 1.5f);
 		#endif
 		}
 	}
@@ -2013,10 +2005,10 @@ void HUD_Weapon (void)
 	//strcpy(str, GetWeaponName(cl.stats[STAT_ACTIVEWEAPON]));
 	l = strlen(str);
 #ifdef VITA
-	x_value = vid.width - fragpic->width - 65 - l*16;
+	x_value = vid.width - fragpic->width - 65 - getTextWidth(str, 2);
 	Draw_ColoredStringScale (x_value, y_value, str, 1, 1, 1, 1, 2.0f);
 #else
-	x_value = vid.width/2 - 63 - l*10;
+	x_value = vid.width/2 - 63 - getTextWidth(str, 1);
 	Draw_ColoredStringScale (x_value, y_value, str, 1, 1, 1, 1, 1.25f);
 #endif
 }
