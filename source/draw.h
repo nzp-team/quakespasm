@@ -52,9 +52,11 @@ extern float loading_cur_step;
 extern int loading_step;
 extern char loading_name[32];
 extern float loading_num_step;
+extern int font_kerningamount[96];
 
 void Draw_ColoredString (int x, int y, const char *str, float r, float g, float b, float a);
 void Draw_ColoredStringScale (int x, int y, const char *str, float r, float g, float b, float a, float s);
+void Draw_ColoredStringCentered(int y, char *text, float r, float g, float b, float a, float s);
 qpic_t *Draw_PicFromWad (const char *name);
 qpic_t *Draw_CachePic (const char *path);
 void Draw_NewGame (void);
@@ -62,6 +64,7 @@ void Draw_NewGame (void);
 void GL_SetCanvas (canvastype newcanvas); //johnfitz
 void Clear_LoadingFill (void);
 gltexture_t *loadtextureimage (char* filename);
+float getTextWidth(char *str, float scale);
 
 #endif	/* _QUAKE_DRAW_H */
 

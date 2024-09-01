@@ -322,6 +322,16 @@ void SCR_UsePrint (int type, int cost, int weapon)
     char s[128];
 	char c[128];
 
+#ifdef VITA
+
+	float scale = 2.0f;
+
+#else
+
+	float scale = 1.25f;
+
+#endif // VITA
+
     switch (type)
 	{
 		case 0://clear
@@ -329,42 +339,42 @@ void SCR_UsePrint (int type, int cost, int weapon)
 			strcpy(c, "");
 			break;
 		case 1://door
-			strcpy(s, va("Hold %s to open Door\n", GetUseButtonL()));
+			strcpy(s, va("Hold  %s  to open Door\n", GetUseButtonL()));
 			strcpy(c, va("[Cost: %i]\n", cost));
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 2://debris
-			strcpy(s, va("Hold %s to remove Debris\n", GetUseButtonL()));
+			strcpy(s, va("Hold  %s  to remove Debris\n", GetUseButtonL()));
 			strcpy(c, va("[Cost: %i]\n", cost));
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 3://ammo
 			strcpy(w, cl.touchname);
-			strcpy(s, va("Hold %s to buy Ammo for %s\n", GetUseButtonL(), w));
+			strcpy(s, va("Hold  %s  to buy Ammo for %s\n", GetUseButtonL(), w));
 			strcpy(c, va("[Cost: %i]\n", cost));
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 4://weapon
 			strcpy(w, cl.touchname);
-			strcpy(s, va("Hold %s to buy %s\n", GetUseButtonL(), w));
+			strcpy(s, va("Hold  %s  to buy %s\n", GetUseButtonL(), w));
 			strcpy(c, va("[Cost: %i]\n", cost));
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 5://window
-			strcpy(s, va("Hold %s to Rebuild Barrier\n", GetUseButtonL()));
+			strcpy(s, va("Hold  %s  to Rebuild Barrier\n", GetUseButtonL()));
 			strcpy(c, "");
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 6://box
-			strcpy(s, va("Hold %s for Mystery Box\n", GetUseButtonL()));
+			strcpy(s, va("Hold  %s  for Mystery Box\n", GetUseButtonL()));
 			strcpy(c, va("[Cost: %i]\n", cost));
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 7://box take
 			strcpy(w, cl.touchname);
-			strcpy(s, va("Hold %s for %s\n", GetUseButtonL(), w));
+			strcpy(s, va("Hold  %s  for %s\n", GetUseButtonL(), w));
 			strcpy(c, "");
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 8://power
 			strcpy(s, "The Power must be Activated first\n");
@@ -372,39 +382,39 @@ void SCR_UsePrint (int type, int cost, int weapon)
 			button_pic_x = 100;
 			break;
 		case 9://perk
-			strcpy(s, va("Hold %s to buy %s\n", GetUseButtonL(), GetPerkName(weapon)));
+			strcpy(s, va("Hold  %s  to buy %s\n", GetUseButtonL(), GetPerkName(weapon)));
 			strcpy(c, va("[Cost: %i]\n", cost));
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 10://turn on power
-			strcpy(s, va("Hold %s to Turn On the Power\n", GetUseButtonL()));
+			strcpy(s, va("Hold  %s  to Turn On the Power\n", GetUseButtonL()));
 			strcpy(c, "");
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 11://turn on trap
-			strcpy(s, va("Hold %s to Activate the Trap\n", GetUseButtonL()));
+			strcpy(s, va("Hold  %s  to Activate the Trap\n", GetUseButtonL()));
 			strcpy(c, va("[Cost: %i]\n", cost));
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 12://PAP
-			strcpy(s, va("Hold %s to Pack-a-Punch\n", GetUseButtonL()));
+			strcpy(s, va("Hold  %s  to Pack-a-Punch\n", GetUseButtonL()));
 			strcpy(c, va("[Cost: %i]\n", cost));
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 13://revive
-			strcpy(s, va("Hold %s to Fix your Code.. :)\n", GetUseButtonL()));
+			strcpy(s, va("Hold  %s  to Fix your Code.. :)\n", GetUseButtonL()));
 			strcpy(c, "");
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 14://use teleporter (free)
-			strcpy(s, va("Hold %s to use Teleporter\n", GetUseButtonL()));
+			strcpy(s, va("Hold  %s  to use Teleporter\n", GetUseButtonL()));
 			strcpy(c, "");
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 15://use teleporter (cost)
-			strcpy(s, va("Hold %s to use Teleporter\n", GetUseButtonL()));
+			strcpy(s, va("Hold  %s  to use Teleporter\n", GetUseButtonL()));
 			strcpy(c, va("[Cost: %i]\n", cost));
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 16://tp cooldown
 			strcpy(s, "Teleporter is cooling down\n");
@@ -412,9 +422,9 @@ void SCR_UsePrint (int type, int cost, int weapon)
 			button_pic_x = 100;
 			break;
 		case 17://link
-			strcpy(s, va("Hold %s to initiate link to pad\n", GetUseButtonL()));
+			strcpy(s, va("Hold  %s  to initiate link to pad\n", GetUseButtonL()));
 			strcpy(c, "");
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 18://no link
 			strcpy(s, "Link not active\n");
@@ -422,14 +432,14 @@ void SCR_UsePrint (int type, int cost, int weapon)
 			button_pic_x = 100;
 			break;
 		case 19://finish link
-			strcpy(s, va("Hold %s to link pad with core\n", GetUseButtonL()));
+			strcpy(s, va("Hold  %s  to link pad with core\n", GetUseButtonL()));
 			strcpy(c, "");
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		case 20://buyable ending
-			strcpy(s, va("Hold %s to End the Game\n", GetUseButtonL()));
+			strcpy(s, va("Hold  %s  to End the Game\n", GetUseButtonL()));
 			strcpy(c, va("[Cost: %i]\n", cost));
-			button_pic_x = 5;
+			button_pic_x = getTextWidth("Hold ", scale);
 			break;
 		default:
 			Con_Printf ("No type defined in engine for useprint\n");
@@ -443,8 +453,7 @@ void SCR_UsePrint (int type, int cost, int weapon)
 
 void SCR_DrawUseString (void)
 {
-	int		l, l2;
-	int		x, x2, y;
+	int		x, y;
 
 	if (cl.stats[STAT_HEALTH] < 0) {
 		return;
@@ -452,32 +461,41 @@ void SCR_DrawUseString (void)
 
 #ifdef VITA
 
-	float scale = 1.0f;
+	float scale = 2.0f;
+	y = vid.height * 0.65;
 
 #else
 
 	float scale = 1.25f;
+	y = vid.height * 0.85;
 
 #endif // VITA
 
-	// The scale is double, so basically subtract the difference here...
-	y = vid.height*0.85;
-	l = strlen (scr_usestring);
-    x = ((vid.width/2 - l*8*scale)/2);
-	l2 = strlen (scr_usestring2);
-	x2 = ((vid.width/2 - l2*8*scale)/2);
-
 #ifdef VITA
-    GL_SetCanvas(CANVAS_HUD);
-#else
-    GL_SetCanvas(CANVAS_USEPRINT);
-#endif
 
-    Draw_ColoredStringScale(x, y, scr_usestring, 1, 1, 1, 1, scale);
-	Draw_ColoredStringScale(x2, y + 12*scale, scr_usestring2, 1, 1, 1, 1, scale);
+	x = (vid.width - getTextWidth(scr_usestring, scale))/2;
+
+#else
+	x = (640 - getTextWidth(scr_usestring, scale))/2;
+    GL_SetCanvas(CANVAS_USEPRINT);
+
+#endif // VITA
+
+	Draw_ColoredStringCentered(y, scr_usestring, 1, 1, 1, 1, scale);
+	Draw_ColoredStringCentered(y + 12 * scale, scr_usestring2, 1, 1, 1, 1, scale);
 
     GL_SetCanvas(CANVAS_DEFAULT);
-	Draw_Pic (x*2 + button_pic_x*16*scale, y*0.8125, GetButtonIcon("+use"));
+
+#ifdef VITA
+
+		Draw_Pic ((x + button_pic_x), y - 8, GetButtonIcon("+use"));
+
+#else
+
+		Draw_Pic (x*2 + button_pic_x*scale + 26, y*0.8125, GetButtonIcon("+use"));
+
+#endif // VITA
+
 }
 
 void SCR_CheckDrawUseString (void)
@@ -575,16 +593,16 @@ void SCR_DrawCenterString (void) //actually do the drawing
 
 #ifndef VITA
 
-		int scale = 8;
+		int scale = 1;
 
 #else
 
-		int scale = 16;
+		int scale = 2;
 
 #endif // VITA
 
-		x = (320 - l*scale)/2;	//johnfitz -- 320x200 coordinate system
-		for (j=0 ; j<l ; j++, x+=scale)
+		x = (320 - getTextWidth(start, scale))/2; //johnfitz -- 320x200 coordinate system
+		for (j=0 ; j<l ; j++)
 		{
 
 #ifndef VITA
@@ -597,11 +615,19 @@ void SCR_DrawCenterString (void) //actually do the drawing
 
 #endif // VITA
 
+			// Hooray for variable-spacing!
+			if (start[j] == ' ')
+				x += 4 * scale;
+			else if ((int)start[j] < 33 || (int)start[j] > 126)
+				x += 8 * scale;
+			else
+				x += (font_kerningamount[(int)(start[j] - 33)] + 1) * scale;
+
 			if (!remaining--)
 				return;
 		}
 
-		y += scale;
+		y += scale * 8;
 
 		while (*start && *start != '\n')
 			start++;
@@ -1086,7 +1112,6 @@ SCR_DrawLoadScreen
 
 double loadingtimechange;
 int loadingdot;
-int loadingtextwidth;
 char *lodinglinetext;
 qpic_t *awoo;
 char *ReturnLoadingtex (void)
@@ -1387,22 +1412,21 @@ void SCR_DrawLoadScreen (void)
 
 	if (loadingtimechange < Sys_DoubleTime ()) {
         lodinglinetext = ReturnLoadingtex();
-		loadingtextwidth = strlen(lodinglinetext); //strlen(lodinglinetext)*8
         loadingtimechange = Sys_DoubleTime () + 5;
 	}
 
 	if (key_dest == key_game) {
+
 #ifdef VITA
-		Draw_ColoredStringScale((vid.width - loadingtextwidth*16)/2, 544 - 16 - 8, lodinglinetext, 255, 255, 255, 255, 2.0f);
 
-		//if (strcmp(lodinglinetext, "Please help me find the meaning of   . Thanks.") == 0) {
-			//Draw_Pic(335, 255, awoo);
+		Draw_ColoredStringCentered(544 - 16 - 8, lodinglinetext, 1, 1, 1, 1, 2.0f);
+
 #else
-		Draw_ColoredStringScale((640 - loadingtextwidth*10)/2, 342, lodinglinetext, 255, 255, 255, 255, 1.25f);
 
-		//if (strcmp(lodinglinetext, "Please help me find the meaning of   . Thanks.") == 0)
-			//Draw_StretchPic(335, 337, awoo, 17, 17);
+		Draw_ColoredStringCentered(342, lodinglinetext, 1, 1, 1, 1, 1.25f);
+
 #endif // VITA
+
 	}
 
 }

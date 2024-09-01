@@ -214,7 +214,7 @@ int menu_offset_y;
 
 #define MENU_INITVARS()						int y = 0; menu_offset_y = y + 70;
 #define DRAW_HEADER(title) 					Draw_ColoredStringScale(10, y + 10, title, 1, 1, 1, 1, 4.0f);
-#define DRAW_VERSIONSTRING()				Draw_ColoredStringScale(vid.width - (strlen(game_build_date) * 16), y + 5, game_build_date, 1, 1, 1, 1, 2.0f);
+#define DRAW_VERSIONSTRING()				Draw_ColoredStringScale(vid.width - getTextWidth(game_build_date, 2), y + 5, game_build_date, 1, 1, 1, 1, 2.0f);
 #define DRAW_MENUOPTION(id, txt, cursor, divider) { \
 	menu_offset_y += OFFSET_SPACING; \
 	if (cursor == id) \
@@ -243,9 +243,9 @@ int menu_offset_y;
 	else \
 		Draw_ColoredStringScale(10, 500, "Back", 1, 1, 1, 1, 2.0f); \
 }
-#define DRAW_MAPTHUMB(img) Draw_StretchPic(x_map_info_disp + 252, y + 68, img, 450, 255);
-#define DRAW_MAPDESC(id, txt) Draw_ColoredStringScale(x_map_info_disp + 217, y + 329 + (18 * id), txt, 1, 1, 1, 1, 2.0f);
-#define DRAW_MAPAUTHOR(id, txt) Draw_ColoredStringScale(x_map_info_disp + 217, y + 329 + (18 * id), txt, 1, 1, 0, 1, 2.0f);
+#define DRAW_MAPTHUMB(img) Draw_StretchPic(x_map_info_disp + 245, y + 68, img, 450, 255);
+#define DRAW_MAPDESC(id, txt) Draw_ColoredStringScale(x_map_info_disp + 245, y + 329 + (18 * id), txt, 1, 1, 1, 1, 2.0f);
+#define DRAW_MAPAUTHOR(id, txt) Draw_ColoredStringScale(x_map_info_disp + 245, y + 329 + (18 * id), txt, 1, 1, 0, 1, 2.0f);
 #define DRAW_CREDITLINE(id, txt) Draw_ColoredStringScale(10, menu_offset_y + (OFFSET_SPACING * id), txt, 1, 1, 1, 1, 2.0f);
 #define DRAW_SETTINGSVALUE(id, txt) Draw_ColoredStringScale(400, y + 70 + (OFFSET_SPACING * (id + 1)), txt, 1, 1, 1, 1, 2.0f);
 #define DRAW_SLIDER(id, r) M_DrawSlider(408, y + 70 + (OFFSET_SPACING * (id + 1)), r, 2.0f);
@@ -256,7 +256,7 @@ int menu_offset_y;
 
 #define MENU_INITVARS()						int y = vid.height * 0.5; menu_offset_y = y + 55;
 #define DRAW_HEADER(title) 					Draw_ColoredStringScale(10, y + 10, title, 1, 1, 1, 1, 3.0f);
-#define DRAW_VERSIONSTRING()				Draw_ColoredString(635 - (strlen(game_build_date) * 8), y + 10, game_build_date, 1, 1, 1, 1);
+#define DRAW_VERSIONSTRING()				Draw_ColoredStringScale(635 - getTextWidth(game_build_date, 1), y + 10, game_build_date, 1, 1, 1, 1, 1.0f);
 #define DRAW_MENUOPTION(id, txt, cursor, divider) { \
 	menu_offset_y += OFFSET_SPACING; \
 	if (cursor == id) \
@@ -285,8 +285,8 @@ int menu_offset_y;
 	else \
 		Draw_ColoredStringScale(10, y + 335, "Back", 1, 1, 1, 1, 1.5f); \
 }
-#define DRAW_MAPTHUMB(img) Draw_StretchPic(x_map_info_disp + 290, y + 45, img, 300, 170);
-#define DRAW_MAPDESC(id, txt) Draw_ColoredStringScale(x_map_info_disp + 280, y + 218 + (15 * id), txt, 1, 1, 1, 1, 1.25f);
+#define DRAW_MAPTHUMB(img) Draw_StretchPic(x_map_info_disp + 280, y + 45, img, 280, 160);
+#define DRAW_MAPDESC(id, txt) Draw_ColoredStringScale(x_map_info_disp + 280, y + 218 + (15 * id), txt, 1, 1, 1, 1, 1.45f);
 #define DRAW_MAPAUTHOR(id, txt) Draw_ColoredStringScale(x_map_info_disp + 280, y + 218 + (15 * id), txt, 1, 1, 0, 1, 1.25f);
 #define DRAW_CREDITLINE(id, txt) Draw_ColoredStringScale(10, menu_offset_y + ((OFFSET_SPACING - 2) * id), txt, 1, 1, 1, 1, 1.25f);
 #define DRAW_SETTINGSVALUE(id, txt) Draw_ColoredStringScale(300, y + 55 + (OFFSET_SPACING * (id + 1)), txt, 1, 1, 1, 1, 1.5f);
@@ -667,24 +667,24 @@ void M_Main_Draw (void)
 #ifdef VITA
 
 	Draw_SubPic(915, 510, 26, 26, 32, 0, 64, 32, social_badges); // YouTube
-	Draw_ColoredStringScale(840, 510 + 6, "@nzpteam", 1, 1, 0, 1, 1.0f);
+	Draw_ColoredStringScale(848, 510 + 6, "@nzpteam", 1, 1, 0, 1, 1.0f);
 
 	Draw_SubPic(915, 510 - 26 - 5, 26, 26, 0, 32, 32, 64, social_badges); // Twitter
 	Draw_ColoredStringScale(840, 510 - 25, "/NZPTeam", 1, 1, 0, 1, 1.0f);
 
 	Draw_SubPic(915, 510 - 52 - 10, 26, 26, 32, 32, 64, 64, social_badges); // Patreon
-	Draw_ColoredStringScale(792, 510 - 52 - 3, "/cypressimplex", 1, 1, 0, 1, 1.0f);
+	Draw_ColoredStringScale(818, 510 - 52 - 3, "/cypressimplex", 1, 1, 0, 1, 1.0f);
 
 #else
 
 	Draw_SubPic(610, y + 330, 22, 22, 32, 0, 64, 32, social_badges); // YouTube
-	Draw_ColoredStringScale(542, y + 337, "@nzpteam", 1, 1, 0, 1, 1.0f);
+	Draw_ColoredStringScale(548, y + 337, "@nzpteam", 1, 1, 0, 1, 1.0f);
 
 	Draw_SubPic(610, y + 302, 22, 22, 0, 32, 32, 64, social_badges); // Twitter
 	Draw_ColoredStringScale(542, y + 309, "/NZPTeam", 1, 1, 0, 1, 1.0f);
 
 	Draw_SubPic(610, y + 274, 22, 22, 32, 32, 64, 64, social_badges); // Patreon
-	Draw_ColoredStringScale(494, y + 280, "/cypressimplex", 1, 1, 0, 1, 1.0f);
+	Draw_ColoredStringScale(520, y + 280, "/cypressimplex", 1, 1, 0, 1, 1.0f);
 
 #endif // VITA
 
@@ -940,9 +940,6 @@ void M_SinglePlayer_Draw (void)
 
 	// Fill black to make everything easier to see
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
-
-	// Version String
-	DRAW_VERSIONSTRING();
 
 	// Header
 	DRAW_HEADER("SOLO");
@@ -1388,9 +1385,6 @@ void M_Achievement_Draw (void)
 	// Fill black to make everything easier to see
 	Draw_FillByColor(0, 0, 960, 544, 0, 0, 0, 1);
 
-	// Version String
-	//DRAW_VERSIONSTRING();
-
     if (!m_achievement_selected)
     {
         Draw_FillByColor(15, 8, 225, 12, 204, 0, 0, 150);
@@ -1556,9 +1550,6 @@ void M_Menu_Maps_Draw (void)
 
 	// Fill black to make everything easier to see
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
-
-	// Version String
-	DRAW_VERSIONSTRING();
 
 	// Header
 	DRAW_HEADER("CUSTOM MAPS");
@@ -2510,9 +2501,6 @@ void M_Options_Draw (void)
 	// Fill black to make everything easier to see
 	Draw_FillByColor(0, 0, 1280, 720, 0, 0, 0, 0.4);
 
-	// Version String
-	DRAW_VERSIONSTRING();
-
 	// Header
 	DRAW_HEADER("SETTINGS");
 
@@ -3378,13 +3366,13 @@ void M_Credits_Draw (void)
 	DRAW_CREDITLINE(11, "Blubswillrule, Biodude, Cypress, Marty P.");
 	DRAW_CREDITLINE(12, "");
 	DRAW_CREDITLINE(13, "Special Thanks:");
-	DRAW_CREDITLINE(14, "- Spike, Eukara:     FTEQW");
-	DRAW_CREDITLINE(15, "- Shpuld:            CleanQC4FTE");
-	DRAW_CREDITLINE(16, "- Crow_Bar, st1x51:  dQuake(plus)");
-	DRAW_CREDITLINE(17, "- fgsfdsfgs:         Quakespasm-NX");
-	DRAW_CREDITLINE(18, "- Rinnegatamante:    Initial VITA Port, VITA Auto-Updater");
-	DRAW_CREDITLINE(19, "- Azenn:             GFX Help");
-	DRAW_CREDITLINE(20, "- BCDeshiG:          Extensive Testing");
+	DRAW_CREDITLINE(14, "- Spike, Eukara: [FTEQW]");
+	DRAW_CREDITLINE(15, "- Shpuld: [CleanQC4FTE]");
+	DRAW_CREDITLINE(16, "- Crow_Bar, st1x51: [dQuake(plus)]");
+	DRAW_CREDITLINE(17, "- fgsfdsfgs: [Quakespasm-NX]");
+	DRAW_CREDITLINE(18, "- Rinnegatamante: [Initial VITA Port, VITA Auto-Updater]");
+	DRAW_CREDITLINE(19, "- Azenn: [GFX Help]");
+	DRAW_CREDITLINE(20, "- BCDeshiG: [Extensive Testing]");
 	
 	DRAW_BACKBUTTON(0, 0);
 }

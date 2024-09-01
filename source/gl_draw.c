@@ -448,6 +448,40 @@ void Draw_NewGame (void)
 	menu_numcachepics = 0;
 }
 
+// ! " # $ % & ' ( ) * _ , - . / 0
+// 1 2 3 4 5 6 7 8 9 : ; < = > ? @
+// A B C D E F G H I J K L M N O P
+// Q R S T U V W X Y Z [ \ ] ^ _ `
+// a b c d e f g h i j k l m n o p
+// q r s t u v w x y z { | } ~
+int font_kerningamount[96];
+
+void InitKerningMap(void)
+{
+	// Initialize the kerning amount as 8px for each
+	// char in the event we cant load the file.
+	for(int i = 0; i < 96; i++) {
+		font_kerningamount[i] = 8;
+	}
+
+    FILE *kerning_map = fopen(va("%s/gfx/kerning_map.txt", com_gamedir), "r");
+    if (kerning_map == NULL) {
+        return;
+    }
+
+    char buffer[1024];
+    if (fgets(buffer, sizeof(buffer), kerning_map) != NULL) {
+        char *token = strtok(buffer, ",");
+        int i = 0;
+        while (token != NULL && i < 96) {
+            font_kerningamount[i++] = atoi(token);
+            token = strtok(NULL, ",");
+        }
+    }
+
+    fclose(kerning_map);
+}
+
 /*
 ===============
 Draw_Init -- johnfitz -- rewritten
@@ -478,6 +512,7 @@ void Draw_Init (void)
 	// load game pics
 	Draw_LoadPics ();
 	Clear_LoadingFill ();
+	InitKerningMap();
 }
 
 //==============================================================================
@@ -682,10 +717,20 @@ void Draw_ColoredStringScale (int x, int y, const char *str, float r, float g, f
 
 	while (*str)
 	{
+		
 		if (*str != 32) //don't waste verts on spaces
 			Draw_CharacterQuadScale (x, y, *str, s);
+			
+		// Hooray for variable-spacing!
+		if (*str == ' ')
+			x += 4 * s;
+        else if ((int)*str < 33 || (int)*str > 126)
+            x += 8 * s;
+        else
+            x += (font_kerningamount[(int)(*str - 33)] + 1) * s;
+
 		str++;
-		x += 8*s;
+		//x += 8*s;
 	}
 
 	glEnd ();
@@ -696,41 +741,36 @@ void Draw_ColoredStringScale (int x, int y, const char *str, float r, float g, f
 	glColor4f (1,1,1,1);
 }
 
-
-/*
-================
-Draw_ColoredString
-
-Assume that all rgba values are divided by 255 already
-================
-*/
-void Draw_ColoredString (int x, int y, const char *str, float r, float g, float b, float a)
+float getTextWidth(char *str, float scale)
 {
-	if (y <= -8)
-		return;			// totally off screen
+	float width = 0;
 
-	glEnable (GL_BLEND);
-    glColor4f(r, g, b, a);
-	glDisable (GL_ALPHA_TEST);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    for (int i = 0; i < strlen(str); i++) {
+        // Hooray for variable-spacing!
+		if (str[i] == ' ')
+			width += 4 * scale;
+        else if ((int)str[i] < 33 || (int)str[i] > 126)
+            width += 8 * scale;
+        else
+            width += (font_kerningamount[(int)(str[i] - 33)] + 1) * scale;
+    }
 
-	GL_Bind (char_texture);
-	glBegin (GL_QUADS);
+	return width;
+}
 
-	while (*str)
-	{
-		if (*str != 32) //don't waste verts on spaces
-			Draw_CharacterQuad (x, y, *str);
-		str++;
-		x += 8;
-	}
 
-	glEnd ();
+void Draw_ColoredStringCentered(int y, char *str, float r, float g, float b, float a, float s)
+{
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-	glEnable(GL_ALPHA_TEST);
-	glDisable (GL_BLEND);
-	glColor4f (1,1,1,1);
+#ifdef VITA
+
+	Draw_ColoredStringScale((int)((vid.width - getTextWidth(str, s))/2), y, str, r, g, b, a, s);
+
+#else
+
+	Draw_ColoredStringScale((int)((640 - getTextWidth(str, s))/2), y, str, r, g, b, a, s);
+
+#endif // VITA
 
 }
 
@@ -1084,7 +1124,6 @@ void Draw_LoadingFill(void)
 
 #endif // VITA
 
-	int l;
 	char str[64];
 	char* text;
 
@@ -1110,15 +1149,17 @@ void Draw_LoadingFill(void)
 		default: text = "Initializing.."; break;
 	}
 
-	l = strlen (text);
-
 #ifdef VITA
 
-	Draw_ColoredStringScale((vid.width - l*16)/2, y, text, 1, 1, 1, 1, 2.0f);
+	Draw_ColoredStringCentered(y, text, 1, 1, 1, 1, 2.0f);
+
+	//Draw_ColoredStringScale((vid.width - l*16)/2, y, text, 1, 1, 1, 1, 2.0f);
 
 #else
 
-	Draw_String((640 - l*8)/2, y, text);
+	Draw_ColoredStringCentered(y, text, 1, 1, 1, 1, 1.0f);
+
+	//Draw_String((640 - l*8)/2, y, text);
 
 #endif // VITA
 
