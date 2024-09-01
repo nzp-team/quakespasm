@@ -64,7 +64,7 @@ void Draw_NewGame (void);
 void GL_SetCanvas (canvastype newcanvas); //johnfitz
 void Clear_LoadingFill (void);
 gltexture_t *loadtextureimage (char* filename);
-int getTextWidth(char *str, int scale);
+float getTextWidth(char *str, float scale);
 
 #endif	/* _QUAKE_DRAW_H */
 

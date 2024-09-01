@@ -285,8 +285,8 @@ int menu_offset_y;
 	else \
 		Draw_ColoredStringScale(10, y + 335, "Back", 1, 1, 1, 1, 1.5f); \
 }
-#define DRAW_MAPTHUMB(img) Draw_StretchPic(x_map_info_disp + 280, y + 45, img, 300, 170);
-#define DRAW_MAPDESC(id, txt) Draw_ColoredStringScale(x_map_info_disp + 280, y + 218 + (15 * id), txt, 1, 1, 1, 1, 1.25f);
+#define DRAW_MAPTHUMB(img) Draw_StretchPic(x_map_info_disp + 280, y + 45, img, 280, 160);
+#define DRAW_MAPDESC(id, txt) Draw_ColoredStringScale(x_map_info_disp + 280, y + 218 + (15 * id), txt, 1, 1, 1, 1, 1.45f);
 #define DRAW_MAPAUTHOR(id, txt) Draw_ColoredStringScale(x_map_info_disp + 280, y + 218 + (15 * id), txt, 1, 1, 0, 1, 1.25f);
 #define DRAW_CREDITLINE(id, txt) Draw_ColoredStringScale(10, menu_offset_y + ((OFFSET_SPACING - 2) * id), txt, 1, 1, 1, 1, 1.25f);
 #define DRAW_SETTINGSVALUE(id, txt) Draw_ColoredStringScale(300, y + 55 + (OFFSET_SPACING * (id + 1)), txt, 1, 1, 1, 1, 1.5f);
@@ -667,24 +667,24 @@ void M_Main_Draw (void)
 #ifdef VITA
 
 	Draw_SubPic(915, 510, 26, 26, 32, 0, 64, 32, social_badges); // YouTube
-	Draw_ColoredStringScale(840, 510 + 6, "@nzpteam", 1, 1, 0, 1, 1.0f);
+	Draw_ColoredStringScale(848, 510 + 6, "@nzpteam", 1, 1, 0, 1, 1.0f);
 
 	Draw_SubPic(915, 510 - 26 - 5, 26, 26, 0, 32, 32, 64, social_badges); // Twitter
 	Draw_ColoredStringScale(840, 510 - 25, "/NZPTeam", 1, 1, 0, 1, 1.0f);
 
 	Draw_SubPic(915, 510 - 52 - 10, 26, 26, 32, 32, 64, 64, social_badges); // Patreon
-	Draw_ColoredStringScale(792, 510 - 52 - 3, "/cypressimplex", 1, 1, 0, 1, 1.0f);
+	Draw_ColoredStringScale(818, 510 - 52 - 3, "/cypressimplex", 1, 1, 0, 1, 1.0f);
 
 #else
 
 	Draw_SubPic(610, y + 330, 22, 22, 32, 0, 64, 32, social_badges); // YouTube
-	Draw_ColoredStringScale(542, y + 337, "@nzpteam", 1, 1, 0, 1, 1.0f);
+	Draw_ColoredStringScale(548, y + 337, "@nzpteam", 1, 1, 0, 1, 1.0f);
 
 	Draw_SubPic(610, y + 302, 22, 22, 0, 32, 32, 64, social_badges); // Twitter
 	Draw_ColoredStringScale(542, y + 309, "/NZPTeam", 1, 1, 0, 1, 1.0f);
 
 	Draw_SubPic(610, y + 274, 22, 22, 32, 32, 64, 64, social_badges); // Patreon
-	Draw_ColoredStringScale(494, y + 280, "/cypressimplex", 1, 1, 0, 1, 1.0f);
+	Draw_ColoredStringScale(520, y + 280, "/cypressimplex", 1, 1, 0, 1, 1.0f);
 
 #endif // VITA
 

@@ -507,7 +507,7 @@ void HUD_Points (void)
 			point_x_offset = 5;
 #else
 			x_position = 5;
-			point_x_offset = 4;
+			point_x_offset = 6;
 #endif // VITA
 			
 		} else {
@@ -530,11 +530,11 @@ void HUD_Points (void)
 #endif // VITA
 		
 #ifdef VITA
-		xplus = getTextWidth(HUD_itoa (f, str), 2.0f);
-		Draw_ColoredStringScale (((160 - xplus)/2)-point_x_offset, 413 - (35 * i), va("%i", current_points[i]), r, g, b, 1, 2.0f); //2x Scale/White
+		xplus = getTextWidth(va("%i", current_points), 1.0f);
+		Draw_ColoredStringScale (((195 - xplus)/2)-point_x_offset, 413 - (35 * i), va("%i", current_points[i]), r, g, b, 1, 2.0f); //2x Scale/White
 #else
-		xplus = getTextWidth(HUD_itoa (f, str), 1.5f);
-		Draw_ColoredStringScale (((111 - xplus)/2)-point_x_offset, 633 - (24 * i), va("%i", current_points[i]), r, g, b, 1, 1.5f);
+		xplus = getTextWidth(va("%i", current_points), 1.0f) - 2;
+		Draw_ColoredStringScale (((145 - xplus)/2)-point_x_offset, 633 - (24 * i), va("%i", current_points[i]), r, g, b, 1, 1.5f);
 #endif // VITA
 
 		if (old_points[i] != f)
@@ -542,17 +542,17 @@ void HUD_Points (void)
 			if (f > old_points[i])
 			{
 			#ifdef VITA
-				HUD_Parse_Point_Change(f - old_points[i], 0, 80 - (xplus), 415 - (35 * i));
+				HUD_Parse_Point_Change(f - old_points[i], 0, 45 - (xplus), 415 - (35 * i));
 			#else 
-				HUD_Parse_Point_Change(f - old_points[i], 0, 140 - (xplus), y - (28 * i));	
+				HUD_Parse_Point_Change(f - old_points[i], 0, 145 - (xplus), y - (28 * i));	
 			#endif // VITA
 			}
 			else
 			{
 			#ifdef VITA
-				HUD_Parse_Point_Change(old_points[i] - f, 1, 80 - (xplus), 415 - (35 * i));
+				HUD_Parse_Point_Change(old_points[i] - f, 1, 45 - (xplus), 415 - (35 * i));
 			#else
-				HUD_Parse_Point_Change(old_points[i] - f, 1, 140 - (xplus), y - (28 * i));
+				HUD_Parse_Point_Change(old_points[i] - f, 1, 145 - (xplus), y - (28 * i));
 			#endif // VITA
 			}
 			old_points[i] = f;
@@ -1744,7 +1744,7 @@ void HUD_Ammo (void)
 #else
 
 	float scale = 1.25f;
-	y_value = vid.height - 3 - fragpic->height;
+	y_value = vid.height - fragpic->height;
 	x_value = 575;
 
 #endif // VITA
@@ -1800,19 +1800,19 @@ void HUD_AmmoString (void)
 		#ifdef VITA
 			Draw_ColoredStringCentered((vid.height)/2 + 34, "Reload", 1, 1, 1, 1, 2.0f);
 		#else
-			Draw_ColoredStringCentered((vid.height)*3/4 + 40, "Reload", 1, 1, 1, 1, 1.5f);
+			Draw_ColoredStringCentered((vid.height)*3/4 + 44, "Reload", 1, 1, 1, 1, 1.5f);
 		#endif
 		} else if (0 < cl.stats[STAT_CURRENTMAG]) {
 		#ifdef VITA
 			Draw_ColoredStringCentered((vid.height)/2 + 34, "LOW AMMO", 1, 1, 0, 1, 2.0f);
 		#else
-			Draw_ColoredStringCentered((vid.height)*3/4 + 40, "LOW AMMO", 1, 1, 0, 1, 1.5f);
+			Draw_ColoredStringCentered((vid.height)*3/4 + 44, "LOW AMMO", 1, 1, 0, 1, 1.5f);
 		#endif
 		} else {
 		#ifdef VITA
 			Draw_ColoredStringCentered((vid.height)/2 + 34, "NO AMMO", 1, 0, 0, 1, 2.0f);
 		#else
-			Draw_ColoredStringCentered((vid.height)*3/4 + 40, "NO AMMO", 1, 0, 0, 1, 1.5f);
+			Draw_ColoredStringCentered((vid.height)*3/4 + 44, "NO AMMO", 1, 0, 0, 1, 1.5f);
 		#endif
 		}
 	}
@@ -1850,11 +1850,11 @@ void HUD_Grenades (void)
 		else
 			Draw_ColoredStringScale (x_value + 36, y_value + 44, va ("%i",cl.stats[STAT_PRIGRENADES]), 1, 1, 1, 1, 2.0f);
 	#else
-		Draw_StretchPic (x_value - 24, y_value, fragpic, 26, 26);
+		Draw_StretchPic (x_value - 24, y_value, fragpic, 32, 32);
 		if (cl.stats[STAT_PRIGRENADES] <= 0)
-			Draw_ColoredStringScale (x_value + 15 - 24, y_value + 18, va ("%i",cl.stats[STAT_PRIGRENADES]), 1, 0, 0, 1, 1.25f);
+			Draw_ColoredStringScale (x_value + 15 - 20, y_value + 20, va ("%i",cl.stats[STAT_PRIGRENADES]), 1, 0, 0, 1, 1.25f);
 		else
-			Draw_ColoredStringScale (x_value + 15 - 24, y_value + 18, va ("%i",cl.stats[STAT_PRIGRENADES]), 1, 1, 1, 1, 1.25f);
+			Draw_ColoredStringScale (x_value + 15 - 20, y_value + 20, va ("%i",cl.stats[STAT_PRIGRENADES]), 1, 1, 1, 1, 1.25f);
 	#endif
 	}
 	if (cl.stats[STAT_GRENADES] & UI_BETTY)
@@ -1867,11 +1867,11 @@ void HUD_Grenades (void)
 			Draw_ColoredStringScale (x_value + fragpic->width + 46, y_value + 44, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 1, 1, 1, 2.0f);
 		}
 	#else
-		Draw_StretchPic (x_value, y_value, bettypic, 26, 26);
+		Draw_StretchPic (x_value, y_value, bettypic, 32, 32);
 		if (cl.stats[STAT_SECGRENADES] <= 0) {
-			Draw_ColoredStringScale (x_value + 15, y_value + 18, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 0, 0, 1, 1.25f);
+			Draw_ColoredStringScale (x_value + 15, y_value + 20, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 0, 0, 1, 1.25f);
 		} else {
-			Draw_ColoredStringScale (x_value + 15, y_value + 18, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 1, 1, 1, 1.25f);
+			Draw_ColoredStringScale (x_value + 15, y_value + 20, va ("%i",cl.stats[STAT_SECGRENADES]), 1, 1, 1, 1, 1.25f);
 		}
 	#endif
 	}
@@ -2005,10 +2005,10 @@ void HUD_Weapon (void)
 	//strcpy(str, GetWeaponName(cl.stats[STAT_ACTIVEWEAPON]));
 	l = strlen(str);
 #ifdef VITA
-	x_value = vid.width - fragpic->width - 65 - getTextWidth(str, 2);
+	x_value = vid.width - fragpic->width - 65 - getTextWidth(str, 2.0f);
 	Draw_ColoredStringScale (x_value, y_value, str, 1, 1, 1, 1, 2.0f);
 #else
-	x_value = vid.width/2 - 63 - getTextWidth(str, 1);
+	x_value = vid.width/2 - 63 - getTextWidth(str, 1.25f);
 	Draw_ColoredStringScale (x_value, y_value, str, 1, 1, 1, 1, 1.25f);
 #endif
 }

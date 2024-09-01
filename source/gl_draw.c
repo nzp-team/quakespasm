@@ -717,9 +717,10 @@ void Draw_ColoredStringScale (int x, int y, const char *str, float r, float g, f
 
 	while (*str)
 	{
+		
 		if (*str != 32) //don't waste verts on spaces
 			Draw_CharacterQuadScale (x, y, *str, s);
-
+			
 		// Hooray for variable-spacing!
 		if (*str == ' ')
 			x += 4 * s;
@@ -740,9 +741,9 @@ void Draw_ColoredStringScale (int x, int y, const char *str, float r, float g, f
 	glColor4f (1,1,1,1);
 }
 
-int getTextWidth(char *str, int scale)
+float getTextWidth(char *str, float scale)
 {
-	int width = 0;
+	float width = 0;
 
     for (int i = 0; i < strlen(str); i++) {
         // Hooray for variable-spacing!
@@ -763,11 +764,11 @@ void Draw_ColoredStringCentered(int y, char *str, float r, float g, float b, flo
 
 #ifdef VITA
 
-	Draw_ColoredStringScale((vid.width - getTextWidth(str, (int)s))/2, y, str, r, g, b, a, s);
+	Draw_ColoredStringScale((int)((vid.width - getTextWidth(str, s))/2), y, str, r, g, b, a, s);
 
 #else
 
-	Draw_ColoredStringScale((640 - getTextWidth(str, (int)s))/2, y, str, r, g, b, a, s);
+	Draw_ColoredStringScale((int)((640 - getTextWidth(str, s))/2), y, str, r, g, b, a, s);
 
 #endif // VITA
 
