@@ -339,7 +339,7 @@ void HUD_EndScreen (void)
 
 		// Draw a bunch of score background graphics to form a nice line.
 		for (int j = 0; j < 7; j++) {
-			Draw_StretchPic(90 + (108 * j), 205 + y, sb_moneyback, 128, 32);
+			Draw_AlphaStretchPic(90 + (108 * j), 205 + y, 128, 32, 255, sb_moneyback);
 		}
 
 		Draw_ColoredStringScale(100, 212 + y, s->name, 1, 1, 1, 1, 2.0f);
@@ -371,7 +371,7 @@ void HUD_EndScreen (void)
 
 		// Draw a bunch of score background graphics to form a nice line.
 		for (int j = 0; j < 6; j++) {
-			Draw_StretchPic(85 + (74 * j), vid.height*3/4 - 20 + y, sb_moneyback, 86, 21);
+			Draw_AlphaStretchPic(85 + (74 * j), vid.height*3/4 - 20 + y, 86, 21, 255, sb_moneyback);
 		}
 
 		Draw_ColoredStringScale(100, vid.height*3/4 - 16 + y, s->name, 1, 1, 1, 1, 1.25f);
@@ -524,9 +524,9 @@ void HUD_Points (void)
 			
 
 #ifdef VITA
-		Draw_StretchPic(x_position, 407 - (35 * i), moneyback, 128, 32);
+		Draw_StretchPic(x_position, 407 - (35 * i), 128, 32, 255, moneyback);
 #else
-		Draw_StretchPic(x_position, 629 - (24 * i), moneyback, 86, 21);
+		Draw_StretchPic(x_position, 629 - (24 * i), 86, 21, 255, moneyback);
 #endif // VITA
 		
 #ifdef VITA
