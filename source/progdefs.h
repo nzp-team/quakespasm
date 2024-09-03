@@ -1,28 +1,169 @@
-/*
-Copyright (C) 1996-2001 Id Software, Inc.
-Copyright (C) 2002-2009 John Fitzgibbons and others
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+/* TODO: Use FTEQCC to autogenerate this. */
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+typedef struct
+{	
+    int			pad[28];
+	int			self;
+	int			other;
+	int			world;
+	float		time;
+	float		frametime;
+	float		force_retouch;
+	string_t	mapname;
+	float		deathmatch;
+	float		coop;
+	float		teamplay;
+	float		serverflags;
+	float   	rounds;
+	float   	rounds_change;
+	float		parm1;
+	float		parm2;
+	float		parm3;
+	float		parm4;
+	float		parm5;
+	float		parm6;
+	float		parm7;
+	float		parm8;
+	float		parm9;
+	float		parm10;
+	float		parm11;
+	float		parm12;
+	float		parm13;
+	float		parm14;
+	float		parm15;
+	float		parm16;
+	vec3_t		v_forward;
+	vec3_t		v_up;
+	vec3_t		v_right;
+	float		trace_allsolid;
+	float		trace_startsolid;
+	float		trace_fraction;
+	vec3_t		trace_endpos;
+	vec3_t		trace_plane_normal;
+	float		trace_plane_dist;
+	int			trace_ent;
+	float		trace_inopen;
+	float		trace_inwater;
+	int			msg_entity;
+	func_t		main;
+	func_t		StartFrame;
+	func_t  	EndFrame;
+	func_t		PlayerPreThink;
+	func_t		PlayerPostThink;
+	func_t		ClientKill;
+	func_t		ClientConnect;
+	func_t		PutClientInServer;
+	func_t		ClientDisconnect;
+	func_t		SetNewParms;
+	func_t		SetChangeParms;
+	func_t      ParseClientCommand;					// special command calls
+	string_t    CMD_STRING;
+	func_t      Soft_Restart;
+} globalvars_t;
 
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
-*/
-
-#ifndef __PROGDEFS_H
-#define __PROGDEFS_H
-
-#include "progdefs.q1"
-
-#endif	/* __PROGDEFS_H */
-
+typedef struct
+{
+	float		modelindex;
+	vec3_t		absmin;
+	vec3_t		absmax;
+	float		ltime;
+	float		movetype;
+	float		solid;
+	vec3_t		origin;
+	vec3_t		oldorigin;
+	vec3_t		velocity;
+	vec3_t		angles;
+	vec3_t		avelocity;
+	vec3_t		punchangle;
+	string_t	classname;
+	string_t	model;
+	float		frame;
+	float		skin;
+	float       iframetime;
+	float		effects;
+	vec3_t		mins;
+	vec3_t		maxs;
+	vec3_t		size;
+	func_t		touch;
+	func_t		use;
+	func_t		think;
+	func_t		blocked;
+	float		nextthink;
+	int			groundentity;
+	float		health;
+    float		points;
+	float		kills;	
+	float		weapon;
+	string_t	weaponmodel;
+	string_t    weapon2model;
+	float		weaponframe;
+	float   	weapon2frame;
+	float		currentammo;
+	float		currentmag;
+	float 		zoom;
+	float   	weaponskin;
+	float   	weapon2skin;
+	float		primary_grenades;
+	float		secondary_grenades;
+	float		grenades;
+	float   	perks;
+	float		takedamage;
+	int			chain;
+	float		deadflag;
+	vec3_t		view_ofs;
+	float		button0;
+	float		button1;
+	float		button2;
+	float 		button3;
+	float 		button4;
+	float 		button5;
+	float 		button6;
+	float 		button7;
+	float 		button8;
+	float		impulse;
+	float		fixangle;
+	vec3_t		v_angle;
+	float		idealpitch;
+	string_t	netname;
+	int			enemy;
+	float		flags;
+	float		colormap;
+	float		team;
+	float		max_health;
+	float		teleport_time;
+	float		waterlevel;
+	float		watertype;
+	float		ideal_yaw;
+	float		yaw_speed;
+	int			aiment;
+	int			head;
+	int			larm;
+	int			rarm;
+	int			goalentity;
+	float		spawnflags;
+	string_t	target;
+	string_t	targetname;
+	float       bleed_out;
+	float		progress_bar;
+	int			dmg_inflictor;
+	int			owner;
+	vec3_t		movedir;
+	string_t	message;
+	float		sounds;
+	string_t	noise;
+	string_t	noise1;
+	string_t	noise2;
+	string_t	noise3;
+	float		x2_icon;
+	float		insta_icon;
+	vec3_t 		ADS_Offset;
+	vec3_t  	Flash_Offset;
+	float   	Flash_Size;
+	string_t	Weapon_Name;
+	string_t 	Weapon_Name_Touch;
+	float   	currentmag2;
+	float   	maxspeed;
+	float 		facingenemy;
+	float 		scale;
+} entvars_t;

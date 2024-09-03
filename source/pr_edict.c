@@ -1053,13 +1053,6 @@ void PR_LoadProgs (void)
 	for (i = 0; i < (int) sizeof(*progs) / 4; i++)
 		((int *)progs)[i] = LittleLong ( ((int *)progs)[i] );
 
-	// Naievil -- just fucking surpress this shit...
-	/*if (progs->version != PROG_VERSION)
-		Host_Error ("progs.dat has wrong version number (%i should be %i)", progs->version, PROG_VERSION);
-	if (progs->crc != PROGHEADER_CRC)
-		Host_Error ("progs.dat system vars have been modified, progdefs.h is out of date");
-	*/
-
 	pr_functions = (dfunction_t *)((byte *)progs + progs->ofs_functions);
 	pr_strings = (char *)progs + progs->ofs_strings;
 	if (progs->ofs_strings + progs->numstrings >= com_filesize)
