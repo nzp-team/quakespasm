@@ -524,9 +524,9 @@ void HUD_Points (void)
 			
 
 #ifdef VITA
-		Draw_StretchPic(x_position, 407 - (35 * i), 128, 32, 255, moneyback);
+		Draw_AlphaStretchPic(x_position, 407 - (35 * i), 128, 32, 255, moneyback);
 #else
-		Draw_StretchPic(x_position, 629 - (24 * i), 86, 21, 255, moneyback);
+		Draw_AlphaStretchPic(x_position, 629 - (24 * i), 86, 21, 255, moneyback);
 #endif // VITA
 		
 #ifdef VITA
