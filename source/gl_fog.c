@@ -64,6 +64,11 @@ update internal variables
 */
 void Fog_Update (float start, float end, float red, float green, float blue, float time)
 {
+	if (start <= 0.01f || end <= 0.01f) {
+		start = 0.0f;
+		end = 0.0f;
+	}
+
 	//save previous settings for fade
 	if (time > 0)
 	{
@@ -98,6 +103,8 @@ void Fog_Update (float start, float end, float red, float green, float blue, flo
 	fog_blue = blue;
 	fade_time = time;
 	fade_done = cl.time + time;
+
+	if (fog_start )
 	fog_density_gl = ((fog_start / fog_end))/3.5;
 }
 
@@ -118,6 +125,11 @@ void Fog_ParseServerMessage (void)
 	green = MSG_ReadByte() / 255.0;
 	blue = MSG_ReadByte() / 255.0;
 	time = q_max(0.0, MSG_ReadShort() / 100.0);
+
+	if (start < 0.01f || end < 0.01f) {
+		start = 0.0f;
+		end = 0.0f;
+	}
 
 	Fog_Update (start, end, red, green, blue, time);
 }
@@ -262,6 +274,11 @@ void Fog_ParseWorldspawn (void)
 		}
 
 		fog_density_gl = ((fog_start / fog_end))/3.5;
+	}
+
+	if (fog_start <= 0.01f || fog_end <= 0.01f) {
+		fog_start = 0.0f;
+		fog_end = 0.0f;
 	}
 }
 
@@ -427,7 +444,7 @@ called before drawing stuff that should be fogged
 */
 void Fog_EnableGFog (void)
 {
-	if (Fog_GetDensity() > 0 || !Fog_GetStart() == 0 || (!Fog_GetEnd()) <= 0)
+	if (!(Fog_GetStart() == 0) || !(Fog_GetEnd() <= 0))
 		glEnable(GL_FOG);
 }
 
@@ -440,7 +457,7 @@ called after drawing stuff that should be fogged
 */
 void Fog_DisableGFog (void)
 {
-	if (!Fog_GetStart() == 0 || (!Fog_GetEnd()) <= 0)
+	if (!(Fog_GetStart() == 0) || !(Fog_GetEnd() <= 0))
 		glDisable(GL_FOG);
 }
 
