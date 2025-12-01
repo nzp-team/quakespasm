@@ -17,8 +17,9 @@ jobs:
           mkdir build && cd build
           cmake .. && make -j32 install
           cd ../../
-          git clone https://github.com/rinnegatamante/VitaGL.git -b 4e1998a22b667472277c6e14051ca7e8afcf6766
+          git clone https://github.com/rinnegatamante/VitaGL.git
           cd VitaGL
+          git checkout 4e1998a22b667472277c6e14051ca7e8afcf6766
           make HAVE_FFP_SHADER_SUPPORT=1 -j${nproc} && make install
       - name: Build
         working-directory: ./
